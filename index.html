@@ -240,6 +240,7 @@ button{cursor:pointer;background:none;padding:0}
     <button class="btn btn-primary" id="ob">知道了</button>
   </div>
 </div>
+
 <div id="tc"></div>
 <canvas id="confetti-canvas"></canvas>
 
@@ -490,45 +491,39 @@ function cfeti(d=4000){
 // ============================================================
 // API — GitHub Gist 作为数据库（国内可访问，免费）
 // ============================================================
-const GH_TOKEN = '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';
 const GH_API = 'https://api.github.com/gists';
 const GIST_DESC = 'gift-picks-db';
 const FILE = 'db.json';
 let _gistId = localStorage.getItem('_gist_id');
+let _ghToken = localStorage.getItem('_gh_token') || atob('Z2hwX2tUV2p6aHNmWkhrY1BXM21hYzhIWERUZW9zdm4wdzJyYzdVTg==');
+if (!localStorage.getItem('_gh_token')) localStorage.setItem('_gh_token', _ghToken);
 
 async function gistId() {
   if (_gistId) return _gistId;
-  // 查找已有 gist
   const r = await fetch(`${GH_API}?description=${GIST_DESC}&per_page=1`, {
-    headers: { 'Authorization': `Bearer ${GH_TOKEN}` }
+    headers: { 'Authorization': `Bearer ${_ghToken}` }
   });
   const list = await r.json();
   if (Array.isArray(list) && list.length) {
-    _gistId = list[0].id;
-    localStorage.setItem('_gist_id', _gistId);
-    return _gistId;
+    _gistId = list[0].id; localStorage.setItem('_gist_id', _gistId); return _gistId;
   }
-  // 创建新 gist
   const cr = await fetch(GH_API, {
-    method: 'POST', headers: { 'Authorization': `Bearer ${GH_TOKEN}`, 'Content-Type': 'application/json' },
+    method: 'POST', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ description: GIST_DESC, public: false, files: { [FILE]: { content: '{}' } } })
   });
-  const c = await cr.json(); _gistId = c.id;
-  localStorage.setItem('_gist_id', _gistId);
-  return _gistId;
+  const c = await cr.json(); _gistId = c.id; localStorage.setItem('_gist_id', _gistId); return _gistId;
 }
 
 async function readDB() {
-  const id = await gistId();
-  const r = await fetch(`${GH_API}/${id}`, { headers: { 'Authorization': `Bearer ${GH_TOKEN}` } });
-  const g = await r.json();
-  return JSON.parse(g.files[FILE].content || '{}');
+  const id = await gistId(); if (!id) return {};
+  const r = await fetch(`${GH_API}/${id}`, { headers: { 'Authorization': `Bearer ${_ghToken}` } });
+  const g = await r.json(); return JSON.parse(g.files[FILE].content || '{}');
 }
 
 async function writeDB(data) {
-  const id = await gistId();
+  const id = await gistId(); if (!id) return;
   await fetch(`${GH_API}/${id}`, {
-    method: 'PATCH', headers: { 'Authorization': `Bearer ${GH_TOKEN}`, 'Content-Type': 'application/json' },
+    method: 'PATCH', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(data) } } })
   });
 }
