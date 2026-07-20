@@ -287,7 +287,7 @@ button{cursor:pointer;background:none;padding:0}
         <div class="arrow">→</div>
       </div>
     </div>
-    <div style="text-align:center;padding:var(--space-md) 0 0"><button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button></div>
+    <div style="text-align:center;padding:var(--space-md) 0 0"><button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button></div>
   </div>
 </div>
 
@@ -312,7 +312,7 @@ button{cursor:pointer;background:none;padding:0}
       <div class="lbl" id="tp-lbl">点击上方各维度选择你的类型</div>
     </div>
     <div style="margin-top:var(--space-md)"><button class="btn btn-primary btn-lg btn-full" id="btn-confirm-type" onclick="confirmType()" disabled>✅ 确认，生成密令</button></div>
-    <div style="margin-top:var(--space-sm);text-align:center"><button class="btn btn-secondary" onclick="showScreen('screen-choose')">← 返回</button></div>
+    <div style="margin-top:var(--space-sm);text-align:center"><button class="btn btn-secondary" onclick="ss('screen-choose')">← 返回</button></div>
   </div>
 </div>
 
@@ -389,7 +389,7 @@ button{cursor:pointer;background:none;padding:0}
     <div class="ce" id="ce"></div>
     <div class="ci-acts">
       <button class="btn btn-primary btn-lg" id="btn-cv" onclick="verifyCode()" disabled>🔍 开始答题</button>
-      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
+      <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
     </div>
     <div class="scan-h">✨ 扫码自动填入</div>
   </div>
@@ -423,7 +423,7 @@ button{cursor:pointer;background:none;padding:0}
     <textarea id="import-input" style="width:100%;max-width:360px;height:80px;padding:14px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-family:monospace;font-size:1rem;resize:none;text-align:center;background:var(--bg-card);color:var(--text);outline:none" placeholder="在此粘贴结果码..."></textarea>
     <div class="ci-acts">
       <button class="btn btn-primary btn-lg" id="btn-import" onclick="importResult()" disabled>🔍 查看对比报告</button>
-      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
+      <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
     </div>
   </div>
 </div>
@@ -445,7 +445,7 @@ button{cursor:pointer;background:none;padding:0}
 
 <script>
 // ============================================================
-const CFG = { API_BASE:'https://gift-picks.vercel.app', CODE_LEN:5, POLL_MS:5000, API_TIMEOUT:3000 };
+const CFG = { API_BASE:'https://gift-picks.vercel.app', CODE_LEN:5, POLL_MS:5000, API_TIMEOUT:8000 };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -484,6 +484,7 @@ const P = {EI:null,SN:null,TF:null,JP:null};
 // ============================================================
 function $(id){return document.getElementById(id)}
 function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
+window.showScreen = ss;
 function to(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('tc').appendChild(t);setTimeout(()=>t.remove(),2500)}
 function ni(i,t,m){$('oi').textContent=i||'📮';$('ot').textContent=t;$('om').textContent=m;$('overlay').classList.add('active')}
 $('ob').onclick=()=>$('overlay').classList.remove('active');
@@ -524,7 +525,7 @@ const API = {
     if(raw)return JSON.parse(raw);
     // Try API
     try{
-      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),3000);
+      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),CFG.API_TIMEOUT);
       const r=await fetch(CFG.API_BASE+`/api/room/${c}`,{signal:ac.signal});clearTimeout(tid);
       const d=await r.json();if(!r.ok)throw Error(d.error);return d;
     }catch(e){return null}
@@ -541,7 +542,7 @@ const API = {
     }
     // Try API
     try{
-      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),3000);
+      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),CFG.API_TIMEOUT);
       const r=await fetch(CFG.API_BASE+`/api/room/${c}/submit-other`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:a}),signal:ac.signal});clearTimeout(tid);
       const d=await r.json();if(!r.ok)throw Error(d.error);return d;
     }catch(e){throw Error('ROOM_NOT_FOUND')}
