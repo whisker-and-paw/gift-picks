@@ -116,6 +116,19 @@ button{cursor:pointer;background:none;padding:0}
 .qz-nav{display:flex;gap:var(--space-sm);justify-content:space-between;align-items:center;margin-bottom:var(--space-md)}
 .qz-nav .count{font-size:var(--font-sm);color:var(--text-light);font-weight:600}
 .qz-sub{text-align:center}
+/* 5-level scale */
+.sc-scale{display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:var(--space-md)}
+.sc-poles{display:flex;justify-content:space-between;width:100%;font-size:var(--font-sm);color:var(--text);font-weight:700;line-height:1.4;gap:8px}
+.sc-poles .sp{max-width:38%;font-size:var(--font-sm)}
+.sc-poles .sp.rt{text-align:right}
+.sc-options{display:flex;gap:6px;justify-content:center;width:100%}
+.sc-opt{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 2px;flex:1;border-radius:var(--radius-sm);transition:all .2s;border:2px solid transparent;background:var(--bg)}
+.sc-opt:hover{border-color:var(--primary-light)}
+.sc-opt.sel{border-color:var(--primary);background:var(--primary-light)}
+.sc-dot{width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:2px solid var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--font-sm);color:var(--text-light);transition:all .2s}
+.sc-opt.sel .sc-dot{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 0 3px var(--shadow)}
+.sc-tag{font-size:10px;color:var(--text-light);font-weight:600}
+.sc-opt.sel .sc-tag{color:var(--primary-dark);font-weight:700}
 
 /* ===== OTHER INPUT ===== */
 #screen-other-input .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
@@ -409,27 +422,31 @@ button{cursor:pointer;background:none;padding:0}
 
 <script>
 // ============================================================
-const CFG = { API_BASE:'https://gift-picks.2656153330-35a.workers.dev', CODE_LEN:5, POLL_MS:5000, DEMO:true };
+const CFG = { API_BASE:'https://gift-picks.2656153330-35a.workers.dev', CODE_LEN:5, POLL_MS:5000, DEMO:false };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
 const QS = [
-  {dim:'EI',q:'周末休息时，你更倾向于？',A:'约朋友出去聚会 🎉',B:'一个人在家充电 🏠',sc:'E',em:'⚡'},
-  {dim:'EI',q:'在社交场合你通常是？',A:'主动认识新朋友 🗣️',B:'和熟悉的人待一起 🤝',sc:'E',em:'🎭'},
-  {dim:'EI',q:'遇到烦心事你更倾向？',A:'找人说一说 💬',B:'自己消化 🧘',sc:'E',em:'😔'},
-  {dim:'EI',q:'工作中你更喜欢？',A:'团队讨论头脑风暴 👥',B:'一个人专注做事 💻',sc:'E',em:'💼'},
-  {dim:'SN',q:'描述一件事时你更注重？',A:'具体的事实和细节 🔍',B:'整体的感受和可能性 🌈',sc:'S',em:'🔎'},
-  {dim:'SN',q:'你更擅长做哪类事情？',A:'实际操作（做菜/手工）🔧',B:'脑洞大开想创意 💡',sc:'S',em:'🛠️'},
-  {dim:'SN',q:'学新东西时你更喜欢？',A:'按步骤跟着做 📋',B:'先搞懂原理再发挥 🤔',sc:'S',em:'📚'},
-  {dim:'SN',q:'和朋友聊天你更常聊？',A:'今天发生的具体事儿 🗓️',B:'未来的想法和计划 🚀',sc:'S',em:'💬'},
-  {dim:'TF',q:'朋友找你吐槽时你更常？',A:'帮 TA 分析出主意 🧠',B:'先安抚 TA 的情绪 🤗',sc:'T',em:'🤝'},
-  {dim:'TF',q:'做重要决定时你更看重？',A:'逻辑对不对道理通不通 ⚖️',B:'大家的感受开不开心 💖',sc:'T',em:'⚖️'},
-  {dim:'TF',q:'你觉得自己更偏向？',A:'理性冷静 🧊',B:'感性细腻 🌊',sc:'T',em:'🧊'},
-  {dim:'TF',q:'看感人电影时你？',A:'不太容易被感动 😶',B:'很容易共情落泪 😭',sc:'T',em:'🎬'},
-  {dim:'JP',q:'周末出去玩你更喜欢？',A:'提前做好全部计划 📅',B:'随性走到哪算哪 🍃',sc:'J',em:'🗺️'},
-  {dim:'JP',q:'你的桌面/房间通常是？',A:'整洁有序 🧹',B:'乱中有序 📚',sc:'J',em:'🏠'},
-  {dim:'JP',q:'你做事情的习惯是？',A:'列清单按计划来 ✅',B:'想到什么做什么 🎯',sc:'J',em:'📋'},
-  {dim:'JP',q:'面对 deadline 你通常是？',A:'提前完成早安心 ⏰',B:'最后冲刺效率高 🌙',sc:'J',em:'⏳'},
+  // === E/I ===
+  {dim:'EI',left:'和朋友聚会后我感到精力充沛',right:'社交之后我需要独处来恢复能量',em:'⚡'},
+  {dim:'EI',left:'我倾向于边想边说，在交流中理清思路',right:'我更习惯先想清楚再开口',em:'💭'},
+  {dim:'EI',left:'我享受成为众人关注的焦点',right:'我更喜欢待在幕后不被注意',em:'🎯'},
+  {dim:'EI',left:'我的朋友圈很广，认识很多人',right:'我的朋友不多但关系都很深',em:'👥'},
+  // === S/N ===
+  {dim:'SN',left:'我更关注眼前具体实在的事物',right:'我更喜欢思考未来的可能性',em:'🔍'},
+  {dim:'SN',left:'我习惯按照已有经验和常规做事',right:'我热衷于尝试全新的方式',em:'🛤️'},
+  {dim:'SN',left:'我通常比较务实，注重实际效果',right:'我更喜欢天马行空地畅想',em:'🎨'},
+  {dim:'SN',left:'阅读/看剧时我关注具体情节',right:'我更喜欢琢磨背后的隐喻和主题',em:'📖'},
+  // === T/F ===
+  {dim:'TF',left:'做决定时我主要靠理性分析',right:'做决定时我更看重个人感受',em:'⚖️'},
+  {dim:'TF',left:'指出别人的问题对我来说很正常',right:'我倾向于委婉，怕伤害对方感受',em:'💬'},
+  {dim:'TF',left:'我把公正和原则看得很重',right:'我把和谐与人情看得很重',em:'🎭'},
+  {dim:'TF',left:'别人找我倾诉时我习惯给解决方案',right:'别人找我倾诉时我习惯给情感支持',em:'🤝'},
+  // === J/P ===
+  {dim:'JP',left:'我喜欢生活井井有条有规划',right:'我喜欢随性灵活自由安排',em:'📋'},
+  {dim:'JP',left:'完成任务清单让我很有成就感',right:'我经常在截止前才高效运作',em:'⏰'},
+  {dim:'JP',left:'我更喜欢事情有明确的结论',right:'我乐于保持开放不急着下结论',em:'🔒'},
+  {dim:'JP',left:'旅行前我会做详细的攻略',right:'我更喜欢到了再说随遇而安',em:'🧳'},
 ];
 const DN = {EI:'⚡ 精力来源',SN:'🔍 认知方式',TF:'⚖️ 决策依据',JP:'📋 生活态度'};
 const TN = {'ENFJ':'主人公型','ENFP':'竞选者型','ENTJ':'指挥官型','ENTP':'辩论家型','ESFJ':'执政官型','ESFP':'表演者型','ESTJ':'总经理型','ESTP':'企业家型','INFJ':'提倡者型','INFP':'调停者型','INTJ':'建筑师型','INTP':'逻辑学家型','ISFJ':'守卫者型','ISFP':'探险家型','ISTJ':'物流师型','ISTP':'鉴赏家型'};
@@ -489,9 +506,11 @@ async function rpcG(p){for(let a=0;a<2;a++){try{const r=await fetch(CFG.API_BASE
 function calcMBTI(a){
   const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
   for(const d of dims){
-    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let c=0,v=0;
-    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){c+=a[i]===0?1:0;v++}});
-    t+=v===0?p1[d]:c>=v/2?p1[d]:{'EI':'I','SN':'N','TF':'F','JP':'P'}[d];
+    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let sum=0,cnt=0;
+    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){sum+=a[i];cnt++}});
+    // 5-level: 1=strongly left, 5=strongly right. <=2.5→left, >2.5→right
+    const avg=cnt?sum/cnt:0;
+    t+=cnt?avg<=2.5?p1[d]:{'EI':'I','SN':'N','TF':'F','JP':'P'}[d]:p1[d];
   }
   return t;
 }
@@ -561,14 +580,17 @@ function startSQ(){
 function renderQ(cid,pid,cid2,ans,mode){
   const qi=S.qi,q=QS[qi],t=QS.length;
   $(pid).style.width=`${(qi+1)/t*100}%`;$(cid2).textContent=`${qi+1}/${t}`;
-  const qt=mode==='other'?q.q.replace(/你/g,'TA'):q.q;
-  $(cid).innerHTML=`<div class="qz-card"><span class="q-dim">${DN[q.dim]}</span><div class="q-em">${q.em}</div><div class="q-t">${qt}</div><div class="qz-opts"><div class="qz-opt${ans[qi]===0?' sel':''}" data-o="0" onclick="${mode==='self'?'sA':'oA'}(0)"><span class="lt">A</span><span>${q.A}</span></div><div class="qz-opt${ans[qi]===1?' sel':''}" data-o="1" onclick="${mode==='self'?'sA':'oA'}(1)"><span class="lt">B</span><span>${q.B}</span></div></div></div>`;
+  const leftT=mode==='other'?q.left.replace(/我/g,'TA'):q.left;
+  const rightT=mode==='other'?q.right.replace(/我/g,'TA'):q.right;
+  const selV=ans[qi];
+  const dots=[1,2,3,4,5].map(v=>`<div class="sc-opt${selV===v?' sel':''}" data-v="${v}" onclick="${mode==='self'?'sA':'oA'}(${v})"><div class="sc-dot">${v}</div><div class="sc-tag">${['非常','比较','中立','比较','非常'][v-1]}</div></div>`).join('');
+  $(cid).innerHTML=`<div class="qz-card"><span class="q-dim">${DN[q.dim]}</span><div class="q-em">${q.em}</div><div class="qz-opts" style="margin-bottom:0"><div class="sc-scale"><div class="sc-poles"><span class="sp">${leftT}</span><span class="sp rt">${rightT}</span></div><div class="sc-options">${dots}</div></div></div></div>`;
   const pn=mode==='self'?$('btn-qp'):$('btn-op'),nn=mode==='self'?$('btn-qn'):$('btn-on'),sb=mode==='self'?$('btn-qs'):$('btn-os');
   if(pn)pn.style.visibility=qi===0?'hidden':'visible';
   if(nn){nn.style.display=qi===t-1?'none':'inline-flex';sb.style.display=qi===t-1?'inline-flex':'none'}
 }
-function sA(o){S.ans[S.qi]=o;sk();document.querySelectorAll('#qzc .qz-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .qz-opt[data-o="${o}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)qNext()},200)}
-function qNext(){if(S.ans[S.qi]===null){to('请先完成当前题目～');return}if(S.qi<QS.length-1){S.qi++;renderQ('qzc','qzf','qcount',S.ans,'self')}}
+function sA(v){S.ans[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)qNext()},200)}
+function qNext(){if(S.ans[S.qi]===null){to('请选择程度～');return}if(S.qi<QS.length-1){S.qi++;renderQ('qzc','qzf','qcount',S.ans,'self')}}
 function qPrev(){if(S.qi>0){S.qi--;renderQ('qzc','qzf','qcount',S.ans,'self')}}
 async function qSubmit(){
   if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}ck();
@@ -610,12 +632,11 @@ function showRes(){
   const rm=S.room;if(!rm||!rm.selfType)return;
   const st=rm.selfType,oa=rm.otherAnswers,ot=oa?calcMBTI(oa):'????';
   cl();cfeti(4000);
-  const dims=['EI','SN','TF','JP'];let sc=[],mt=0,ma=0;
+  const dims=['EI','SN','TF','JP'];let sc=[],mt=0;
   for(let i=0;i<4;i++){
     const d=dims[i],sp=st[i],op=ot[i],is=sp===op;
-    if(is)mt++;ma++;
+    if(is)mt++;
     sc.push({d,sp,op,is});
-    if(i===3)ma++;
   }
   const pct=Math.round(mt/4*100);
   const pl=(t,d)=>{const i=dims.indexOf(d);const l=t[i];return{'E':'外向','I':'内向','S':'感觉','N':'直觉','T':'理性','F':'感性','J':'计划','P':'随性'}[l]||l};
@@ -671,8 +692,8 @@ function startOQ(st){
   $('oq-banner').innerHTML=`<div class="emoji">👀</div><h2>替 TA 描绘人格画像</h2><p>TA 的类型是 <strong>${st}</strong>（${TN[st]||''}）<br>以下题请根据你对 TA 的观察回答～</p>`;
   renderQ('oqc','oqzf','ocount',S.ans,'other');ss('screen-other-quiz');
 }
-function oA(o){S.ans[S.qi]=o;sk();document.querySelectorAll('#oqc .qz-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#oqc .qz-opt[data-o="${o}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)oNext()},200)}
-function oNext(){if(S.ans[S.qi]===null){to('请先完成当前题目～');return}if(S.qi<QS.length-1){S.qi++;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
+function oA(v){S.ans[S.qi]=v;sk();document.querySelectorAll('#oqc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#oqc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)oNext()},200)}
+function oNext(){if(S.ans[S.qi]===null){to('请选择程度～');return}if(S.qi<QS.length-1){S.qi++;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
 function oPrev(){if(S.qi>0){S.qi--;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
 async function oSubmit(){
   if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
