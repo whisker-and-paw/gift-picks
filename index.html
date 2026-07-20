@@ -517,12 +517,8 @@ function cfeti(d=4000){
 // ===== NAV =====
 function goSelf(){sk();S.mode='self';ss('screen-choose')}
 function goOther(){
-  sk();S.mode='other';
-  $('#qz-title').textContent='替 TA 描绘人格画像';
-  $('#qz-sub').textContent='以下问题请根据你对 TA 的了解来选择～';
-  // 清空旧输入
-  const inp = document.getElementById('other-type-input');
-  if(inp){inp.value='';document.getElementById('btn-start-other').disabled=true;}
+  sk();
+  S.mode='other';
   ss('screen-other-input');
 }
 function goPickType(){sk();ss('screen-type')}
