@@ -1,0 +1,10 @@
+{
+  "name": "gift-picks-api",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@upstash/redis": "^1.38.0",
+    "@vercel/blob": "^2.6.1",
+    "@vercel/kv": "^1.0.1"
+  }
+}
