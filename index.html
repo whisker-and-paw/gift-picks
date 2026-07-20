@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#7C5CBF">
-<title>人格镜像 · MBPROFILES 深度解析</title>
+<title>人格镜像 · MBTI 深度解析</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -161,7 +161,7 @@ button{cursor:pointer;background:none;padding:0}
     <div class="role-buttons">
       <button class="role-btn" onclick="goSelf()">
         <span class="ic">🧑</span>
-        <span class="info"><strong>了解自己</strong><span>测一测或输入你的 MBPROFILES，获得深度解析</span></span>
+        <span class="info"><strong>了解自己</strong><span>测一测或输入你的 MBTI，获得深度解析</span></span>
         <span class="arrow">→</span>
       </button>
       <button class="role-btn" onclick="goOther()">
@@ -178,13 +178,13 @@ button{cursor:pointer;background:none;padding:0}
   <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="ch-hdr">
       <div class="em">🧑</div>
-      <h2>你了解自己的 MBPROFILES 吗？</h2>
+      <h2>你了解自己的 MBTI 吗？</h2>
       <p>选一个你喜欢的方式～</p>
     </div>
     <div class="ch-cards">
       <div class="ch-card" onclick="goPickType()">
         <div class="ic">🎯</div>
-        <div class="info"><strong>我知道自己的 MBPROFILES</strong><span>四个维度点选，10 秒搞定</span></div>
+        <div class="info"><strong>我知道自己的 MBTI</strong><span>四个维度点选，10 秒搞定</span></div>
         <div class="arrow">→</div>
       </div>
       <div class="ch-card" onclick="goSelfQuiz()">
@@ -202,7 +202,7 @@ button{cursor:pointer;background:none;padding:0}
   <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="tp-hdr">
       <div class="em">🎯</div>
-      <h2>选填你的 MBPROFILES</h2>
+      <h2>选填你的 MBTI</h2>
       <p>四个维度各选一边</p>
     </div>
     <div class="dim-box"><div class="dim-lbl">⚡ 能量来源</div>
@@ -225,6 +225,26 @@ button{cursor:pointer;background:none;padding:0}
 </div>
 
 <!-- ===== QUIZ ===== -->
+<div class="screen" id="screen-other-input">
+  <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;gap:var(--space-lg)">
+    <div style="text-align:center">
+      <span style="font-size:3rem;display:block;margin-bottom:12px">👀</span>
+      <h2 style="font-size:var(--font-lg);font-weight:900;color:var(--text)">TA 的 MBTI 是什么？</h2>
+      <p style="font-size:var(--font-sm);color:var(--text-light);margin-top:4px">让 TA 告诉你 4 个字母，输进去然后替 TA 答题</p>
+    </div>
+    <div class="rp-other-input">
+      <input id="other-type-input" maxlength="4" placeholder="ENFP" style="width:100%;padding:18px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-size:1.5rem;font-weight:800;text-align:center;background:var(--bg-card);color:var(--primary);letter-spacing:8px;text-transform:uppercase;outline:none;font-family:inherit"
+        oninput="this.value=this.value.toUpperCase().replace(/[^EISNTFJP]/g,'');document.getElementById('btn-start-other').disabled=this.value.length!==4"
+        onkeydown="if(event.key==='Enter')startOtherQuiz()">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-sm);align-items:center">
+      <button class="btn btn-primary btn-lg" id="btn-start-other" onclick="startOtherQuiz()" disabled>🧩 开始替 TA 答题</button>
+      <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
+    </div>
+    <div class="rp-tips">💡 不知道 TA 的 MBTI？先让 TA 点「了解自己」测一下，TA 会告诉你结果的～</div>
+  </div>
+</div>
+
 <div class="screen" id="screen-quiz">
   <div class="content" style="flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="qz-hdr"><div class="em">📝</div><h2 id="qz-title">测测你的人格画像</h2><p id="qz-sub">16 道题，从四个维度了解自己</p></div>
@@ -272,7 +292,7 @@ const QS = [
 const DN = {EI:'⚡ 精力来源',SN:'🔍 认知方式',TF:'⚖️ 决策依据',JP:'📋 生活态度'};
 const DP = {EI:['外向','内向'],SN:['感觉','直觉'],TF:['理性','感性'],JP:['计划','随性']};
 
-// ===== MBPROFILES 深度解析数据（完整版，参考官方 MBPROFILES 报告风格） =====
+// ===== MBTI 深度解析数据（完整版，参考官方 MBTI 报告风格） =====
 const PROFILES = {
   ENFJ:{
     name:'主人公型',emoji:'🔥',nick:'教育家',
@@ -500,50 +520,19 @@ function goOther(){
   sk();S.mode='other';
   $('#qz-title').textContent='替 TA 描绘人格画像';
   $('#qz-sub').textContent='以下问题请根据你对 TA 的了解来选择～';
-  // Show the type input screen for other
-  showOtherTypeInput();
+  // 清空旧输入
+  const inp = document.getElementById('other-type-input');
+  if(inp){inp.value='';document.getElementById('btn-start-other').disabled=true;}
+  ss('screen-other-input');
 }
 function goPickType(){sk();ss('screen-type')}
 function goSelfQuiz(){sk();startQuiz('self')}
-
-// ===== OTHER: Input type =====
-function showOtherTypeInput() {
-  const html = `
-    <div style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;gap:var(--space-lg)">
-      <div style="text-align:center">
-        <span style="font-size:3rem;display:block;margin-bottom:12px">👀</span>
-        <h2 style="font-size:var(--font-lg);font-weight:900;color:var(--text)">TA 的 MBPROFILES 是什么？</h2>
-        <p style="font-size:var(--font-sm);color:var(--text-light);margin-top:4px">让 TA告诉你 4 个字母，输进去然后替 TA 答题</p>
-      </div>
-      <div class="rp-other-input">
-        <input id="other-type-input" maxlength="4" placeholder="ENFP" style="width:100%;padding:18px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-size:1.5rem;font-weight:800;text-align:center;background:var(--bg-card);color:var(--primary);letter-spacing:8px;text-transform:uppercase;outline:none;font-family:inherit"
-          oninput="this.value=this.value.toUpperCase().replace(/[^EISNTFJP]/g,'');document.getElementById('btn-start-other').disabled=this.value.length!==4"
-          onkeydown="if(event.key==='Enter')startOtherQuiz()">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:var(--space-sm);align-items:center">
-        <button class="btn btn-primary btn-lg" id="btn-start-other" onclick="startOtherQuiz()" disabled>🧩 开始替 TA 答题</button>
-        <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
-      </div>
-      <div class="rp-tips">💡 不知道 TA 的 MBPROFILES？ 先让 TA 点「了解自己」测一下，TA 会告诉你结果的～</div>
-    </div>
-  `;
-  // Use a temporary screen or overlay
-  const temp = document.createElement('div');
-  temp.className = 'screen active';
-  temp.id = 'screen-other-input';
-  temp.innerHTML = html;
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.body.insertBefore(temp, document.getElementById('screen-report').nextSibling);
-  // Clean up old
-  const old = document.getElementById('screen-other-input');
-  if(old && old !== temp) old.remove();
-}
 
 function startOtherQuiz(){
   const inp = document.getElementById('other-type-input');
   if(!inp || inp.value.length !== 4) return;
   const t = inp.value;
-  if(!/^[EISNTFJP]{4}$/.test(t)){to('请输入有效的 MBPROFILES 类型');return}
+  if(!/^[EISNTFJP]{4}$/.test(t)){to('请输入有效的 MBTI 类型');return}
   S.selfType = t;
   sk();
   startQuiz('other');
@@ -585,7 +574,7 @@ function otherAns(v){S.answers[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-
 function qNext(){if(S.answers[S.qi]===null){to('请选择程度～');return}if(S.qi<15){S.qi++;renderQ(S.mode)}}
 function qPrev(){if(S.qi>0){S.qi--;renderQ(S.mode)}}
 
-function calcMBPROFILES(a){
+function calcMBTI(a){
   const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
   for(const d of dims){
     const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let s=0,c=0;
@@ -612,7 +601,7 @@ function calcScores(a){
 
 function qSubmit(){
   if(S.answers.some(a=>a===null)){to('请完成所有题目～');return}
-  const type = calcMBPROFILES(S.answers);
+  const type = calcMBTI(S.answers);
   S.selfType = type;
   ck();
   if(S.mode === 'self') showSelfReport(type, S.answers);
