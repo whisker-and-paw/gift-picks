@@ -355,7 +355,11 @@ button{cursor:pointer;background:none;padding:0}
     <div class="qr-c" id="qr-c"></div>
     <div class="qr-lbl">📱 扫码替 TA 答题</div>
     <div class="cd-acts"><button class="btn btn-primary btn-sm" onclick="copyLink()">📋 复制分享链接</button></div>
-    <div class="wait-st"><span class="dot"></span><span>等待 TA 提交评价...</span></div>
+    <div style="text-align:center;font-size:var(--font-sm);color:var(--text-light);line-height:1.6;padding:var(--space-sm);background:var(--bg-card);border-radius:var(--radius-md);max-width:360px;border:1px dashed var(--primary-light)">
+      💡 TA 答完后会得到一个 <strong>结果码</strong><br>
+      TA 发给你后，点首页 <strong>「有结果码？导入对比」</strong><br>
+      粘贴即可查看报告 ✨
+    </div>
   </div>
 </div>
 
@@ -547,7 +551,14 @@ function goOther(){
   $('btn-cv').textContent='🔍 开始答题';
   ss('screen-other-input');
   const u=new URLSearchParams(window.location.search);
-  if(u.get('code'))fillCode(u.get('code').toUpperCase());
+  const cd=u.get('code');
+  const tp=u.get('type');
+  // Direct link from QR: has both code and type, skip verification, go straight to quiz
+  if(cd && tp && /^[EISNTFJP]{4}$/.test(tp)){
+    S.code=cd.toUpperCase();S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
+    ck();startOQ(tp);return;
+  }
+  if(cd)fillCode(cd.toUpperCase());
 }
 function goCheck(){
   sk();S.mode='checker';
@@ -583,7 +594,7 @@ async function confirmType(){
   $('genf').style.width='0%';setTimeout(()=>$('genf').style.width='50%',200);setTimeout(()=>$('genf').style.width='80%',400);
   ss('screen-gen');
   try{
-    const r=await API.create(S.selfType,null);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;
+    const r=await API.create(S.selfType,null);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;localStorage.setItem('_my_room',r.code);
     setTimeout(()=>showCode(),500);
   }catch(e){console.error(e);$('genf').style.width='0%';ni('📮','创建失败','镜像暂时无法生成...请检查网络后重试。')}
 }
@@ -632,7 +643,7 @@ function showCode(){
   const qr=$('qr-c');qr.innerHTML='';
   const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
   try{if(typeof QRCode!=='undefined')new QRCode(qr,{text:u,width:160,height:160,colorDark:'#7C5CBF',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});else throw Error('')}catch(e){qr.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(u)}" alt="QR" style="border-radius:8px">`}
-  pollStart();
+  if(!CFG.DEMO)pollStart();
 }
 function copyLink(){
   const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
@@ -695,15 +706,12 @@ async function verifyCode(){
       if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
       S.code=cd;S.room=d;showRes();return;
     }
-    // Cross-device fallback: if room not found in localStorage, get type from URL
-    if(!d && CFG.DEMO){
-      const tp=new URLSearchParams(window.location.search).get('type');
-      if(tp && /^[EISNTFJP]{4}$/.test(tp)){
-        S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
-        ck();startOQ(tp);return;
-      }
+    if(!d){
+      // DEMO: friend may try manual code entry on different device
+      // Tell them to use the QR/scan link instead
+      ni('📮','请用二维码打开','用手机扫 TA 分享的二维码可以直接答题哦～<br>手动输入密令仅限同一设备。');
+      rv();er();return
     }
-    if(!d){ni('📮','密令无效','不存在或已过期');rv();er();return}
     if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
     if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
     S.code=cd;S.room=d;ck();startOQ(d.selfType);
@@ -765,23 +773,17 @@ function importResult(){
   if(!raw.startsWith('R:')){to('格式不对～请粘贴完整的结果码');return}
   const nums=raw.slice(2).split('-').map(Number);
   if(nums.length!==16||nums.some(n=>isNaN(n)||n<1||n>5)){to('结果码数据异常，请检查');return}
-  // Find the initiator's room in localStorage
-  const allKeys=Object.keys(localStorage).filter(k=>k.startsWith('room_'));
+  // Get the initiator's room using the saved key
+  const roomCode=localStorage.getItem('_my_room');
   let found=null;
-  for(const k of allKeys){
-    try{
-      const rm=JSON.parse(localStorage.getItem(k));
-      if(rm&&rm.selfType&&rm.status==='created'){
-        found=rm;break;
-      }
-    }catch(e){}
+  if(roomCode){
+    try{found=JSON.parse(localStorage.getItem('room_'+roomCode))}catch(e){}
   }
-  if(found){
+  if(found&&found.selfType){
     found.otherAnswers=nums;found.status='completed';
     S.room=found;showRes();
   }else{
-    // No room found locally - try last used room
-    ni('📮','没找到本地数据','先把你的密令保存在这个浏览器上再导入结果码～<br>或者用「查询结果」功能输入你的密令先加载数据。');
+    ni('📮','没找到本地数据','请先在浏览器中创建密令（选/测 MBTI 生成密令）<br>再粘贴 TA 发回的结果码～');
   }
 }
 function resetAll(){
