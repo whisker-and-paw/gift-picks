@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#7C5CBF">
-<title>人格镜像 · MBTI 深度解析</title>
+<title>人格镜像 · MBPROFILES 深度解析</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -161,7 +161,7 @@ button{cursor:pointer;background:none;padding:0}
     <div class="role-buttons">
       <button class="role-btn" onclick="goSelf()">
         <span class="ic">🧑</span>
-        <span class="info"><strong>了解自己</strong><span>测一测或输入你的 MBTI，获得深度解析</span></span>
+        <span class="info"><strong>了解自己</strong><span>测一测或输入你的 MBPROFILES，获得深度解析</span></span>
         <span class="arrow">→</span>
       </button>
       <button class="role-btn" onclick="goOther()">
@@ -178,13 +178,13 @@ button{cursor:pointer;background:none;padding:0}
   <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="ch-hdr">
       <div class="em">🧑</div>
-      <h2>你了解自己的 MBTI 吗？</h2>
+      <h2>你了解自己的 MBPROFILES 吗？</h2>
       <p>选一个你喜欢的方式～</p>
     </div>
     <div class="ch-cards">
       <div class="ch-card" onclick="goPickType()">
         <div class="ic">🎯</div>
-        <div class="info"><strong>我知道自己的 MBTI</strong><span>四个维度点选，10 秒搞定</span></div>
+        <div class="info"><strong>我知道自己的 MBPROFILES</strong><span>四个维度点选，10 秒搞定</span></div>
         <div class="arrow">→</div>
       </div>
       <div class="ch-card" onclick="goSelfQuiz()">
@@ -202,7 +202,7 @@ button{cursor:pointer;background:none;padding:0}
   <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="tp-hdr">
       <div class="em">🎯</div>
-      <h2>选填你的 MBTI</h2>
+      <h2>选填你的 MBPROFILES</h2>
       <p>四个维度各选一边</p>
     </div>
     <div class="dim-box"><div class="dim-lbl">⚡ 能量来源</div>
@@ -272,34 +272,200 @@ const QS = [
 const DN = {EI:'⚡ 精力来源',SN:'🔍 认知方式',TF:'⚖️ 决策依据',JP:'📋 生活态度'};
 const DP = {EI:['外向','内向'],SN:['感觉','直觉'],TF:['理性','感性'],JP:['计划','随性']};
 
-// ===== MBTI 深度解析数据 =====
-const TI = {
-  ENFJ:{name:'主人公型',emoji:'🔥',t:'你有与生俱来的感染力，像一团温暖的火照亮身边的人。你擅长读懂别人的情绪，也热衷于帮助他人成长。你的领导力不是命令，而是感召。',g:'你的热情和感染力让人不由自主想靠近，是天生的引路者。',w:'容易过度承担他人的情绪，要学会给自己充电。'}
-  ,ENFP:{name:'竞选者型',emoji:'🌈',t:'你是行走的彩虹，脑子里有无数奇思妙想。对世界充满好奇，总能发现生活中的美好和可能。你的热情像阳光一样洒满每个角落。',g:'你的创造力和感染力让人如沐春风，是聚会上最闪亮的星。',w:'容易三分钟热度，注意力太容易被新鲜事物分散。'}
-  ,ENTJ:{name:'指挥官型',emoji:'⚡',t:'你是天生的战略家，目光永远看向远方的目标。果断、自信、不畏挑战——别人看到困难，你看到机会。你的执行力是身边人的定心丸。',g:'你的决断力和大局观让人信服，是天生的领导者。',w:'有时候过于强势，不妨多听听别人的感受。'}
-  ,ENTP:{name:'辩论家型',emoji:'💡',t:'你是行走的点子工厂，思维像跳跳糖一样活跃。你享受思想的碰撞，在辩论中越战越勇。对你来说，最大的快乐就是发现一个全新的角度。',g:'你的机智和创造力让任何对话都变得有趣。',w:'容易陷入"为了辩论而辩论"，有时显得好胜。'}
-  ,ESFJ:{name:'执政官型',emoji:'🤝',t:'你是朋友圈里的温暖纽带，永远记得每个人的生日和喜好。你让身边的人感到被在乎、被照顾。你相信人与人之间的联系是最珍贵的。',g:'你的热心和周到让所有人都愿意亲近你。',w:'太在意别人的看法，容易委屈自己。'}
-  ,ESFP:{name:'表演者型',emoji:'🎭',t:'你是天生的聚光灯吸收器，有你在的地方就有笑声。你享受活在当下的每一刻，用你的快乐感染周围每一个人。',g:'你的热情和活力就是最迷人的地方。',w:'不太喜欢做长远规划，容易被当下牵着走。'}
-  ,ESTJ:{name:'总经理型',emoji:'📋',t:'你是那种"说到做到"的人。你相信规则和秩序，做事靠谱、执行力强。在团队里你往往是那个让大家不乱套的人。',g:'你的可靠和执行力让所有人放心。',w:'有时过于固执，不太接受非常规的做法。'}
-  ,ESTP:{name:'企业家型',emoji:'🎯',t:'你是行动派，想到就去做。你反应快、适应力强，在变化中如鱼得水。别人还在犹豫的时候，你已经试过了。',g:'你的行动力和应变能力让人佩服。',w:'可能缺少耐心，对重复性的事情容易厌倦。'}
-  ,INFJ:{name:'提倡者型',emoji:'🌌',t:'你是一个深邃而温柔的理想主义者。你能看到事物表面之下的本质，对人性有深刻的理解。你追求意义，渴望让世界变得更好。',g:'你的洞察力和同理心让你成为绝佳的倾听者。',w:'太容易吸收负面情绪，需要学会保护自己。'}
-  ,INFP:{name:'调停者型',emoji:'🌙',t:'你的内心是一片星空，敏感、浪漫、充满诗意。你追求真诚和深度，对美和意义有着天生的感知力。你是最温柔的理想主义者。',g:'你的真诚和深度让与你相处成一种疗愈。',w:'容易陷入内耗和纠结，太在意是否"对得起"别人。'}
-  ,INTJ:{name:'建筑师型',emoji:'🏛️',t:'你是头脑中的建筑师，习惯用逻辑和系统思考一切。你享受独处，在思考中找到力量。你的远见和规划能力让你总能走在前面。',g:'你的深度思考和战略眼光是稀有的天赋。',w:'有时显得太冷太独立，让别人觉得难以接近。'}
-  ,INTP:{name:'逻辑学家型',emoji:'🔬',t:'你有一颗不停运转的大脑，对一切充满好奇，渴望理解世界的底层逻辑。你享受探索概念和理论，在知识中找到快乐。',g:'你的智慧和求知欲让你成为一个有趣的思想者。',w:'容易活在自己的世界里，需要注意与现实接轨。'}
-  ,ISFJ:{name:'守卫者型',emoji:'🛡️',t:'你是最可靠的守护者，默默付出从不张扬。你记得每个人的习惯和喜好，用行动表达关心。你让身边的人感到安全和温暖。',g:'你的细致和可靠是任何人最想拥有的品质。',w:'总是先照顾别人的需求，忘了照顾好自己。'}
-  ,ISFP:{name:'探险家型',emoji:'🎨',t:'你是安静的艺术家，用独特的眼光看世界。你温柔、敏感，对美有天然的感知力。你不爱张扬，但在自己的世界里闪闪发光。',g:'你的审美和温柔让人感到宁静和美好。',w:'容易过于低调，让别人忽略你的好。'}
-  ,ISTJ:{name:'物流师型',emoji:'📌',t:'你是最靠谱的人，没有之一。你认真负责，说到做到，是团队里的定海神针。你相信脚踏实地的力量，用行动赢得所有人的信任。',g:'你的可靠和责任感是稀缺的品格。',w:'可能有些保守，对新事物的接受需要时间。'}
-  ,ISTP:{name:'鉴赏家型',emoji:'🔧',t:'你是动手能力最强的行动派，喜欢搞清楚一切事物的运作原理。你冷静、理性，在危机中是最镇定的人。',g:'你的冷静和实操能力是别人信赖的原因。',w:'不太擅长表达情感，让别人觉得你有点冷。'}
-};
-const MT = {
-  E:{name:'外向',emoji:'☀️',desc:'你从社交中获得能量，喜欢和人打交道。想法在交流中越来越清晰，一个人待久了反而会没精神。',g:'天生的社交达人，朋友们都喜欢你的活力',w:'需要独处的时间来自我恢复，别把自己耗尽'},
-  I:{name:'内向',emoji:'🌙',desc:'你从独处中获得能量，深思熟虑后再表达。你享受深度的一对一交流，在热闹的场合反而会消耗精力。',g:'你的沉稳和深度让交流变得有质量',w:'适当走出舒适区，你的想法值得被更多人听见'},
-  S:{name:'感觉',emoji:'🔍',desc:'你关注具体的事实和细节，相信眼见为实。你务实、脚踏实地，擅长把想法变成现实。',g:'你的务实精神让你在现实中走得很稳',w:'偶尔也可以抬头看看星空，想象一下可能性'},
-  N:{name:'直觉',emoji:'🌈',desc:'你善于发现事物的本质和可能性，总能看到大局。你喜欢天马行空地想象，对未来充满憧憬。',g:'你的想象力和大局观是最大的财富',w:'记得看看脚下的路，把想法落实在行动上'},
-  T:{name:'理性',emoji:'⚖️',desc:'你做决定时更依赖逻辑和分析，追求公平公正。你能在情绪中找到理性的声音，做出客观的判断。',g:'你的理性是混乱中的定心丸',w:'做决定时也考虑一下人情味'},
-  F:{name:'感性',emoji:'💖',desc:'你做决定时更看重感受和价值观，关注他人的情绪。你的同理心让你成为最好的倾听者。',g:'你的温暖和同理心让身边人感到治愈',w:'偶尔也需要用理性保护自己'},
-  J:{name:'计划',emoji:'📋',desc:'你喜欢井井有条的感觉，计划和清单让你安心。你习惯提前安排，不喜欢临时抱佛脚。',g:'你的条理性和规划能力让人信赖',w:'偶尔也享受一下随性的惊喜'},
-  P:{name:'随性',emoji:'🍃',desc:'你享受灵活自由的生活，喜欢随遇而安。你适应能力强，总能优雅地应对变化。',g:'你的灵活和适应力是很多人羡慕的',w:'在关键事情上可以稍微提前规划一下'},
+// ===== MBPROFILES 深度解析数据（完整版，参考官方 MBPROFILES 报告风格） =====
+const PROFILES = {
+  ENFJ:{
+    name:'主人公型',emoji:'🔥',nick:'教育家',
+    slogan:'你的热情是火种，点燃身边每一个人的潜能。',
+    overview:'ENFJ 是天生的人际关系专家和催化剂。你有一种罕见的才能——你能看到别人身上的潜力，并且知道如何激发它。你不是在人群中脱颖而出，而是让整个群体因为你变得更好。你身上有一种温暖而坚定的力量，让周围的人自然而然地信任你、靠近你。',
+    trait:'你热情、有感染力、善于沟通，同时也非常有原则。你在意和谐，但不会为了和谐而回避冲突——你有勇气说出别人不敢说的话。你的直觉让你能读懂空气，你的情感让你在乎每一个人的感受，你的计划性让你真的能推动改变。',
+    strength:'✓ 天生的领导者，能激发团队士气\n✓ 极强的同理心，能读懂他人的情绪和需求\n✓ 出色的沟通能力，擅长说服和激励\n✓ 有原则和担当，为信念挺身而出\n✓ 善于培养他人，乐于看到别人成长',
+    weakness:'✗ 过度关注他人感受，容易忽视自己的需求\n✗ 对批评过于敏感，容易把善意建议当成否定\n✗ 容易承担过多责任，陷入过度付出\n✗ 有时过于理想化，对人和事抱有不切实际的期待\n✗ 难以拒绝别人，边界感需要加强',
+    career:'教育行业（教师/培训师）、心理咨询/教练、人力资源、公共关系、非营利组织管理、医疗服务、销售管理、培训发展',
+    communication:'和 ENFJ 沟通，要真诚、直接但又温和。他们能看穿虚伪，但也需要感受到你的善意。肯定他们的付出和努力，他们最需要的不是建议，而是理解和认可。如果你想给他们反馈，先肯定再建议，他们会很愿意接受。',
+    relationship:'在关系中，ENFJ 是全心投入的伴侣。他们会记住你说过的每一句话，在意你的每一个情绪波动。他们需要深度的情感连接和精神共鸣。最好的相处方式是：真诚地沟通、肯定他们的付出、给他们足够的回应和关注。他们不需要完美的你，但他们需要一个愿意和你一起成长的你。',
+    growth:'学会区分"别人的问题"和"自己的问题"。你不需要为所有人的情绪负责。给自己设定边界不是自私，而是可持续地善良。偶尔放下"应该做什么"，问问自己"我想要什么"。'
+  }
+  ,ENFP:{
+    name:'竞选者型',emoji:'🌈',nick:'创意家',
+    slogan:'你的内心是一片星辰大海，装着无数的可能和梦想。',
+    overview:'ENFP 是行走的灵感火花，你对世界充满孩子般的好奇和热情。你有一种独特的魅力——你的快乐会传染，你的创造力会启发身边的人。你不只是生活在世界上，你是真正在"体验"这个世界。你的大脑随时都在寻找新的连接、新的可能性、新的意义。',
+    trait:'你热情、开放、充满想象力，同时又非常敏感和有同理心。你享受探索新的想法和可能性，但你也深深在乎人的感受。你的直觉让你看到别人看不到的链接，你的情感让你对世界有温度。你最大的天赋是：你能让人感到被看见、被理解。',
+    strength:'✓ 创造力和想象力丰富，总能想出新鲜点子\n✓ 热情有感染力，让身边人感到快乐和有希望\n✓ 很强的同理心，能理解和共情他人\n✓ 适应力强，拥抱变化和可能性\n✓ 善于发现他人的潜力和闪光点',
+    weakness:'✗ 容易三分钟热度，兴趣来得快去得也快\n✗ 组织规划能力偏弱，执行力跟不上创意\n✗ 对批评和负面评价过于敏感\n✗ 做决定时容易纠结，害怕选错\n✗ 容易过度承诺，因为不想让任何人失望',
+    career:'创意行业（广告/设计/写作）、咨询、教育、心理咨询、非营利组织、艺术创作、品牌策划、人力资源、活动策划',
+    communication:'和 ENFP 沟通，请给他们表达的空间和热情的回馈。他们对你的想法感兴趣，也希望你对他们的想法感兴趣。不要在第一时间否定他们的创意，即使不现实，先肯定他们的想象力再说。真诚最重要，他们能一眼看穿敷衍。',
+    relationship:'在关系中，ENFP 需要自由、新鲜感和深度的情感连接。他们喜欢惊喜、 spontaneity 和有趣的对话。最好的关系是：既能一起冒险探索，也能在沙发上聊三小时人生和梦想。给他们信任和空间，他们会用全部的真诚和热情回报你。',
+    growth:'学会把一件事坚持到底。不是每个灵感都需要追逐，选一个最让你心动的，给它足够的时间开花结果。你的创造力需要纪律来让它落地——不是限制你的自由，而是让你的才华真正发光。'
+  }
+  ,ENTJ:{
+    name:'指挥官型',emoji:'⚡',nick:'战略家',
+    slogan:'你看到的是未来，别人看到的是困难。你是把愿景变成现实的人。',
+    overview:'ENTJ 是天生的战略家和管理者。你有一种罕见的才能——你不仅能看到全局，还能制定出到达那里的路径。别人在讨论"能不能做"的时候，你已经在想"怎么做最好"。你的果断和自信来自你周密的分析和判断，而不是盲目的乐观。',
+    trait:'你理性、果断、目标导向，做事雷厉风行。你对自己和他人都有很高的标准，因为你知道什么是可能的。你不怕冲突，因为在你看来，直面问题比回避问题更尊重人。你说话直接但不刻薄——你的目的不是伤人，而是解决问题、推动进展。',
+    strength:'✓ 卓越的战略眼光和全局观\n✓ 果断的决策力，不拖延不犹豫\n✓ 强大的执行力，能把想法变成现实\n✓ 天生的领导气质，能凝聚团队\n✓ 理性客观，能剥离情绪做判断',
+    weakness:'✗ 有时过于强势，忽略他人的感受\n✗ 对效率低下的人缺乏耐心\n✗ 容易忽视人际关系中的情感细节\n✗ 工作狂倾向，难以放松\n✗ 对自己的要求过于苛刻',
+    career:'企业管理、创业、咨询、法律、项目管理、投资银行、政策制定、技术架构师、军事战略',
+    communication:'和 ENTJ 沟通，直接、高效、有理有据。不要绕圈子，不要说"可能也许"，给结论、给数据、给方案。他们尊重有逻辑的观点，即使你反对他们，只要你的论证够有力，他们会认真考虑。情感诉求？适度就好。',
+    relationship:'在关系中，ENTJ 看似强势，其实内心需要的是尊重和信任。他们不擅长甜言蜜语，但会用行动证明自己可靠。给他们欣赏和肯定，他们最需要的是你相信他们的判断和能力。最好的伴侣是：独立、有主见、能和他们在同一水平线上对话的人。',
+    growth:'学会温柔。不是所有问题都需要立刻解决，不是每一次对话都是谈判。偶尔放下目标和效率，享受过程和无目的的时刻。你身边的人需要的不是你的解决方案——他们有时候只是需要一个拥抱而不是一个计划。'
+  }
+  ,ENTP:{
+    name:'辩论家型',emoji:'💡',nick:'创新者',
+    slogan:'你的大脑是一台永不停歇的创新引擎，每一个冲突都是灵感的来源。',
+    overview:'ENTP 是行走的创意永动机。你有一种独特的思维方式——你总能看到事物的另一面、第三个选择、被忽略的可能性。你享受思想碰撞的快感，在辩论中，你不是想赢，而是想探索真理的边界。你的好奇心没有边界，你的思维没有天花板。',
+    trait:'你机智、灵活、充满创意，同时也非常独立和自信。你享受着被挑战、被反驳，因为每一次辩论都能让你看到新的角度。你不喜欢被束缚和限制，你喜欢保持开放的选择。你有种让人又爱又恨的才能——你总能找到别人逻辑中的漏洞，但也总是那个能想出别人想不到的方案的人。',
+    strength:'✓ 快速学习和掌握新概念的能力\n✓ 出色的即兴反应和临场应变能力\n✓ 能从多个角度看问题，提出创新方案\n✓ 有趣的谈话者，永远有话聊\n✓ 享受挑战，不被压力吓倒',
+    weakness:'✗ 容易争辩过头，显得好胜和挑衅\n✗ 三分钟热度，兴趣经常转移\n✗ 有时过于理论化，忽略现实限制\n✗ 不太擅长跟进和执行收尾\n✗ 可能给人不够可靠的感觉',
+    career:'创业、战略咨询、产品经理、律师、研发、程序设计、记者、创意总监、投资分析',
+    communication:'和 ENTP 沟通，准备好被挑战、被质疑——这不是针对你，这是他们的思考方式。他们不会因为"一直都是这样做的"就接受一个观点。给他们自由探索的空间，用逻辑和事实说服他们。最重要的是：允许他们质疑一切。',
+    relationship:'在关系中，ENTP 需要的是头脑上的刺激和自由的空间。他们喜欢和伴侣一起探讨有趣的话题、争论观点、互相启发。无聊是他们的死穴——固定的模式和一成不变的生活会让他们窒息。最好的相处方式是：做一个有趣的、有自己想法的人，陪他们一起探索世界。',
+    growth:'学会跟进和落地。不是每一个想法都需要实现，但那些真正重要的想法值得你坚持下去。你的才华需要纪律来放大——把精力集中在几个关键项目上，你会看到你的想法真正改变世界。'
+  }
+  ,ESFJ:{
+    name:'执政官型',emoji:'🤝',nick:'关怀者',
+    slogan:'你记得每一个人的喜好，在乎每一个人的感受。你是这个世界上最温暖的守护者。',
+    overview:'ESFJ 是社交网络中的粘合剂。你有与生俱来的照顾他人的本能——你记得别人的生日、知道谁喜欢什么、能察觉到谁情绪不对。你不是刻意讨好，而是发自内心地想让身边的人感到舒服和被在乎。你相信传统和责任感，你是那种"说到做到"的人。',
+    trait:'你热心、可靠、有条理，非常在意人际关系的和谐。你有很强的责任感，答应的事一定会做到。你对细节有敏锐的感知，特别是和人有关的细节。你喜欢计划和有序，不喜欢不确定性。你最大的快乐来自于被别人需要和感激。',
+    strength:'✓ 极强的责任心和执行力\n✓ 关心他人，善于为别人着想\n✓ 出色的组织能力和计划性\n✓ 注重细节，做事认真负责\n✓ 善于营造和谐融洽的氛围',
+    weakness:'✗ 太在意别人的看法，容易委屈自己\n✗ 对批评和拒绝特别敏感\n✗ 有时过于保守，抗拒变化\n✗ 容易过度付出，导致身心俱疲\n✗ 对和自己价值观不同的人缺乏包容',
+    career:'医疗护理、教育、社会工作、人力资源、行政管理、客服管理、社区服务、非营利组织',
+    communication:'和 ESFJ 沟通，要温和、礼貌、真诚。他们非常在意语气和方式——即使你说的是对的，如果方式太冲，他们也会受伤。肯定他们的付出，感谢他们的努力。给他们明确的期望和肯定，他们需要知道"我做得怎么样"。',
+    relationship:'在关系中，ESFJ 是那种会用实际行动表达爱意的人。他们为你做饭、记得你的日程、在你需要的时候第一时间出现。他们需要被看见、被感谢。最好的关系是：互相照顾、互相肯定、有传统的仪式感（节日、纪念日）。不要让他们觉得自己在单向付出。',
+    growth:'学会对自己好一点。你照顾了所有人，谁来照顾你？学会说"不"不是自私，你不需要为所有人的幸福负责。偶尔放下"别人怎么想"——你首先是自己的主角，不是别人生活里的配角。'
+  }
+  ,ESFP:{
+    name:'表演者型',emoji:'🎭',nick:'欢乐使者',
+    slogan:'有你的地方就有笑声，你是生活派对的主角。',
+    overview:'ESFP 是活在当下的艺术家。你对生活有一种天生的热情和享受——你不需要等到"以后"才快乐，你现在就能找到快乐。你的活力会感染周围的人，你是那种能让沉闷的聚会变得有趣的人。你享受被关注，你也值得被关注。',
+    trait:'你活泼、开朗、随性，喜欢和人互动。你享受感官的体验——美食、音乐、旅行、艺术。你不喜欢计划和理论，你喜欢"做"而不是"想"。你的直觉让你对人们的情感很敏感——你能迅速感知到气氛的变化。你的随性让你的生活充满惊喜和乐趣。',
+    strength:'✓ 充满活力和热情，带动团队气氛\n✓ 善于与人打交道，有很强的社交能力\n✓ 适应力强，随机应变\n✓ 审美品味好，有艺术天赋\n✓ 活在当下，懂得享受生活',
+    weakness:'✗ 不太喜欢做长远规划\n✗ 面对冲突容易逃避而不是解决\n✗ 对抽象理论和概念缺乏耐心\n✗ 对批评比较敏感\n✗ 有时过于追求享乐，忽略责任',
+    career:'演艺行业、旅游/酒店、销售、时尚产业、活动策划、艺术创作、健身教练、媒体传播',
+    communication:'和 ESFP 沟通，轻松、有趣、直接。别太严肃，别太长篇大论——用生动的语言、实际例子、或者视觉效果会更好。他们喜欢被赞美和肯定。给他们互动的机会，而不是单向的说教。',
+    relationship:'在关系中，ESFP 需要的是乐趣、新鲜感和陪伴。他们喜欢约会、旅行、一起尝试新事物。他们不是不爱了，只是容易被无聊杀死。最好的伴侣是：愿意和他们一起玩、不过度约束他们、欣赏他们自发性的人。他们用快乐和热情回报你。',
+    growth:'偶尔慢下来，想想长远的事情。不是每个决定都要跟着感觉走——有些重要的事需要计划。学会面对不舒服的情绪，而不是用"玩"来转移注意力。你快乐的同时，也可以很负责。'
+  }
+  ,ESTJ:{
+    name:'总经理型',emoji:'📋',nick:'执行者',
+    slogan:'你是秩序的化身，让混乱变得井然有序是你的天赋。',
+    overview:'ESTJ 是那种让事情发生的人。你务实、高效、执行力极强——你不需要讨论"要不要做"，你关心的是"怎么做、谁来做、什么时候完成"。你是团队里最可靠的支柱，在混乱中你能迅速建立秩序。你的责任感和职业道德让人敬佩。',
+    trait:'你果断、有条理、注重效率，相信传统和规则。你说到做到，也期待别人和你一样。你的判断基于事实和经验，而不是猜测和直觉。你对"对"和"错"有清晰的判断标准。你尊重权威和等级，因为你觉得这是维持秩序的基础。',
+    strength:'✓ 卓越的执行力和组织能力\n✓ 在危机中能保持冷静，迅速建立秩序\n✓ 强大的责任感和职业道德\n✓ 果断不拖延，善于做决定\n✓ 关注细节，做事精益求精',
+    weakness:'✗ 有时过于固执，不听不同意见\n✗ 对效率低下和不靠谱的人缺乏耐心\n✗ 过于直接，语气容易伤人\n✗ 不太擅长处理情感和人际关系中的细腻部分\n✗ 抗拒变化和非常规的做法',
+    career:'企业管理、政府公职、军队/警察、项目管理、银行业、审计、法律、运营管理',
+    communication:'和 ESTJ 沟通，直接、清晰、有数据支持。不要用"我觉得"，用"数据显示"。讲重点、给结论、说方案。他们尊重专业和能力，如果你有料，他们会听你的。别绕弯子，别讲太多情感故事，他们需要事实。',
+    relationship:'在关系中，ESTJ 是行动派而非语言派。他们可能不常说甜言蜜语，但会用实际行动照顾你——修东西、安排行程、解决问题。他们最需要的是尊重和认可。最好的伴侣是：理解他们的责任感、欣赏他们的可靠、同时也帮他们放松的人。',
+    growth:'学会灵活。不是所有事情都非黑即白，有时候"不同的方式"不等于"错误的方式"。偶尔放下计划和控制，享受生活中的意外和不确定性。你的强硬是一种力量，但柔软也是一种力量。'
+  }
+  ,ESTP:{
+    name:'企业家型',emoji:'🎯',nick:'冒险家',
+    slogan:'你是行动派，这个世界是你的游乐场和战场。',
+    overview:'ESTP 是活在当下、敢于冒险的行动者。你有种天生的勇气和冲劲——别人还在犹豫的时候，你已经行动了。你反应快、适应力强、能言善辩。你在变化和挑战中找到兴奋感，在压力中爆发出最好的自己。你有一种"搞定事情"的魅力。',
+    trait:'你精力充沛、务实、机智灵活。你看重结果和效率，不沉迷于理论和空谈。你观察力敏锐，能迅速捕捉到周围的变化和机会。你享受竞争和挑战，在风险中找到快感。你说话直来直去，不喜欢拐弯抹角。你是那种"只要我想做，就没有做不成"的人。',
+    strength:'✓ 行动力极强，说干就干\n✓ 临场应变能力一流\n✓ 善于谈判和说服\n✓ 在压力下表现优异\n✓ 敏锐的商业嗅觉和机会捕捉能力',
+    weakness:'✗ 缺乏长远规划，容易只顾眼前\n✗ 对约束和规则缺乏耐心\n✗ 有时过于冒险，不考虑后果\n✗ 可能让人觉得不够可靠\n✗ 对理论性、重复性工作容易厌倦',
+    career:'创业、销售、投资、地产、体育、娱乐、市场推广、酒店管理、户外领队',
+    communication:'和 ESTP 沟通，直接、幽默、有活力。不要长篇大论，不要教条式的说教。用实际的例子、生动的故事、竞争性的挑战来引起他们的兴趣。他们喜欢机智的对话和有趣的交锋。',
+    relationship:'在关系中，ESTP 需要的是有趣、刺激、不受束缚的生活。他们喜欢和伴侣一起尝试新事物、旅行、冒险。无聊是最大的敌人。最好的伴侣是：独立、有趣、不过度依赖他们、也喜欢探索世界的人。他们可能不够细腻，但他们的行动和陪伴是最真实的爱的表达。',
+    growth:'学会放慢脚步。不是所有值得做的事情都需要立刻做——有些事情需要等待和规划。你的勇气让你走得很远，但深思熟虑能让你走得更远。学会对一个选择保持承诺，而不是总在找下一个更好的选项。'
+  }
+  ,INFJ:{
+    name:'提倡者型',emoji:'🌌',nick:'引路者',
+    slogan:'你看到的不是表象，是本质。你追求的不仅是成功，是意义。',
+    overview:'INFJ 是稀有的理想主义者，你有一种深邃的内心世界和敏锐的洞察力。你不只是看到事物的表面——你看到的是背后的模式、动机和可能性。你对人性和世界有深刻的理解，你渴望创造有意义的改变。你安静，但不软弱；你温柔，但有坚定的信念。',
+    trait:'你富有洞察力、有创造力、有原则，同时又非常善良。你对人的感受很敏感，能察觉到别人没有说出口的情绪。你有强烈的价值观，你追求的不是名利，而是意义。你善于倾听，但你也敢于为正确的事情发声。你享受独处，但你也渴望深度的连接。',
+    strength:'✓ 深邃的洞察力和直觉，能看透本质\n✓ 强烈的同理心，能深刻理解他人\n✓ 有创造力和艺术天赋\n✓ 坚持原则，有坚定的信念\n✓ 善于倾听，给人深度的慰藉',
+    weakness:'✗ 容易过度吸收别人的负面情绪\n✗ 完美主义倾向，对自己要求过高\n✗ 有时过于理想化，对现实失望\n✗ 难以敞开心扉，害怕被误解\n✗ 容易过度反思和纠结',
+    career:'心理咨询、教育、写作/出版、艺术创作、非营利组织、医疗健康、社会工作、用户研究、UI/UX设计',
+    communication:'和 INFJ 沟通，要真诚、深入、有温度。他们能感受到你的意图是否真诚。不要表面的寒暄，他们会觉得累。他们喜欢有意义的对话——关于目的、意义、感受、未来。给他们时间和空间来表达，不要催促。',
+    relationship:'在关系中，INFJ 需要深度的情感连接和精神共鸣。他们不满足于表面的关系，他们想要灵魂上的共振。他们需要被真正"看见"和理解。最好的伴侣是：真诚、有深度、愿意进行情感交流的人。一旦他们确定你是安全的，他们会给你最深沉的爱和最坚定的支持。',
+    growth:'学会保护自己的能量。你的同理心是天赋，但也可能变成负担。不是每一个需要帮助的人都是你的责任，不是每一个情绪都需要你消化。建立健康的边界，偶尔"不敏感"不是你的错。世界上需要你，但首先你需要照顾好自己。'
+  }
+  ,INFP:{
+    name:'调停者型',emoji:'🌙',nick:'诗人',
+    slogan:'你的内心是一首诗，敏感、美丽、深邃——你是这个世界上最温柔的理想主义者。',
+    overview:'INFP 是内心最丰富的人格类型之一。你活在自己的内心世界里，那里有最绚烂的色彩、最动人的故事、最深刻的思考。你追求真诚和意义，无法忍受虚伪和表面。你对美、对善良、对公正有着天生的感知力。你也许是内向的，但你的内心世界无比丰富而壮阔。',
+    trait:'你敏感、理想主义、富有创造力，有着非常坚定的价值观。你对别人的感受很在意，你希望世界变得更美好。你喜欢通过写作、音乐、艺术来表达自己。你不喜欢冲突和批评，因为你很容易受伤。但你有一种安静的力量——坚持你所相信的，即使整个世界都不理解。',
+    strength:'✓ 丰富的内心世界和创造力\n✓ 真诚、真实，不伪装不迎合\n✓ 强烈的价值观和道德感\n✓ 对他人有深刻的同理心\n✓ 善于表达情感和感受',
+    weakness:'✗ 过于敏感，容易受到伤害\n✗ 做决定时容易纠结\n✗ 有时脱离现实，活在自己的世界里\n✗ 面对冲突时容易回避\n✗ 自我要求过高，容易自我批评',
+    career:'写作/编辑、艺术创作、心理咨询、教育、设计、音乐、宗教/精神领域、非营利组织',
+    communication:'和 INFP 沟通，要温和、耐心、真诚。不要评判他们的感受，不要否定他们的理想。他们的想法可能不"实用"，但对他们来说那是真实而重要的。给他们表达的空间，问他们的感受和想法。最好的沟通是：你理解他们不需要被拯救，只需要被倾听。',
+    relationship:'在关系中，INFP 是深情的、浪漫的、忠诚的伴侣。他们追求灵魂上的契合——不仅仅是生活在一起，而是在价值观和梦想上共鸣。他们需要温柔、耐心和真诚。不要欺骗他们，信任一旦破碎很难修复。最好的伴侣是：欣赏他们的独特性、不过度批评他们、愿意和他们一起创造有意义的生活。',
+    growth:'学会在现实世界和内心世界之间架起桥梁。你的理想很美，但它们需要一点点现实的支撑才能实现。学会接受世界的不完美，同时也学会接受自己的不完美。你已经足够好了——你不需要变成别人，你只需要成为更好的自己。'
+  }
+  ,INTJ:{
+    name:'建筑师型',emoji:'🏛️',nick:'策略家',
+    slogan:'你在脑海中构建了整个世界——然后一步一步把它变成现实。',
+    overview:'INTJ 是战略性的思想者和规划者。你有一种罕见的才能：你不仅能想象一个更好的未来，还能制定出到达那里的蓝图。你独立思考、不随波逐流，你的判断基于自己的分析和研究，而不是大众意见。你追求的不仅是成功，是精通和卓越。',
+    trait:'你理性、独立、有远见，对自己和他人都有很高的标准。你习惯用系统和框架思考问题，追求最优解而不是最流行的解。你的直觉让你能看到未来的可能性，你的理性让你能评估这些可能性的可行性。你可能显得冷漠和疏离，但你的内心有强烈的信念和标准。',
+    strength:'✓ 卓越的战略思维和长期规划能力\n✓ 独立思考和判断，不盲从\n✓ 高标准的自我要求和执行力\n✓ 善于复杂问题的分析和解决\n✓ 在压力下保持冷静和理性',
+    weakness:'✗ 过于挑剔，对他人和自己的要求都很高\n✗ 表达上可能显得刻薄或冷漠\n✗ 不太擅长处理情感和人际关系\n✗ 完美主义倾向，导致行动延迟\n✗ 有时过于固执，拒绝不同意见',
+    career:'科技研发、工程、战略咨询、金融分析、法律、学术研究、建筑设计、数据科学、医疗诊断',
+    communication:'和 INTJ 沟通，要有逻辑、有深度、有准备。不要浪费时间在闲聊上，直接进入正题。如果你要提出一个想法，准备好数据和论证。他们尊重智力上的平等对话——你的论点越有力，他们越认真对待。不要用情感诉求来说服他们，用逻辑。',
+    relationship:'在关系中，INTJ 可能不是最浪漫的伴侣，但可能是最可靠的。他们用行动和承诺来表达爱意——他们规划共同的未来、为你解决问题、支持你的目标。他们需要的是尊重和理解——尊重他们的独立空间，理解他们需要独处来充电。最好的伴侣是：有自己的追求、能进行深度对话、不依赖他们提供情绪价值的人。',
+    growth:'学会走出你的头脑，进入你的内心。不是所有问题都需要分析，不是所有事情都需要最优解。偶尔放下效率和逻辑，感受一下生活本身的美好。记住：你需要的是平衡，不是完美。'
+  }
+  ,INTP:{
+    name:'逻辑学家型',emoji:'🔬',nick:'思想家',
+    slogan:'你有永不满足的好奇心，你想理解一切事物背后的运作原理。',
+    overview:'INTP 是思想家、理论家、永远的探索者。你的大脑是一台精密的机器，时刻在分析、拆解、重建你对世界的理解。你渴望理解事物的本质和规律——"为什么"和"如果……会怎样"是你最常问的问题。你在知识的海洋中遨游，探索是最让你兴奋的事情。',
+    trait:'你理性、好奇、客观，追求逻辑上的一致和精确。你对权威和传统说法保持怀疑——"因为一直是这样"对你来说不是好理由。你喜欢探索抽象概念和复杂理论，但对日常琐事和社交礼仪缺乏耐心。你享受孤独，因为独处时你才能专注思考你最感兴趣的事情。',
+    strength:'✓ 分析问题的深度和洞察力\n✓ 创造性的解决问题的能力\n✓ 快速学习和掌握新知识\n✓ 理性客观，能剥离偏见做判断\n✓ 对复杂系统的理解能力',
+    weakness:'✗ 社交上可能显得疏离或不感兴趣\n✗ 执行力弱，容易停留在思考阶段\n✗ 对细节和日常事务缺乏耐心\n✗ 有时过度分析，陷入分析瘫痪\n✗ 不太擅长表达情感',
+    career:'科技研发、软件工程、数据分析、科学研究者、大学教授、哲学、经济学、战略规划、游戏设计',
+    communication:'和 INTP 沟通，要精确、理性、有趣。他们喜欢深入的话题和有逻辑的讨论。不要用"权威"来压他们——他们只相信论证本身的说服力。给他们时间思考，不要催促即时回答。他们可能说话不多，但当他们开口时，往往值得听。',
+    relationship:'在关系中，INTP 需要的是理解他们思维方式的人。他们不是不爱你，只是有时沉浸在自己的世界里忘了回复。他们需要伴侣接受他们需要大量独处时间这个事实。最好的伴侣是：独立、有自己的兴趣、不把他们的沉默当作拒绝。他们可能不会说太多甜言蜜语，但他们的忠诚和支持是毋庸置疑的。',
+    growth:'学会把想法变成行动。你的大脑是你最大的财富，但你需要在现实世界中测试你的想法。完美不是等到所有条件都成熟了再行动——完成比完美更重要。偶尔走出来，和真实的人交流真实的世界，你的理论需要现实的检验。'
+  }
+  ,ISFJ:{
+    name:'守卫者型',emoji:'🛡️',nick:'守护者',
+    slogan:'你是最安静的守护者——你记得每一个人需要什么，即使从不说出口。',
+    overview:'ISFJ 是最温暖、最可靠的守护者。你有一种安静而伟大的力量——你默默付出，不求回报。你记得别人的喜好，在意别人的感受，用最细微的行动表达最深的关心。你不是舞台中央的人，但你是让一切顺利运转的基石。你的温柔和坚定让身边的人感到安全和被爱。',
+    trait:'你温柔、负责、细致入微，非常在乎他人的感受和需要。你做事认真、靠谱，答应的事情一定做到。你尊重传统和权威，喜欢稳定和可预测的环境。你对细节有惊人的记忆——特别是和人有关的细节。你不喜欢冲突，倾向于维护和谐。你的善良不是软弱，而是选择。',
+    strength:'✓ 极其负责可靠，说到做到\n✓ 关注细节，做事一丝不苟\n✓ 温暖体贴，善于照顾他人\n✓ 对传统和承诺有着坚定的尊重\n✓ 记忆力好，特别是关于人的细节',
+    weakness:'✗ 过度付出，容易忽视自己的需求\n✗ 抗拒变化，适应新环境需要时间\n✗ 对批评和负面反馈很敏感\n✗ 不太愿意表达自己的情绪和需求\n✗ 过于在意别人对自己的看法',
+    career:'医疗护理、教育、社会工作、行政管理、图书馆学、银行、客服管理、社区服务、数据分析',
+    communication:'和 ISFJ 沟通，要温和、具体、有礼貌。他们需要感受到你的善意和真诚。肯定他们的付出和努力——他们做很多事，但不一定会主动说出来。给他们明确、具体的请求，不要含糊或暗示。不要用激烈的方式表达不满，他们会记很久。',
+    relationship:'在关系中，ISFJ 是默默付出的伴侣。他们用行动表达爱意——为你做饭、记得你的喜好、在你需要时第一时间出现。他们最需要的不是物质上的回报，而是被看见、被感谢。最好的伴侣是：注意到他们的付出、真诚地感谢他们、偶尔主动照顾他们让他们也感受到被爱。',
+    growth:'学会为自己发声。你的需求同样重要——不要总是把别人放在第一位。偶尔说"不"不会让你变成坏人。学会接受变化，变化不一定是坏事，有时候它会带给你惊喜。你值得被同样温柔地对待。'
+  }
+  ,ISFP:{
+    name:'探险家型',emoji:'🎨',nick:'艺术家',
+    slogan:'你用独一无二的眼光看世界，你的审美就是你的语言。',
+    overview:'ISFP 是安静但内心丰富的艺术家。你对美有天生的敏感——你看到的世界和别人不一样，你能发现别人忽略的色彩、纹理、情绪。你不喜欢张扬，但你的作品和你做事的方式透露出你独特的品味。你温柔、善良，对世界保持着一种温柔的好奇。',
+    trait:'你温和、敏感、有艺术气质，同时又很务实和随性。你享受体验——美食、旅行、音乐、自然、手工艺。你不喜欢理论抽象的东西，你喜欢真实的、可触摸的体验。你尊重别人的空间，也希望别人尊重你的空间。你有自己的节奏，不想被催促。',
+    strength:'✓ 出色的审美和艺术天赋\n✓ 温柔体贴，善解人意\n✓ 适应力强，随遇而安\n✓ 对美和品质有天然的感知力\n✓ 低调但不平庸，有自己的风格',
+    weakness:'✗ 过于谦逊，不愿展示自己\n✗ 面对冲突容易回避\n✗ 长远规划不是强项\n✗ 容易被他人的情绪影响\n✗ 对自己的才华缺乏自信',
+    career:'艺术创作、设计、音乐、摄影、园艺、烹饪、服装设计、美容行业、户外运动',
+    communication:'和 ISFP 沟通，温和、直接但不要太直接。他们不喜欢冲突，所以用温和的方式表达不同意见。不要催促他们做决定，给他们时间和空间。欣赏他们的作品和品味——他们不一定会主动展示，但收到真诚的赞美会很开心。',
+    relationship:'在关系中，ISFP 是温柔、浪漫、有品位的伴侣。他们会用自己的方式表达爱——做一顿美好的晚餐、布置一个温馨的空间、送你一件精心挑选的礼物。他们需要的是温柔、耐心和空间。不要逼迫他们谈论感受，用陪伴和行动来沟通爱。',
+    growth:'学会相信自己的价值。你的才华是真实的，值得被看见——不要把所有的赞美都推掉。学会早点表达你的感受，而不是等它积累成问题。你值得被听到、被看到、被重视。'
+  }
+  ,ISTJ:{
+    name:'物流师型',emoji:'📌',nick:'守护者',
+    slogan:'你是最可靠的人——不承诺则已，承诺则必定做到。',
+    overview:'ISTJ 是最可靠、最有责任感的人格类型之一。你说话算数，做事靠谱，是任何团队里最让人放心的那个人。你相信行动胜于言辞，用结果和事实说话。你的生活有章法、有条理，你知道做什么、什么时候做、怎么做。在混乱中，你是那个建立秩序的人。',
+    trait:'你认真、负责、有原则，尊重传统和规则。你做事有计划、有条理，不喜欢临时抱佛脚。你的判断基于事实和实际经验，而不是想象和猜测。你对承诺看得非常重——答应的事一定会做到。你可能不善言辞，但你的行动已经说明了一切。',
+    strength:'✓ 无与伦比的可靠性和责任感\n✓ 做事有条不紊，计划性和执行力强\n✓ 注重事实和细节，决策有理有据\n✓ 在危机中保持冷静和理智\n✓ 尊重承诺，言行一致',
+    weakness:'✗ 有时过于固执，不善于变通\n✗ 对新事物接受速度较慢\n✗ 表达情感方面比较内敛\n✗ 对不符合规则的行为缺乏包容\n✗ 工作狂倾向，需要学会放松',
+    career:'法律（法官/律师）、审计、会计、项目管理、军事、行政管理、医疗、执法、软件开发',
+    communication:'和 ISTJ 沟通，要直接、具体、有事实依据。不要夸大或含糊其辞，他们会记住你说的每一个细节。尊重他们的经验和判断——他们不喜欢没经验的人指手画脚。给他们明确的期望和目标，他们会全力以赴去达成。',
+    relationship:'在关系中，ISTJ 是靠谱、忠诚、稳重的伴侣。他们可能不擅长浪漫的惊喜，但他们会记得你说过的话，按时完成答应的事，在你需要的时候提供实际的帮助。他们需要的是尊重和欣赏——尊重他们的付出，欣赏他们的可靠。最好的伴侣是：理解他们的责任感，不逼迫他们表达情感，也给他们稳定的情感依靠。',
+    growth:'学会在规则之外思考。不是所有的规则都适用于所有情况，偶尔打破常规可能会带来意想不到的好处。学会表达你的感受——不是所有沟通都需要解决问题，有时候只是分享情绪也很重要。你已经够努力了，偶尔放松不是错。'
+  }
+  ,ISTP:{
+    name:'鉴赏家型',emoji:'🔧',nick:'手艺人',
+    slogan:'你动手去做，而不是说。你是这个世界上最冷静的观察者和最出色的执行者。',
+    overview:'ISTP 是最务实、最冷静的人格类型之一。你有一种清晰的头脑和稳定的双手——你善于理解事物的运作原理，并且能动手去修、去造、去优化。你在危机中是最镇定的人，因为你的注意力永远在"现在该怎么办"而不是"完了怎么办"。你独立、自信，不需要别人的认可来证明自己。',
+    trait:'你冷静、理性、善于动手，对事物的运作原理充满好奇。你喜欢自由和空间，不喜欢被管束和限制。你善于观察，能迅速捕捉到问题的关键。你做事的风格是：先观察、再行动。你可能话不多，但一说就到点子上。你在压力下反而表现得更好。',
+    strength:'✓ 在危机中异常冷静，能妥善应对\n✓ 动手能力强，善于修理和建造\n✓ 逻辑思维清晰，能快速找到问题关键\n✓ 独立自主，不需要依赖他人\n✓ 适应力强，善于应对突发状况',
+    weakness:'✗ 可能显得冷漠和疏离\n✗ 有时过于冒险，不考虑后果\n✗ 不喜欢长期承诺和规划\n✗ 在表达情感方面有困难\n✗ 容易感到无聊，需要新鲜刺激',
+    career:'工程、机械、体育、消防/救援、飞行员、外科医生、特技演员、赛车手、自由职业',
+    communication:'和 ISTP 沟通，简洁、直接、务实。不要废话连篇，不要情感绑架。用事实和逻辑说话，给他们时间和空间来思考。他们不喜欢被逼迫做决定或表达感受。尊重他们的独立性——告诉他们你需要什么，然后让他们用自己的方式去完成。',
+    relationship:'在关系中，ISTP 需要的是理解他们独立性的伴侣。他们爱你，但他们也需要自由和空间。他们可能不是最好的情感交流者，但他们会用行动证明他们在乎——修好你坏掉的东西、帮你解决问题、陪你做你喜欢的事。最好的伴侣是：独立、不依赖、给他们空间——他们会用忠诚和实际行动回报你。',
+    growth:'学会打开心扉。你不需要每时每刻都那么独立和强大——偶尔表达脆弱不会让你变弱，反而让你更真实。学会长期承诺——有些东西值得你坚持，即使它不再新鲜。你已经能搞定外部世界的挑战，现在也许是时候探索一下你自己的内心世界了。'
+  }
 };
 
 // ===== STATE =====
@@ -346,7 +512,7 @@ function showOtherTypeInput() {
     <div style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;gap:var(--space-lg)">
       <div style="text-align:center">
         <span style="font-size:3rem;display:block;margin-bottom:12px">👀</span>
-        <h2 style="font-size:var(--font-lg);font-weight:900;color:var(--text)">TA 的 MBTI 是什么？</h2>
+        <h2 style="font-size:var(--font-lg);font-weight:900;color:var(--text)">TA 的 MBPROFILES 是什么？</h2>
         <p style="font-size:var(--font-sm);color:var(--text-light);margin-top:4px">让 TA告诉你 4 个字母，输进去然后替 TA 答题</p>
       </div>
       <div class="rp-other-input">
@@ -358,7 +524,7 @@ function showOtherTypeInput() {
         <button class="btn btn-primary btn-lg" id="btn-start-other" onclick="startOtherQuiz()" disabled>🧩 开始替 TA 答题</button>
         <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
       </div>
-      <div class="rp-tips">💡 不知道 TA 的 MBTI？ 先让 TA 点「了解自己」测一下，TA 会告诉你结果的～</div>
+      <div class="rp-tips">💡 不知道 TA 的 MBPROFILES？ 先让 TA 点「了解自己」测一下，TA 会告诉你结果的～</div>
     </div>
   `;
   // Use a temporary screen or overlay
@@ -377,7 +543,7 @@ function startOtherQuiz(){
   const inp = document.getElementById('other-type-input');
   if(!inp || inp.value.length !== 4) return;
   const t = inp.value;
-  if(!/^[EISNTFJP]{4}$/.test(t)){to('请输入有效的 MBTI 类型');return}
+  if(!/^[EISNTFJP]{4}$/.test(t)){to('请输入有效的 MBPROFILES 类型');return}
   S.selfType = t;
   sk();
   startQuiz('other');
@@ -389,7 +555,7 @@ function pickD(el,d,v){sk();document.querySelectorAll(`.dim-opt[data-d="${d}"]`)
 function updT(){
   if(Object.values(P).every(v=>v!==null)){
     const t=P.EI+P.SN+P.TF+P.JP;
-    $('#tp-code').textContent=t;$('#tp-lbl').textContent=TI[t]?.name||'';
+    $('#tp-code').textContent=t;$('#tp-lbl').textContent=PROFILES[t]?.name||'';
     $('#tp-res').style.display='block';$('#btn-confirm-type').disabled=false;
     S.selfType=t;
   }
@@ -419,7 +585,7 @@ function otherAns(v){S.answers[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-
 function qNext(){if(S.answers[S.qi]===null){to('请选择程度～');return}if(S.qi<15){S.qi++;renderQ(S.mode)}}
 function qPrev(){if(S.qi>0){S.qi--;renderQ(S.mode)}}
 
-function calcMBTI(a){
+function calcMBPROFILES(a){
   const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
   for(const d of dims){
     const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let s=0,c=0;
@@ -446,7 +612,7 @@ function calcScores(a){
 
 function qSubmit(){
   if(S.answers.some(a=>a===null)){to('请完成所有题目～');return}
-  const type = calcMBTI(S.answers);
+  const type = calcMBPROFILES(S.answers);
   S.selfType = type;
   ck();
   if(S.mode === 'self') showSelfReport(type, S.answers);
@@ -455,7 +621,7 @@ function qSubmit(){
 
 // ===== SELF REPORT =====
 function showSelfReport(type, answers){
-  const info = TI[type] || {name:'',emoji:'🪞',t:'复杂而独特的你',g:'',w:''};
+  const info = PROFILES[type] || {name:'',emoji:'🪞',slogan:'',overview:'',trait:'',strength:'',weakness:'',career:'',communication:'',relationship:'',growth:''};
   const scores = answers ? calcScores(answers) : null;
   const dims=['EI','SN','TF','JP'];
 
@@ -474,53 +640,75 @@ function showSelfReport(type, answers){
     });
   }
 
+  const dimNames = {E:'外向',I:'内向',S:'感觉',N:'直觉',T:'理性',F:'感性',J:'计划',P:'随性'};
+
   const report = `
     <div class="rp-header">
       <div class="em">${info.emoji}</div>
       <div class="type">${type}</div>
       <div class="type-name">${info.name}</div>
-      <div class="tagline">「${info.t}」</div>
+      <div class="tagline">${info.slogan}</div>
     </div>
 
     ${answers ? `
     <div class="rp-sec">
-      <div class="sec-t"><span class="ic">📊</span> 维度倾向</div>
+      <div class="sec-t"><span class="ic">📊</span> 维度分布</div>
       ${dimHtml}
     </div>
     ` : ''}
 
     <div class="rp-sec">
-      <div class="sec-t"><span class="ic">🔮</span> 人格画像</div>
-      <p>${info.t}</p>
+      <div class="sec-t"><span class="ic">🔮</span> 人格总览</div>
+      <p>${info.overview}</p>
     </div>
 
     <div class="rp-sec">
-      <div class="sec-t"><span class="ic">⭐</span> 你的光芒</div>
-      <p>${info.g}</p>
+      <div class="sec-t"><span class="ic">🧬</span> 性格特质</div>
+      <p>${info.trait}</p>
     </div>
 
     <div class="rp-sec">
-      <div class="sec-t"><span class="ic">🌱</span> 成长空间</div>
-      <p>${info.w}</p>
+      <div class="sec-t"><span class="ic">⭐</span> 核心优势</div>
+      <p style="white-space:pre-line">${info.strength}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🌱</span> 成长方向</div>
+      <p style="white-space:pre-line">${info.weakness}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">💼</span> 适合领域</div>
+      <p>${info.career}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">💬</span> 沟通风格</div>
+      <p>${info.communication}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">💕</span> 亲密关系</div>
+      <p>${info.relationship}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🧘</span> 自我修炼</div>
+      <p>${info.growth}</p>
     </div>
 
     <div class="rp-sec">
       <div class="sec-t"><span class="ic">🔎</span> 四维详解</div>
-      ${dims.map(d=>`<div style="margin-bottom:10px">
-        <div style="font-weight:700;font-size:var(--font-sm);color:var(--primary-dark)">${DN[d]}</div>
-        <p style="font-size:var(--font-sm);margin-top:2px">${MT[type[dims.indexOf(d)]]?.desc||''}</p>
+      ${dims.map(d=>`<div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:var(--font-sm);color:var(--primary-dark);margin-bottom:2px">${DN[d]}</div>
+        <p style="font-size:var(--font-sm);margin:0">你偏 <strong>${dimNames[type[dims.indexOf(d)]]||type[dims.indexOf(d)]}</strong> —— ${getDimDesc(d, type[dims.indexOf(d)])}</p>
       </div>`).join('')}
     </div>
 
-    <div class="rp-sec">
-      <div class="sec-t"><span class="ic">🤝</span> 相处之道</div>
-      <p>${getRelationTip(type)}</p>
-    </div>
-
     ${answers ? `
-    <div class="rp-sec">
-      <div class="sec-t"><span class="ic">👀</span> 想知道别人眼中的你吗？</div>
-      <p>让身边的朋友打开这个页面，选「评价他人」<br>输入你的 MBTI 类型 <strong>${type}</strong>，替 TA 答题<br>就能看到你眼中的自己 vs 别人眼中的你的对比分析 ✨</p>
+    <div class="rp-sec" style="text-align:center;background:linear-gradient(135deg,var(--primary-light),var(--secondary-light))">
+      <div class="sec-t"><span class="ic">👀</span></div>
+      <p>想知道别人眼中的你是什么样的吗？<br>让朋友打开本页面，选「评价他人」<br>输入你的类型 <strong>${type}</strong>，替 TA 答题<br>就能看到自我认知 vs 他人眼中的对比分析 ✨</p>
     </div>
     ` : ''}
   `;
@@ -530,13 +718,25 @@ function showSelfReport(type, answers){
   ss('screen-report');
 }
 
+function getDimDesc(dim, letter) {
+  const descs = {
+    E:'你从社交和外部世界获得能量——和人互动、参与活动让你充满活力。你想事情的时候喜欢说出来，在交流中思路越来越清晰。你不是不能独处，但长时间独处会让你有点闷。',I:'你从内心世界获得能量——独处、思考、深度阅读是你充电的方式。你习惯先想后说，在心里把话过一遍再开口。你不是不喜欢社交，你只是需要独处来恢复能量。',
+    S:'你相信具体的事实和实在的经验。你喜欢实实在在的东西——看得见、摸得着、有据可查。你务实、接地气，擅长把想法变成可执行的步骤。你的记忆更多是具体的事件和细节而非抽象的印象。',N:'你相信直觉和可能性。你能看到事物背后的模式和潜在含义，享受天马行空地想象。你总是关注"未来会怎样"、"还有什么可能性"，对重复性的具体事务容易感到无聊。',
+    T:'你做决定时习惯用逻辑和理性。你追求公平和客观，能暂时放下个人感受去做判断。你善于分析问题，找出因果关系。在情绪化的场合中，你往往是那个保持理智的人。',F:'你做决定时优先考虑感受和价值观。你在意人和人的关系，追求和谐。你能敏锐地感知到别人的情绪，有很强的共情能力。你做事的动力更多来自"这件事的意义"而非"这件事的逻辑"。',
+    J:'你喜欢有计划、有组织的生活方式。你习惯提前安排，不喜欢最后一刻的变动。清单和计划让你感到安心，完成任务的满足感是你的动力来源。你倾向于把事情定下来、做出结论。',P:'你喜欢灵活、随性的生活方式。你享受保持开放，不喜欢被固定的计划束缚。你适应能力强，能从容应对变化。你倾向于保持选择，不想过早下结论——因为你不想错过更好的可能性。'
+  };
+  return descs[letter] || '';
+}
+
 // ===== COMPARE REPORT =====
 function showCompareReport(selfType, otherAnswers){
   const otherType = calcMBTI(otherAnswers);
   const scores = calcScores(otherAnswers);
   const dims=['EI','SN','TF','JP'];
-  const info = TI[selfType] || TI['ENFP'];
-  const otherInfo = TI[otherType] || TI['ENFP'];
+  const selfInfo = PROFILES[selfType] || PROFILES['ENFP'];
+  const otherInfo = PROFILES[otherType] || PROFILES['ENFP'];
+
+  const dimNames = {E:'外向',I:'内向',S:'感觉',N:'直觉',T:'理性',F:'感性',J:'计划',P:'随性'};
 
   let matchCount = 0;
   let dimHtml = '';
@@ -544,10 +744,7 @@ function showCompareReport(selfType, otherAnswers){
     const sp = selfType[i], op = otherType[i];
     const isMatch = sp === op;
     if(isMatch) matchCount++;
-    const pct = scores[d];
-    const lt = DP[d][0], rt = DP[d][1];
-    const pole = pct >= 50 ? lt : rt;
-    const spLabel = MT[sp]?.name||sp, opLabel = MT[op]?.name||op;
+    const spLabel = dimNames[sp]||sp, opLabel = dimNames[op]||op;
     dimHtml += `<div class="rp-dim">
       <span class="dl">${DN[d]}</span>
       <span class="dv ${isMatch?'match':'mis'}">${isMatch?'✅ '+spLabel:'你'+spLabel+' · TA看'+opLabel}</span>
@@ -556,9 +753,6 @@ function showCompareReport(selfType, otherAnswers){
 
   const matchPct = Math.round(matchCount/4*100);
   const analysis = generateAnalysis(selfType, otherType);
-
-  // Get self descriptions
-  const selfInfo = TI[selfType];
 
   const report = `
     <div class="rp-header">
@@ -583,19 +777,34 @@ function showCompareReport(selfType, otherAnswers){
 
     <div class="rp-sec">
       <div class="sec-t"><span class="ic">🔮</span> TA 心目中你的样子</div>
-      <p>在 TA 眼中，你是 <strong>${otherType} ${otherInfo.name}</strong> 类型。</p>
-      <p>${otherInfo.t}</p>
+      <p style="margin-bottom:4px">在 TA 眼中，你是 <strong>${otherType} ${otherInfo.name}</strong> 类型。</p>
+      <p>${otherInfo.slogan}</p>
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:var(--space-sm);margin-top:8px">
+        <p style="font-size:var(--font-sm);margin:0"><strong>🧬 性格特质：</strong>${otherInfo.trait}</p>
+      </div>
+      <div style="margin-top:8px">
+        <p style="font-size:var(--font-sm);margin:0"><strong>⭐ TA看到你的优势：</strong><br>${otherInfo.strength.split('\n').slice(0,3).join('<br>')}</p>
+      </div>
     </div>
 
     <div class="rp-sec">
       <div class="sec-t"><span class="ic">🪞</span> 你眼中的自己</div>
-      <p>你认为自己是 <strong>${selfType} ${selfInfo.name}</strong> 类型。</p>
-      <p>${selfInfo.t}</p>
+      <p style="margin-bottom:4px">你认为自己是 <strong>${selfType} ${selfInfo.name}</strong> 类型。</p>
+      <p>${selfInfo.slogan}</p>
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:var(--space-sm);margin-top:8px">
+        <p style="font-size:var(--font-sm);margin:0"><strong>🧬 性格特质：</strong>${selfInfo.trait}</p>
+      </div>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">💬</span> 沟通建议</div>
+      <p>${selfInfo.communication}</p>
     </div>
 
     <div class="rp-sec" style="text-align:center">
       <div class="sec-t"><span class="ic">💝</span></div>
-      <p>${matchPct >= 75 ? '你们真的很了解彼此！这份默契让人羡慕 ✨' : matchPct >= 50 ? '有一些默契，但还有更多惊喜等着你去发现 🌱' : '每个人都是一面多棱镜，在不同角度下折射出不同的光。这些差异不是对错，而是你丰富人格的体现 🌈'}</p>
+      <p style="font-size:var(--font-md);font-weight:700;margin-bottom:8px">${matchPct >= 75 ? '✨ 你们真的很了解彼此！' : matchPct >= 50 ? '🌱 有一些默契，还有惊喜等着发现' : '🌈 每个人都是一面多棱镜'}</p>
+      <p>${matchPct >= 75 ? selfInfo.relationship : '这些差异不是对错，而是你丰富人格在不同人眼中的真实投影。每一种看法都反映了一部分的你——接纳它们，你会看到一个更完整的自己。'}</p>
     </div>
   `;
 
@@ -611,7 +820,8 @@ function generateAnalysis(self, other){
   for(let i=0;i<4;i++){
     if(self[i] !== other[i]){
       const d = dims[i];
-      diffs.push(`<strong>${DN[d]}</strong>维度上，你觉得自己偏${MT[self[i]]?.name||self[i]}，但 TA 觉得你更像${MT[other[i]]?.name||other[i]}。`);
+      const dn = {E:'外向',I:'内向',S:'感觉',N:'直觉',T:'理性',F:'感性',J:'计划',P:'随性'};
+      diffs.push(`<strong>${DN[d]}</strong>维度上，你觉得自己偏${dn[self[i]]||self[i]}，但 TA 觉得你更像${dn[other[i]]||other[i]}。`);
     }
   }
   if(diffs.length === 0){
