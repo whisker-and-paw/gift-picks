@@ -217,7 +217,7 @@ function g(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remov
 
 function startQuiz(){
   S.ans=Array.from({length:16},()=>null);S.qi=0;
-  S.mode=$('#choose').classList.contains('active')?'self':'other';
+  S.mode=S.otherType?'other':'self';
   renderQ();g('quiz');
 }
 
@@ -225,7 +225,7 @@ function renderQ(){
   const q=Q[S.qi];
   $('#qf').style.width=`${(S.qi+1)/16*100}%`;
   $('#qcnt').textContent=`${S.qi+1}/16`;
-  const lt=S.mode==='other'?q.l:S.l,rt=S.mode==='other'?q.r:S.r;
+  const lt=S.mode==='other'?q.l.replace(/我/g,'TA'):q.l,rt=S.mode==='other'?q.r.replace(/我/g,'TA'):q.r;
   const sv=S.ans[S.qi];
   const opts=[1,2,3,4,5].map(v=>`<div class="sc-opt${sv===v?' sel':''}" onclick="setA(${v})"><div class="dot">${v}</div><div class="tag">${['非常左','偏左','中立','偏右','非常右'][v-1]}</div></div>`).join('');
   $('#qc').innerHTML=`<div class="qz-card"><span class="q-dim">${dn[q.dim]}</span><div class="q-em">${q.em}</div><div class="q-t">${lt}</div><div class="sc-poles"><span>${lt}</span><span class="rt">${rt}</span></div><div class="sc-opts">${opts}</div></div>`;
