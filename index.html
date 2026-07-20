@@ -356,11 +356,11 @@ button{cursor:pointer;background:none;padding:0}
     <div class="qr-c" id="qr-c"></div>
     <div class="qr-lbl">📱 扫码替 TA 答题</div>
     <div class="cd-acts"><button class="btn btn-primary btn-sm" onclick="copyLink()">📋 复制分享链接</button></div>
-    <div style="text-align:center;font-size:var(--font-sm);color:var(--text-light);line-height:1.6;padding:var(--space-sm);background:var(--bg-card);border-radius:var(--radius-md);max-width:360px;border:1px dashed var(--primary-light)">
-      💡 TA 答完后会得到一个 <strong>结果码</strong><br>
-      TA 发给你后，点首页 <strong>「有结果码？导入对比」</strong><br>
-      粘贴即可查看报告 ✨
+    <div style="text-align:center;font-size:var(--font-sm);color:var(--text-light);line-height:1.6;padding:var(--space-md);background:var(--bg-card);border-radius:var(--radius-md);max-width:360px;border:1px dashed var(--primary-light)">
+      ⏳ 等待 TA 完成答题...<br>
+      <span style="font-size:12px">同设备会自动同步，也可点下方手动查看</span>
     </div>
+    <button class="btn btn-secondary btn-sm" onclick="checkResults()" style="margin-top:8px">🔄 刷新检查结果</button>
   </div>
 </div>
 
@@ -694,15 +694,20 @@ function copyLink(){
 }
 function pollStart(){
   pollStop();
-  // Poll local storage first (same device). Also try API.
   S.timer=setInterval(async()=>{
     try{
       const d=await API.get(S.code);
-      if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}
+      if(d&&d.status==='completed'){pollStop();S.roomData=d;showRes()}
     }catch(e){}
   },CFG.POLL_MS);
 }
 function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
+async function checkResults(){
+  if(!S.code){to('没有密令');return}
+  const d=await API.get(S.code);
+  if(d&&d.status==='completed'){pollStop();S.roomData=d;showRes()}
+  else to('还没收到评价，再等等～');
+}
 
 // ============================================================
 // RESULTS
@@ -803,6 +808,20 @@ function resetAll(){
   document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
   ss('screen-landing');
 }
+
+// ============================================================
+// 跨标签页同步 → 监听 localStorage 变化
+// ============================================================
+window.addEventListener('storage', (e) => {
+  if (e.key && e.key.startsWith('rm_') && S.code && e.key === 'rm_'+S.code) {
+    try {
+      const rm = JSON.parse(e.newValue);
+      if (rm && rm.status === 'completed') {
+        pollStop(); S.roomData = rm; showRes();
+      }
+    } catch(ex) {}
+  }
+});
 
 // ============================================================
 // INIT
