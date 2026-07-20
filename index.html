@@ -445,7 +445,7 @@ button{cursor:pointer;background:none;padding:0}
 
 <script>
 // ============================================================
-const CFG = { API_BASE:'https://gift-picks.vercel.app', CODE_LEN:5, POLL_MS:5000, API_TIMEOUT:8000 };
+const CFG = { CODE_LEN:5, POLL_MS:2000 };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -507,12 +507,10 @@ function cfeti(d=4000){
 }
 
 // ============================================================
-// API — 智能降级: 优先 API, 不通自动切 localStorage
+// API — 纯 localStorage，零网络
 // ============================================================
 function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<CFG.CODE_LEN;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
 
-// 所有 create 操作只用 localStorage（秒完成，不碰网络）
-// get/submit 先试 localStorage，没有再试 API
 const API = {
   async create(t,a){
     const c=glc();
@@ -520,32 +518,17 @@ const API = {
     return {code:c};
   },
   async get(c){
-    // Try local first (same device)
-    const raw=localStorage.getItem(`rm_${c}`);
-    if(raw)return JSON.parse(raw);
-    // Try API
-    try{
-      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),CFG.API_TIMEOUT);
-      const r=await fetch(CFG.API_BASE+`/api/room/${c}`,{signal:ac.signal});clearTimeout(tid);
-      const d=await r.json();if(!r.ok)throw Error(d.error);return d;
-    }catch(e){return null}
+    const r=localStorage.getItem(`rm_${c}`);
+    return r?JSON.parse(r):null;
   },
   async submit(c,a){
-    // Try local first
-    const raw=localStorage.getItem(`rm_${c}`);
-    if(raw){
-      const rm=JSON.parse(raw);
-      if(rm.status!=='created')throw Error('ALREADY_DONE');
-      rm.otherAnswers=a;rm.status='completed';
-      localStorage.setItem(`rm_${c}`,JSON.stringify(rm));
-      return {success:true};
-    }
-    // Try API
-    try{
-      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),CFG.API_TIMEOUT);
-      const r=await fetch(CFG.API_BASE+`/api/room/${c}/submit-other`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:a}),signal:ac.signal});clearTimeout(tid);
-      const d=await r.json();if(!r.ok)throw Error(d.error);return d;
-    }catch(e){throw Error('ROOM_NOT_FOUND')}
+    const r=localStorage.getItem(`rm_${c}`);
+    if(!r)throw Error('ROOM_NOT_FOUND');
+    const rm=JSON.parse(r);
+    if(rm.status!=='created')throw Error('ALREADY_DONE');
+    rm.otherAnswers=a;rm.status='completed';
+    localStorage.setItem(`rm_${c}`,JSON.stringify(rm));
+    return {success:true};
   }
 };
 
@@ -666,7 +649,7 @@ function showCode(){
   const qr=$('qr-c');qr.innerHTML='';
   const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
   try{if(typeof QRCode!=='undefined')new QRCode(qr,{text:u,width:160,height:160,colorDark:'#7C5CBF',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});else throw Error('')}catch(e){qr.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(u)}" alt="QR" style="border-radius:8px">`}
-  if(!CFG.DEMO)pollStart();
+  pollStart();
 }
 function copyLink(){
   const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
@@ -729,27 +712,25 @@ async function verifyCode(){
   const ins=document.querySelectorAll('.ci-box');let cd='';ins.forEach(i=>cd+=i.value.toUpperCase());
   if(cd.length!==CFG.CODE_LEN)return;
   const isCh=S.mode==='checker';$('btn-cv').disabled=true;$('btn-cv').textContent='⏳ 验证中...';
-  try{
-    const d=await API.get(cd);
-    if(isCh){
-      if(!d){ni('📮','密令无效','不存在或已过期');rv();er();return}
-      if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
-      S.code=cd;S.room=d;showRes();return;
+  const d=await API.get(cd);
+  if(isCh){
+    if(!d){ni('📮','密令无效','不存在或已过期。如果是跨设备，请用结果码导入。');rv();er();return}
+    if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
+    S.code=cd;S.room=d;showRes();return;
+  }
+  if(!d){
+    // Maybe it's a code from another device - try URL type param
+    const tp=new URLSearchParams(window.location.search).get('type');
+    if(tp&&/^[EISNTFJP]{4}$/.test(tp)){
+      S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
+      ck();startOQ(tp);return;
     }
-    if(!d){
-      // API unreachable + room not local. Try getting type from URL as fallback
-      const tp=new URLSearchParams(window.location.search).get('type');
-      if(tp&&/^[EISNTFJP]{4}$/.test(tp)){
-        S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
-        ck();startOQ(tp);return;
-      }
-      ni('📮','无法验证密令','API 暂时不可用。请确保用 TA 分享的链接打开（自带密令），或在同一设备上操作。');
-      rv();er();return
-    }
-    if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
-    if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
-    S.code=cd;S.room=d;ck();startOQ(d.selfType);
-  }catch(e){console.error(e);ni('📮','网络异常','联系不上服务器...');er();rv()}
+    ni('📮','密令无效','请确保用 TA 分享的链接扫码打开，或在同一设备上操作。跨设备请用结果码导入。');
+    rv();er();return
+  }
+  if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
+  if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
+  S.code=cd;S.room=d;ck();startOQ(d.selfType);
 }
 function rv(){$('btn-cv').textContent=S.mode==='checker'?'🔍 查看报告':'🔍 开始答题';$('btn-cv').disabled=false}
 
