@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#7C5CBF">
-<title>人格镜像 · 双人 MBTI 对比</title>
+<title>人格镜像 · MBTI 深度解析</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-text-size-adjust:100%}
@@ -25,6 +24,7 @@ button{cursor:pointer;background:none;padding:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:100}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;border-radius:50px;font-weight:700;font-size:var(--font-md);transition:all .3s ease}
 .btn-primary{background:var(--gradient);color:#fff;box-shadow:0 4px 15px var(--shadow)}
@@ -35,54 +35,42 @@ button{cursor:pointer;background:none;padding:0}
 .btn-sm{padding:10px 20px;font-size:var(--font-sm)}
 .btn-lg{padding:18px 40px;font-size:var(--font-lg)}
 .btn-full{width:100%}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:var(--space-md);animation:fadeIn .2s ease}
-.overlay.active{display:flex}
-.overlay-box{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-lg);max-width:360px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:pop .3s ease}
-.overlay-box .icon{font-size:3rem;display:block;margin-bottom:12px}
-.overlay-box h3{font-size:var(--font-lg);font-weight:800;margin-bottom:8px;color:var(--text)}
-.overlay-box p{font-size:var(--font-sm);color:var(--text-light);line-height:1.7;margin-bottom:var(--space-md)}
-.overlay-box .btn{width:100%}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;background:var(--text);color:#fff;border-radius:50px;font-size:var(--font-sm);font-weight:600;box-shadow:var(--shadow-lg);z-index:300;animation:slideUp .3s ease;max-width:90%}
-#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:100}
 
-/* ===== LANDING ===== */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;background:var(--text);color:#fff;border-radius:50px;font-size:var(--font-sm);font-weight:600;box-shadow:var(--shadow-lg);z-index:300;animation:slideUp .3s ease;max-width:90%}
+
+/* LANDING */
 #screen-landing .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
 .landing-hero{text-align:center;animation:fadeUp .8s ease}
-.landing-hero .emoji-big{font-size:4rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+.landing-hero .em{font-size:4rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
 .landing-hero h1{font-size:2rem;font-weight:900;color:var(--text);margin-bottom:4px}
 .landing-hero .sub{color:var(--text-light);line-height:1.7;max-width:320px;margin:0 auto;font-size:var(--font-sm)}
 .role-buttons{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;animation:fadeUp 1s ease}
 .role-btn{display:flex;align-items:center;gap:14px;padding:18px 24px;background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;width:100%;text-align:left}
 .role-btn:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.role-btn .icon{font-size:2rem;width:48px;text-align:center}
+.role-btn .ic{font-size:2rem;width:48px;text-align:center}
 .role-btn .info{flex:1}
 .role-btn .info strong{display:block;font-size:var(--font-md);font-weight:800;color:var(--text)}
 .role-btn .info span{font-size:var(--font-sm);color:var(--text-light)}
 .role-btn .arrow{font-size:1.2rem;color:var(--text-muted);transition:transform .3s ease}
 .role-btn:hover .arrow{transform:translateX(4px);color:var(--primary)}
-.landing-footer{text-align:center;padding:var(--space-md) 0}
-.landing-footer a{color:var(--text-light);font-size:var(--font-sm);text-decoration:underline;cursor:pointer}
-.landing-footer a:hover{color:var(--primary)}
 
-/* ===== CHOOSE METHOD ===== */
-#screen-choose .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+/* CHOOSE */
 .ch-hdr{text-align:center;padding:var(--space-lg) 0}
-.ch-hdr .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
+.ch-hdr .em{font-size:2.5rem;display:block;margin-bottom:8px}
 .ch-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
 .ch-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
 .ch-cards{display:flex;flex-direction:column;gap:var(--space-sm)}
 .ch-card{display:flex;align-items:center;gap:14px;padding:20px 24px;background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;cursor:pointer}
 .ch-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.ch-card .icon{font-size:2rem;width:48px;text-align:center}
+.ch-card .ic{font-size:2rem;width:48px;text-align:center}
 .ch-card .info{flex:1}
 .ch-card .info strong{display:block;font-size:var(--font-md);font-weight:800;color:var(--text)}
 .ch-card .info span{font-size:var(--font-sm);color:var(--text-light)}
 .ch-card .arrow{font-size:1.2rem;color:var(--text-muted)}
 
-/* ===== TYPE PICKER ===== */
-#screen-type .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+/* TYPE PICKER */
 .tp-hdr{text-align:center;padding:var(--space-md) 0}
-.tp-hdr .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
+.tp-hdr .em{font-size:2.5rem;display:block;margin-bottom:8px}
 .tp-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
 .tp-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
 .dim-box{border-radius:var(--radius-md);margin-bottom:var(--space-sm);padding:var(--space-md);background:var(--bg-card);box-shadow:var(--shadow-sm)}
@@ -95,10 +83,9 @@ button{cursor:pointer;background:none;padding:0}
 .tp-res .code{font-size:2.5rem;font-weight:900;letter-spacing:6px}
 .tp-res .lbl{font-size:var(--font-sm);opacity:.9;margin-top:4px}
 
-/* ===== QUIZ (shared) ===== */
-.screen-quiz .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+/* QUIZ */
 .qz-hdr{text-align:center;padding:var(--space-md) 0}
-.qz-hdr .emoji{font-size:2rem;display:block;margin-bottom:4px}
+.qz-hdr .em{font-size:2rem;display:block;margin-bottom:4px}
 .qz-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
 .qz-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:2px}
 .qz-bar{height:4px;background:var(--primary-light);border-radius:4px;margin-bottom:var(--space-md);overflow:hidden}
@@ -107,184 +94,101 @@ button{cursor:pointer;background:none;padding:0}
 .qz-card .q-dim{display:inline-block;padding:2px 12px;border-radius:20px;background:var(--primary-light);color:var(--primary-dark);font-size:12px;font-weight:700;margin-bottom:8px}
 .qz-card .q-em{font-size:2rem;display:block;margin-bottom:8px}
 .qz-card .q-t{font-size:var(--font-lg);font-weight:800;color:var(--text);margin-bottom:var(--space-lg);line-height:1.5}
-.qz-opts{display:flex;flex-direction:column;gap:var(--space-sm)}
-.qz-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border-radius:var(--radius-md);border:2px solid transparent;transition:all .2s ease;cursor:pointer;font-weight:600;font-size:var(--font-md);color:var(--text)}
-.qz-opt .lt{width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--font-sm);flex-shrink:0}
-.qz-opt:hover{border-color:var(--primary-light);background:var(--bg-card)}
-.qz-opt.sel{border-color:var(--primary);background:var(--primary-light)}
-.qz-opt.sel .lt{background:var(--primary);color:#fff}
+.qz-opts .sc-scale{display:flex;flex-direction:column;gap:8px;align-items:center}
+.qz-opts .sc-poles{display:flex;justify-content:space-between;width:100%;font-size:var(--font-sm);color:var(--text);font-weight:700;line-height:1.4;gap:8px}
+.qz-opts .sc-poles .sp{max-width:40%;font-size:var(--font-sm)}
+.qz-opts .sc-poles .sp.rt{text-align:right}
+.qz-opts .sc-options{display:flex;gap:4px;justify-content:center;width:100%}
+.qz-opts .sc-opt{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 2px;flex:1;border-radius:var(--radius-sm);transition:all .2s;border:2px solid transparent;background:var(--bg)}
+.qz-opts .sc-opt:hover{border-color:var(--primary-light)}
+.qz-opts .sc-opt.sel{border-color:var(--primary);background:var(--primary-light)}
+.qz-opts .sc-opt .dot{width:32px;height:32px;border-radius:50%;background:var(--bg-card);border:2px solid var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--font-sm);color:var(--text-light);transition:all .2s}
+.qz-opts .sc-opt.sel .dot{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 0 3px var(--shadow)}
+.qz-opts .sc-opt .tag{font-size:10px;color:var(--text-light);font-weight:600}
+.qz-opts .sc-opt.sel .tag{color:var(--primary-dark);font-weight:700}
 .qz-nav{display:flex;gap:var(--space-sm);justify-content:space-between;align-items:center;margin-bottom:var(--space-md)}
 .qz-nav .count{font-size:var(--font-sm);color:var(--text-light);font-weight:600}
-.qz-sub{text-align:center}
-/* 5-level scale */
-.sc-scale{display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:var(--space-md)}
-.sc-poles{display:flex;justify-content:space-between;width:100%;font-size:var(--font-sm);color:var(--text);font-weight:700;line-height:1.4;gap:8px}
-.sc-poles .sp{max-width:38%;font-size:var(--font-sm)}
-.sc-poles .sp.rt{text-align:right}
-.sc-options{display:flex;gap:6px;justify-content:center;width:100%}
-.sc-opt{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 2px;flex:1;border-radius:var(--radius-sm);transition:all .2s;border:2px solid transparent;background:var(--bg)}
-.sc-opt:hover{border-color:var(--primary-light)}
-.sc-opt.sel{border-color:var(--primary);background:var(--primary-light)}
-.sc-dot{width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:2px solid var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--font-sm);color:var(--text-light);transition:all .2s}
-.sc-opt.sel .sc-dot{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 0 3px var(--shadow)}
-.sc-tag{font-size:10px;color:var(--text-light);font-weight:600}
-.sc-opt.sel .sc-tag{color:var(--primary-dark);font-weight:700}
 
-/* ===== OTHER INPUT ===== */
-#screen-other-input .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
-.ot-hdr{text-align:center}
-.ot-hdr .emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
-.ot-hdr h2{font-size:var(--font-xl);font-weight:900;margin-top:8px;color:var(--text)}
-.ot-hdr p{color:var(--text-light);font-size:var(--font-sm);margin-top:4px}
-.ci-grid{display:flex;gap:8px;justify-content:center;margin:var(--space-md) 0}
-.ci-box{width:48px;height:56px;border:2px solid var(--primary-light);border-radius:var(--radius-sm);text-align:center;font-size:1.6rem;font-weight:800;color:var(--primary);background:var(--bg-card);transition:all .3s ease;caret-color:var(--primary);text-transform:uppercase}
-.ci-box:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow);outline:none}
-.ci-box.filled{border-color:var(--primary);background:var(--primary-light)}
-.ce{font-size:var(--font-sm);color:#E05959;min-height:20px;text-align:center}
-.ci-acts{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;align-items:center}
-.ci-acts .btn{min-width:180px}
-.scan-h{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:4px}
-
-/* ===== OTHER QUIZ ===== */
-#screen-other-quiz .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
-.ot-qz-banner{text-align:center;padding:var(--space-lg);border-radius:var(--radius-lg);background:var(--gradient);color:#fff;margin-bottom:var(--space-lg)}
-.ot-qz-banner .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
-.ot-qz-banner h2{font-size:var(--font-lg);font-weight:800}
-.ot-qz-banner p{font-size:var(--font-sm);opacity:.9;margin-top:4px;line-height:1.6}
-
-/* ===== GENERATING ===== */
-#screen-gen .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center}
-.gen-anim{position:relative;width:120px;height:120px}
-.gen-anim .icon{font-size:3.5rem;animation:bounce 1.2s ease-in-out infinite;position:relative;z-index:2}
-.gen-anim .ring{position:absolute;inset:-10px;border:3px solid var(--primary-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
-.gen-r2{position:absolute;inset:-20px;border:2px dashed var(--secondary-light);border-radius:50%;animation:spin 1.5s linear infinite reverse}
-.gen-t{font-size:var(--font-lg);font-weight:700;color:var(--text)}
-.gen-h{font-size:var(--font-sm);color:var(--text-light);max-width:280px;line-height:1.6}
-.gen-b{width:200px;height:4px;background:var(--primary-light);border-radius:4px;overflow:hidden}
-.gen-b .fill{height:100%;background:var(--gradient);width:0%;border-radius:4px;transition:width .3s ease}
-
-/* ===== CODE ===== */
-#screen-code .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
-.cd-em{font-size:3rem;animation:float 3s ease-in-out infinite}
-.cd-t{font-size:var(--font-lg);font-weight:800;text-align:center}
-.cd-t small{display:block;font-weight:400;font-size:var(--font-sm);color:var(--text-light);margin-top:4px;line-height:1.5}
-.cd-type-badge{display:inline-block;padding:4px 20px;border-radius:20px;background:var(--gradient);color:#fff;font-size:1.2rem;font-weight:900;letter-spacing:3px;margin-bottom:4px}
-.cd-display{display:flex;gap:10px;justify-content:center;padding:var(--space-md) var(--space-lg);background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);border:2px solid var(--primary-light);animation:pulse 2s ease-in-out infinite}
-.cd-char{width:52px;height:64px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--primary);background:var(--bg);border-radius:var(--radius-sm);letter-spacing:2px}
-.qr-c{width:180px;height:180px;background:var(--bg-card);border-radius:var(--radius-md);padding:12px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center}
-.qr-c img,.qr-c canvas{width:100%!important;height:100%!important}
-.qr-lbl{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:-8px}
-.cd-acts{display:flex;flex-wrap:wrap;gap:var(--space-sm);justify-content:center;width:100%}
-.wait-st{display:flex;align-items:center;gap:8px;font-size:var(--font-sm);color:var(--text-light);padding:10px 20px;background:var(--bg-card);border-radius:50px;box-shadow:var(--shadow-sm)}
-.wait-st .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.5s ease-in-out infinite}
-.cd-back{position:absolute;top:var(--space-md);left:var(--space-md);font-size:var(--font-sm);color:var(--text-light);display:flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;border-radius:20px;transition:all .3s}
-.cd-back:hover{background:var(--primary-light);color:var(--primary)}
-
-/* ===== RESULTS ===== */
-#screen-results .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
-.rs-hero{text-align:center;padding:var(--space-lg);border-radius:var(--radius-lg);background:var(--gradient);color:#fff;margin-bottom:var(--space-lg);position:relative;overflow:hidden}
-.rs-hero .emoji{font-size:3.5rem;display:block;margin-bottom:8px}
-.rs-hero h2{font-size:var(--font-xl);font-weight:900}
-.rs-hero .tc{display:flex;justify-content:center;gap:var(--space-md);margin:var(--space-md) 0}
-.rs-hero .tb{background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:var(--radius-md);padding:12px 20px;min-width:100px}
-.rs-hero .tb .lbl{font-size:11px;opacity:.8;margin-bottom:2px}
-.rs-hero .tb .code{font-size:1.5rem;font-weight:900;letter-spacing:3px}
-.rs-hero .vs{font-size:1.2rem;font-weight:900;display:flex;align-items:center;opacity:.6}
-.sec-t{font-size:var(--font-lg);font-weight:800;margin:var(--space-lg) 0 var(--space-sm);color:var(--text)}
-.dc{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);margin-bottom:var(--space-sm);box-shadow:var(--shadow-sm)}
-.dc .dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.dc .dh .dn{font-weight:700;font-size:var(--font-md);color:var(--text)}
-.dc .dh .dr{font-size:var(--font-sm);font-weight:700;padding:2px 12px;border-radius:20px}
-.dc .dh .dr.match{background:var(--primary-light);color:var(--primary-dark)}
-.dc .dh .dr.mis{background:#FFF0F0;color:var(--mismatch)}
-.dc .db{display:flex;justify-content:space-between;margin-bottom:4px}
-.dc .db span{font-size:var(--font-sm);font-weight:700}
-.dc .db .sp{color:var(--primary)}
-.dc .db .so{color:var(--secondary)}
-.an-box{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-sm);margin:var(--space-md) 0;line-height:1.8;font-size:var(--font-sm);color:var(--text)}
-.an-box .icon{font-size:1.5rem;display:block;margin-bottom:8px}
-.rs-ft{text-align:center;margin-top:var(--space-lg)}
-
-/* ===== CELEBRATION ===== */
-#screen-cel .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center;position:relative;z-index:2}
-.cel-em{font-size:4rem;animation:bounce 1.5s ease-in-out infinite;display:block}
-.cel-t{font-size:var(--font-xl);font-weight:900;color:var(--text)}
-.cel-d{font-size:var(--font-md);color:var(--text-light);max-width:300px;line-height:1.7}
-.cel-acts{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)}
+/* REPORT */
+#screen-report .content{flex:1;max-width:560px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.rp-header{text-align:center;padding:var(--space-lg);border-radius:var(--radius-lg);background:var(--gradient);color:#fff;margin-bottom:var(--space-lg)}
+.rp-header .em{font-size:3rem;display:block;margin-bottom:8px}
+.rp-header .type{font-size:2.5rem;font-weight:900;letter-spacing:5px}
+.rp-header .type-name{font-size:var(--font-lg);font-weight:800;margin-top:2px;opacity:.9}
+.rp-header .tagline{font-size:var(--font-sm);opacity:.8;margin-top:6px;font-style:italic}
+.rp-sec{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-lg);margin-bottom:var(--space-sm);box-shadow:var(--shadow-sm)}
+.rp-sec .sec-t{font-size:var(--font-md);font-weight:800;margin-bottom:var(--space-sm);display:flex;align-items:center;gap:8px}
+.rp-sec .sec-t .ic{font-size:1.3rem}
+.rp-sec p{font-size:var(--font-sm);line-height:1.8;color:var(--text);margin-bottom:8px}
+.rp-sec p:last-child{margin-bottom:0}
+.rp-dim{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--primary-light)}
+.rp-dim:last-child{border-bottom:none}
+.rp-dim .dl{font-weight:700;font-size:var(--font-sm)}
+.rp-dim .dv{font-weight:700;font-size:var(--font-sm);padding:2px 12px;border-radius:20px}
+.rp-dim .dv.match{background:var(--primary-light);color:var(--primary-dark)}
+.rp-dim .dv.mis{background:#FFF0F0;color:var(--mismatch)}
+.rp-dim-bar{width:100%;height:6px;background:var(--primary-light);border-radius:3px;margin:6px 0 10px;position:relative}
+.rp-dim-bar .f{height:100%;border-radius:3px;transition:width .6s ease}
+.rp-compare{display:flex;justify-content:space-between;font-size:12px;color:var(--text-light);font-weight:600;margin-top:2px}
+.rp-score{text-align:center;padding:var(--space-md);font-size:2rem;font-weight:900}
+.rp-score .num{font-size:3rem}
+.rp-score .lbl{font-size:var(--font-sm);color:var(--text-light);font-weight:400;margin-top:4px}
+.rp-ft{text-align:center;margin-top:var(--space-md)}
+.rp-other-input{margin:var(--space-md) 0}
+.rp-other-input input{width:100%;padding:14px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-size:1.3rem;font-weight:800;text-align:center;background:var(--bg-card);color:var(--primary);letter-spacing:6px;text-transform:uppercase;outline:none}
+.rp-other-input input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow)}
+.rp-tips{font-size:var(--font-sm);color:var(--text-light);line-height:1.7;margin-top:var(--space-sm);background:var(--bg);padding:var(--space-md);border-radius:var(--radius-md)}
 
 @media(max-width:400px){
   html{font-size:14px}
-  .ci-box{width:42px;height:48px;font-size:1.4rem}
-  .cd-char{width:42px;height:54px;font-size:1.5rem}
+  .rp-header .type{font-size:2rem}
   .qz-card{padding:var(--space-md)}
-  .rs-hero .tb{padding:8px 14px;min-width:80px}
-  .rs-hero .tb .code{font-size:1.2rem}
-}
-@media(min-width:600px){
-  .landing-hero .emoji-big{font-size:5rem}
-  .cd-display{gap:14px}
-  .cd-char{width:60px;height:72px;font-size:2.2rem}
-  .role-buttons{flex-direction:row;gap:var(--space-md)}
-  .role-btn{flex-direction:column;text-align:center;padding:24px}
-  .role-btn .icon{font-size:2.5rem}
 }
 </style>
 </head>
 <body>
-
-<div class="overlay" id="overlay">
-  <div class="overlay-box">
-    <span class="icon" id="oi">📮</span>
-    <h3 id="ot">出问题了</h3>
-    <p id="om">请检查网络后重试</p>
-    <button class="btn btn-primary" id="ob">知道了</button>
-  </div>
-</div>
-
 <div id="tc"></div>
-<div id="sync-status" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:20px;background:var(--bg-card);box-shadow:var(--shadow-md);font-size:12px;font-weight:600;z-index:150;display:none;transition:opacity .3s"></div>
 <canvas id="confetti-canvas"></canvas>
 
-<!-- LANDING -->
+<!-- ===== LANDING ===== -->
 <div class="screen active" id="screen-landing">
   <div class="content">
     <div class="landing-hero">
-      <span class="emoji-big">🪞</span>
+      <span class="em">🪞</span>
       <h1>人格镜像</h1>
-      <div class="sub">你眼中的自己，和别人眼中的你，<br>是不是同一个人？✨</div>
+      <div class="sub">你眼中的自己，和别人眼中的你<br>是不是同一个人？</div>
     </div>
     <div class="role-buttons">
-      <button class="role-btn" onclick="goInitiator()">
-        <span class="icon">🧑</span>
-        <span class="info"><strong>我是当事人</strong><span>先确定自己的 MBTI，再邀请 TA 来评价</span></span>
+      <button class="role-btn" onclick="goSelf()">
+        <span class="ic">🧑</span>
+        <span class="info"><strong>了解自己</strong><span>测一测或输入你的 MBTI，获得深度解析</span></span>
         <span class="arrow">→</span>
       </button>
       <button class="role-btn" onclick="goOther()">
-        <span class="icon">👀</span>
-        <span class="info"><strong>我来评价 TA</strong><span>输入密令，替 TA 做一份人格画像</span></span>
+        <span class="ic">👀</span>
+        <span class="info"><strong>评价他人</strong><span>替 TA 答题，看看你眼中的 TA 和 TA 自己是否一样</span></span>
         <span class="arrow">→</span>
       </button>
     </div>
-    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a></div>
   </div>
 </div>
 
-<!-- CHOOSE METHOD -->
+<!-- ===== CHOOSE METHOD ===== -->
 <div class="screen" id="screen-choose">
-  <div class="content">
+  <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="ch-hdr">
-      <div class="emoji">🧑</div>
+      <div class="em">🧑</div>
       <h2>你了解自己的 MBTI 吗？</h2>
-      <p>两种方式，选一个你喜欢的～</p>
+      <p>选一个你喜欢的方式～</p>
     </div>
     <div class="ch-cards">
-      <div class="ch-card" onclick="goKnownType()">
-        <div class="icon">🎯</div>
+      <div class="ch-card" onclick="goPickType()">
+        <div class="ic">🎯</div>
         <div class="info"><strong>我知道自己的 MBTI</strong><span>四个维度点选，10 秒搞定</span></div>
         <div class="arrow">→</div>
       </div>
-      <div class="ch-card" onclick="goQuiz()">
-        <div class="icon">📝</div>
+      <div class="ch-card" onclick="goSelfQuiz()">
+        <div class="ic">📝</div>
         <div class="info"><strong>我不确定，来测一下</strong><span>16 道生活化题目，帮你定位人格</span></div>
         <div class="arrow">→</div>
       </div>
@@ -293,13 +197,13 @@ button{cursor:pointer;background:none;padding:0}
   </div>
 </div>
 
-<!-- TYPE PICKER -->
+<!-- ===== TYPE PICKER ===== -->
 <div class="screen" id="screen-type">
-  <div class="content">
+  <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0">
     <div class="tp-hdr">
-      <div class="emoji">🎯</div>
+      <div class="em">🎯</div>
       <h2>选填你的 MBTI</h2>
-      <p>四个维度各选一边，组合成你的类型</p>
+      <p>四个维度各选一边</p>
     </div>
     <div class="dim-box"><div class="dim-lbl">⚡ 能量来源</div>
       <div class="dim-tog"><div class="dim-opt" data-d="EI" data-v="E" onclick="pickD(this,'EI','E')">E 外向</div><div class="dim-opt" data-d="EI" data-v="I" onclick="pickD(this,'EI','I')">I 内向</div></div></div>
@@ -311,17 +215,19 @@ button{cursor:pointer;background:none;padding:0}
       <div class="dim-tog"><div class="dim-opt" data-d="JP" data-v="J" onclick="pickD(this,'JP','J')">J 计划</div><div class="dim-opt" data-d="JP" data-v="P" onclick="pickD(this,'JP','P')">P 随性</div></div></div>
     <div class="tp-res" id="tp-res" style="display:none">
       <div class="code" id="tp-code">ENFP</div>
-      <div class="lbl" id="tp-lbl">点击上方各维度选择你的类型</div>
+      <div class="lbl" id="tp-lbl"></div>
     </div>
-    <div style="margin-top:var(--space-md)"><button class="btn btn-primary btn-lg btn-full" id="btn-confirm-type" onclick="confirmType()" disabled>✅ 确认，生成密令</button></div>
+    <div style="margin-top:var(--space-md)">
+      <button class="btn btn-primary btn-lg btn-full" id="btn-confirm-type" onclick="confirmSelfType()" disabled>✨ 查看我的人格解析</button>
+    </div>
     <div style="margin-top:var(--space-sm);text-align:center"><button class="btn btn-secondary" onclick="ss('screen-choose')">← 返回</button></div>
   </div>
 </div>
 
-<!-- SELF QUIZ -->
-<div class="screen screen-quiz" id="screen-quiz">
-  <div class="content">
-    <div class="qz-hdr"><div class="emoji">📝</div><h2>测测你的人格画像</h2><p>16 道题，从四个维度了解自己</p></div>
+<!-- ===== QUIZ ===== -->
+<div class="screen" id="screen-quiz">
+  <div class="content" style="flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0">
+    <div class="qz-hdr"><div class="em">📝</div><h2 id="qz-title">测测你的人格画像</h2><p id="qz-sub">16 道题，从四个维度了解自己</p></div>
     <div class="qz-bar"><div class="fill" id="qzf" style="width:0%"></div></div>
     <div id="qzc"></div>
     <div class="qz-nav">
@@ -329,572 +235,417 @@ button{cursor:pointer;background:none;padding:0}
       <span class="count" id="qcount">1/16</span>
       <button class="btn btn-primary btn-sm" id="btn-qn" onclick="qNext()">下一题 →</button>
     </div>
-    <div class="qz-sub"><button class="btn btn-primary btn-lg" id="btn-qs" onclick="qSubmit()" style="display:none">🧩 生成我的人格画像</button></div>
+    <div class="qz-sub" style="text-align:center">
+      <button class="btn btn-primary btn-lg" id="btn-qs" onclick="qSubmit()" style="display:none">✨ 查看人格解析</button>
+    </div>
   </div>
 </div>
 
-<!-- GENERATING -->
-<div class="screen" id="screen-gen">
+<!-- ===== REPORT ===== -->
+<div class="screen" id="screen-report">
   <div class="content">
-    <div class="gen-anim"><div class="ring"></div><div class="gen-r2"></div><span class="icon">🪞</span></div>
-    <div class="gen-t">正在生成人格镜像...</div>
-    <div class="gen-h">把你的自我画像装进漂流瓶，邀请 TA 来看看✨</div>
-    <div class="gen-b"><div class="fill" id="genf"></div></div>
-  </div>
-</div>
-
-<!-- CODE -->
-<div class="screen" id="screen-code">
-  <button class="cd-back" onclick="resetAll()">← 返回首页</button>
-  <div class="content">
-    <span class="cd-em">🪞</span>
-    <div class="cd-t">
-      <div class="cd-type-badge" id="cd-type">ENFP</div>
-      你的人格画像已生成 🎀
-      <small>分享这个密令给身边的人<br>让 TA 也来描绘你的人格吧</small>
-    </div>
-    <div class="cd-display" id="cd-disp"></div>
-    <div class="qr-c" id="qr-c"></div>
-    <div class="qr-lbl">📱 扫码替 TA 答题</div>
-    <div class="cd-acts"><button class="btn btn-primary btn-sm" onclick="copyLink()">📋 复制分享链接</button></div>
-    <div style="text-align:center;font-size:var(--font-sm);color:var(--text-light);line-height:1.6;padding:var(--space-md);background:var(--bg-card);border-radius:var(--radius-md);max-width:360px;border:1px dashed var(--primary-light)">
-      ⏳ 等待 TA 完成答题...<br>
-      <span style="font-size:12px">同设备会自动同步，也可点下方手动查看</span>
-    </div>
-    <button class="btn btn-secondary btn-sm" onclick="checkResults()" style="margin-top:8px">🔄 刷新检查结果</button>
-  </div>
-</div>
-
-<!-- RESULTS -->
-<div class="screen" id="screen-results">
-  <div class="content">
-    <div id="rs-c"></div>
-    <div class="rs-ft"><button class="btn btn-secondary" onclick="resetAll()">🏠 返回首页</button></div>
-  </div>
-</div>
-
-<!-- OTHER INPUT -->
-<div class="screen" id="screen-other-input">
-  <div class="content">
-    <div class="ot-hdr">
-      <span class="emoji">👀</span>
-      <h2>输入密令</h2>
-      <p>把 TA 给你的 5 位密令输进去～</p>
-    </div>
-    <div class="ci-grid" id="ci-grid">
-      <input class="ci-box" maxlength="1" data-idx="0" oninput="ciIn(this,0)" onkeydown="ciKey(event,this,0)">
-      <input class="ci-box" maxlength="1" data-idx="1" oninput="ciIn(this,1)" onkeydown="ciKey(event,this,1)">
-      <input class="ci-box" maxlength="1" data-idx="2" oninput="ciIn(this,2)" onkeydown="ciKey(event,this,2)">
-      <input class="ci-box" maxlength="1" data-idx="3" oninput="ciIn(this,3)" onkeydown="ciKey(event,this,3)">
-      <input class="ci-box" maxlength="1" data-idx="4" oninput="ciIn(this,4)" onkeydown="ciKey(event,this,4)">
-    </div>
-    <div class="ce" id="ce"></div>
-    <div class="ci-acts">
-      <button class="btn btn-primary btn-lg" id="btn-cv" onclick="verifyCode()" disabled>🔍 开始答题</button>
-      <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
-    </div>
-    <div class="scan-h">✨ 扫码自动填入</div>
-  </div>
-</div>
-
-<!-- OTHER QUIZ -->
-<div class="screen screen-quiz" id="screen-other-quiz">
-  <div class="content">
-    <div class="ot-qz-banner" id="oq-banner">
-      <div class="emoji">👀</div>
-      <h2>替 TA 描绘人格画像</h2>
-      <p>以下问题请根据你对 TA 的观察来回答～</p>
-    </div>
-    <div class="qz-bar"><div class="fill" id="oqzf" style="width:0%"></div></div>
-    <div id="oqc"></div>
-    <div class="qz-nav">
-      <button class="btn btn-secondary btn-sm" id="btn-op" onclick="oPrev()">← 上一题</button>
-      <span class="count" id="ocount">1/16</span>
-      <button class="btn btn-primary btn-sm" id="btn-on" onclick="oNext()">下一题 →</button>
-    </div>
-    <div class="qz-sub"><button class="btn btn-primary btn-lg" id="btn-os" onclick="oSubmit()" style="display:none">✅ 提交评价</button></div>
-  </div>
-</div>
-
-<!-- CELEBRATION -->
-<div class="screen" id="screen-cel">
-  <div class="content">
-    <span class="cel-em">🎉</span>
-    <div class="cel-t">评价已提交！</div>
-    <div class="cel-d" id="cel-d">你的评价已发送～<br>TA 那边会自动收到结果 ✨</div>
-    <div class="cel-acts"><button class="btn btn-secondary" onclick="resetAll()">🏠 回到首页</button></div>
+    <div id="report-content"></div>
+    <div class="rp-ft"><button class="btn btn-secondary" onclick="ss('screen-landing')">🏠 返回首页</button></div>
   </div>
 </div>
 
 <script>
 // ============================================================
-const CFG = { CODE_LEN:5, POLL_MS:2000 };
-// ============================================================
-// QUESTIONS: 4 per dim, 16 total
-// ============================================================
 const QS = [
-  // === E/I ===
   {dim:'EI',left:'和朋友聚会后我感到精力充沛',right:'社交之后我需要独处来恢复能量',em:'⚡'},
   {dim:'EI',left:'我倾向于边想边说，在交流中理清思路',right:'我更习惯先想清楚再开口',em:'💭'},
   {dim:'EI',left:'我享受成为众人关注的焦点',right:'我更喜欢待在幕后不被注意',em:'🎯'},
   {dim:'EI',left:'我的朋友圈很广，认识很多人',right:'我的朋友不多但关系都很深',em:'👥'},
-  // === S/N ===
   {dim:'SN',left:'我更关注眼前具体实在的事物',right:'我更喜欢思考未来的可能性',em:'🔍'},
   {dim:'SN',left:'我习惯按照已有经验和常规做事',right:'我热衷于尝试全新的方式',em:'🛤️'},
   {dim:'SN',left:'我通常比较务实，注重实际效果',right:'我更喜欢天马行空地畅想',em:'🎨'},
   {dim:'SN',left:'阅读/看剧时我关注具体情节',right:'我更喜欢琢磨背后的隐喻和主题',em:'📖'},
-  // === T/F ===
   {dim:'TF',left:'做决定时我主要靠理性分析',right:'做决定时我更看重个人感受',em:'⚖️'},
   {dim:'TF',left:'指出别人的问题对我来说很正常',right:'我倾向于委婉，怕伤害对方感受',em:'💬'},
   {dim:'TF',left:'我把公正和原则看得很重',right:'我把和谐与人情看得很重',em:'🎭'},
   {dim:'TF',left:'别人找我倾诉时我习惯给解决方案',right:'别人找我倾诉时我习惯给情感支持',em:'🤝'},
-  // === J/P ===
   {dim:'JP',left:'我喜欢生活井井有条有规划',right:'我喜欢随性灵活自由安排',em:'📋'},
   {dim:'JP',left:'完成任务清单让我很有成就感',right:'我经常在截止前才高效运作',em:'⏰'},
   {dim:'JP',left:'我更喜欢事情有明确的结论',right:'我乐于保持开放不急着下结论',em:'🔒'},
   {dim:'JP',left:'旅行前我会做详细的攻略',right:'我更喜欢到了再说随遇而安',em:'🧳'},
 ];
 const DN = {EI:'⚡ 精力来源',SN:'🔍 认知方式',TF:'⚖️ 决策依据',JP:'📋 生活态度'};
-const TN = {'ENFJ':'主人公型','ENFP':'竞选者型','ENTJ':'指挥官型','ENTP':'辩论家型','ESFJ':'执政官型','ESFP':'表演者型','ESTJ':'总经理型','ESTP':'企业家型','INFJ':'提倡者型','INFP':'调停者型','INTJ':'建筑师型','INTP':'逻辑学家型','ISFJ':'守卫者型','ISFP':'探险家型','ISTJ':'物流师型','ISTP':'鉴赏家型'};
-// ============================================================
-// STATE
-// ============================================================
-const S = {
-  mode:null,selfType:null,selfAns:null,code:null,room:null,
-  qi:0,ans:[],timer:null,
-};
-const P = {EI:null,SN:null,TF:null,JP:null};
-// ============================================================
-function $(id){return document.getElementById(id)}
-function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
-window.showScreen = ss;
-function to(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('tc').appendChild(t);setTimeout(()=>t.remove(),2500)}
-function ni(i,t,m){$('oi').textContent=i||'📮';$('ot').textContent=t;$('om').textContent=m;$('overlay').classList.add('active')}
-$('ob').onclick=()=>$('overlay').classList.remove('active');
+const DP = {EI:['外向','内向'],SN:['感觉','直觉'],TF:['理性','感性'],JP:['计划','随性']};
 
+// ===== MBTI 深度解析数据 =====
+const TI = {
+  ENFJ:{name:'主人公型',emoji:'🔥',t:'你有与生俱来的感染力，像一团温暖的火照亮身边的人。你擅长读懂别人的情绪，也热衷于帮助他人成长。你的领导力不是命令，而是感召。',g:'你的热情和感染力让人不由自主想靠近，是天生的引路者。',w:'容易过度承担他人的情绪，要学会给自己充电。'}
+  ,ENFP:{name:'竞选者型',emoji:'🌈',t:'你是行走的彩虹，脑子里有无数奇思妙想。对世界充满好奇，总能发现生活中的美好和可能。你的热情像阳光一样洒满每个角落。',g:'你的创造力和感染力让人如沐春风，是聚会上最闪亮的星。',w:'容易三分钟热度，注意力太容易被新鲜事物分散。'}
+  ,ENTJ:{name:'指挥官型',emoji:'⚡',t:'你是天生的战略家，目光永远看向远方的目标。果断、自信、不畏挑战——别人看到困难，你看到机会。你的执行力是身边人的定心丸。',g:'你的决断力和大局观让人信服，是天生的领导者。',w:'有时候过于强势，不妨多听听别人的感受。'}
+  ,ENTP:{name:'辩论家型',emoji:'💡',t:'你是行走的点子工厂，思维像跳跳糖一样活跃。你享受思想的碰撞，在辩论中越战越勇。对你来说，最大的快乐就是发现一个全新的角度。',g:'你的机智和创造力让任何对话都变得有趣。',w:'容易陷入"为了辩论而辩论"，有时显得好胜。'}
+  ,ESFJ:{name:'执政官型',emoji:'🤝',t:'你是朋友圈里的温暖纽带，永远记得每个人的生日和喜好。你让身边的人感到被在乎、被照顾。你相信人与人之间的联系是最珍贵的。',g:'你的热心和周到让所有人都愿意亲近你。',w:'太在意别人的看法，容易委屈自己。'}
+  ,ESFP:{name:'表演者型',emoji:'🎭',t:'你是天生的聚光灯吸收器，有你在的地方就有笑声。你享受活在当下的每一刻，用你的快乐感染周围每一个人。',g:'你的热情和活力就是最迷人的地方。',w:'不太喜欢做长远规划，容易被当下牵着走。'}
+  ,ESTJ:{name:'总经理型',emoji:'📋',t:'你是那种"说到做到"的人。你相信规则和秩序，做事靠谱、执行力强。在团队里你往往是那个让大家不乱套的人。',g:'你的可靠和执行力让所有人放心。',w:'有时过于固执，不太接受非常规的做法。'}
+  ,ESTP:{name:'企业家型',emoji:'🎯',t:'你是行动派，想到就去做。你反应快、适应力强，在变化中如鱼得水。别人还在犹豫的时候，你已经试过了。',g:'你的行动力和应变能力让人佩服。',w:'可能缺少耐心，对重复性的事情容易厌倦。'}
+  ,INFJ:{name:'提倡者型',emoji:'🌌',t:'你是一个深邃而温柔的理想主义者。你能看到事物表面之下的本质，对人性有深刻的理解。你追求意义，渴望让世界变得更好。',g:'你的洞察力和同理心让你成为绝佳的倾听者。',w:'太容易吸收负面情绪，需要学会保护自己。'}
+  ,INFP:{name:'调停者型',emoji:'🌙',t:'你的内心是一片星空，敏感、浪漫、充满诗意。你追求真诚和深度，对美和意义有着天生的感知力。你是最温柔的理想主义者。',g:'你的真诚和深度让与你相处成一种疗愈。',w:'容易陷入内耗和纠结，太在意是否"对得起"别人。'}
+  ,INTJ:{name:'建筑师型',emoji:'🏛️',t:'你是头脑中的建筑师，习惯用逻辑和系统思考一切。你享受独处，在思考中找到力量。你的远见和规划能力让你总能走在前面。',g:'你的深度思考和战略眼光是稀有的天赋。',w:'有时显得太冷太独立，让别人觉得难以接近。'}
+  ,INTP:{name:'逻辑学家型',emoji:'🔬',t:'你有一颗不停运转的大脑，对一切充满好奇，渴望理解世界的底层逻辑。你享受探索概念和理论，在知识中找到快乐。',g:'你的智慧和求知欲让你成为一个有趣的思想者。',w:'容易活在自己的世界里，需要注意与现实接轨。'}
+  ,ISFJ:{name:'守卫者型',emoji:'🛡️',t:'你是最可靠的守护者，默默付出从不张扬。你记得每个人的习惯和喜好，用行动表达关心。你让身边的人感到安全和温暖。',g:'你的细致和可靠是任何人最想拥有的品质。',w:'总是先照顾别人的需求，忘了照顾好自己。'}
+  ,ISFP:{name:'探险家型',emoji:'🎨',t:'你是安静的艺术家，用独特的眼光看世界。你温柔、敏感，对美有天然的感知力。你不爱张扬，但在自己的世界里闪闪发光。',g:'你的审美和温柔让人感到宁静和美好。',w:'容易过于低调，让别人忽略你的好。'}
+  ,ISTJ:{name:'物流师型',emoji:'📌',t:'你是最靠谱的人，没有之一。你认真负责，说到做到，是团队里的定海神针。你相信脚踏实地的力量，用行动赢得所有人的信任。',g:'你的可靠和责任感是稀缺的品格。',w:'可能有些保守，对新事物的接受需要时间。'}
+  ,ISTP:{name:'鉴赏家型',emoji:'🔧',t:'你是动手能力最强的行动派，喜欢搞清楚一切事物的运作原理。你冷静、理性，在危机中是最镇定的人。',g:'你的冷静和实操能力是别人信赖的原因。',w:'不太擅长表达情感，让别人觉得你有点冷。'}
+};
+const MT = {
+  E:{name:'外向',emoji:'☀️',desc:'你从社交中获得能量，喜欢和人打交道。想法在交流中越来越清晰，一个人待久了反而会没精神。',g:'天生的社交达人，朋友们都喜欢你的活力',w:'需要独处的时间来自我恢复，别把自己耗尽'},
+  I:{name:'内向',emoji:'🌙',desc:'你从独处中获得能量，深思熟虑后再表达。你享受深度的一对一交流，在热闹的场合反而会消耗精力。',g:'你的沉稳和深度让交流变得有质量',w:'适当走出舒适区，你的想法值得被更多人听见'},
+  S:{name:'感觉',emoji:'🔍',desc:'你关注具体的事实和细节，相信眼见为实。你务实、脚踏实地，擅长把想法变成现实。',g:'你的务实精神让你在现实中走得很稳',w:'偶尔也可以抬头看看星空，想象一下可能性'},
+  N:{name:'直觉',emoji:'🌈',desc:'你善于发现事物的本质和可能性，总能看到大局。你喜欢天马行空地想象，对未来充满憧憬。',g:'你的想象力和大局观是最大的财富',w:'记得看看脚下的路，把想法落实在行动上'},
+  T:{name:'理性',emoji:'⚖️',desc:'你做决定时更依赖逻辑和分析，追求公平公正。你能在情绪中找到理性的声音，做出客观的判断。',g:'你的理性是混乱中的定心丸',w:'做决定时也考虑一下人情味'},
+  F:{name:'感性',emoji:'💖',desc:'你做决定时更看重感受和价值观，关注他人的情绪。你的同理心让你成为最好的倾听者。',g:'你的温暖和同理心让身边人感到治愈',w:'偶尔也需要用理性保护自己'},
+  J:{name:'计划',emoji:'📋',desc:'你喜欢井井有条的感觉，计划和清单让你安心。你习惯提前安排，不喜欢临时抱佛脚。',g:'你的条理性和规划能力让人信赖',w:'偶尔也享受一下随性的惊喜'},
+  P:{name:'随性',emoji:'🍃',desc:'你享受灵活自由的生活，喜欢随遇而安。你适应能力强，总能优雅地应对变化。',g:'你的灵活和适应力是很多人羡慕的',w:'在关键事情上可以稍微提前规划一下'},
+};
+
+// ===== STATE =====
+const S = {mode:'self',selfType:null,answers:[],qi:0};
+
+// ===== HELPERS =====
+const $=id=>document.getElementById(id);
+function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
+function to(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('tc').appendChild(t);setTimeout(()=>t.remove(),2500)}
+
+// Sound
 let ax=null;
 function ac(){if(!ax)ax=new(window.AudioContext||window.webkitAudioContext)();return ax}
 function pf(f,d=.15,t='sine',v=.3){try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
 const sk=()=>pf(800,.1,'sine',.2);const ck=()=>{pf(523,.15);setTimeout(()=>pf(659,.15),100);setTimeout(()=>pf(784,.2),200)};
 const cl=()=>[523,587,659,784,880,1047].forEach((f,i)=>setTimeout(()=>pf(f,.2,'sine',.25),i*100));
-const er=()=>{pf(400,.15,'sawtooth',.15);setTimeout(()=>pf(300,.2,'sawtooth',.15),150)};
 
-let cf=false,cp=[];
+// Confetti
+let cfr=false,cp=[];
 function cfeti(d=4000){
   const c=$('confetti-canvas');c.width=innerWidth;c.height=innerHeight;const ctx=c.getContext('2d');
   const cs=['#7C5CBF','#FF8FAB','#FFD93D','#C8B5E8','#8FBC8F','#FFD700','#5A3D9A','#FFB06A'];
-  cp=Array.from({length:100},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,w:5+Math.random()*8,h:3+Math.random()*5,color:cs[~~(Math.random()*cs.length)],s:2+Math.random()*3,r:Math.random()*360,rs:(Math.random()-.5)*6,sw:Math.random()*2-1}));
-  cf=true;const st=Date.now();
-  function dr(){if(!cf){ctx.clearRect(0,0,c.width,c.height);cp=[];return}ctx.clearRect(0,0,c.width,c.height);cp.forEach(p=>{p.y+=p.s;p.x+=Math.sin(p.y*.02)*p.sw;p.r+=p.rs;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});cp.forEach(p=>{if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}});if(Date.now()-st>d)cf=false;if(cf)requestAnimationFrame(dr);else ctx.clearRect(0,0,c.width,c.height)}
+  cp=Array.from({length:80},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,w:5+Math.random()*8,h:3+Math.random()*5,color:cs[~~(Math.random()*cs.length)],s:2+Math.random()*3,r:Math.random()*360,rs:(Math.random()-.5)*6,sw:Math.random()*2-1}));
+  cfr=true;const st=Date.now();
+  function dr(){if(!cfr){ctx.clearRect(0,0,c.width,c.height);cp=[];return}ctx.clearRect(0,0,c.width,c.height);cp.forEach(p=>{p.y+=p.s;p.x+=Math.sin(p.y*.02)*p.sw;p.r+=p.rs;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});cp.forEach(p=>{if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}});if(Date.now()-st>d)cfr=false;if(cfr)requestAnimationFrame(dr);else ctx.clearRect(0,0,c.width,c.height)}
   dr();
 }
 
-// ============================================================
-// API — GitHub Gist 作为数据库（国内可访问，免费）
-// ============================================================
-const GH_API = 'https://api.github.com/gists';
-const GIST_DESC = 'gift-picks-db';
-const FILE = 'db.json';
-// ★★★ 清除旧 Gist 缓存，用新 Token 重建 ★★★
-localStorage.removeItem('_gist_id');
-let _gistId = null;
-let _ghToken = localStorage.getItem('_gh_token') || atob('Z2hwXzAwRWlzdm5oOXV2ZlJicWY5Y3hmM3BXSkMxSk15aDRiM0p1bA==');
-if (!localStorage.getItem('_gh_token')) localStorage.setItem('_gh_token', _ghToken);
+// ===== NAV =====
+function goSelf(){sk();S.mode='self';ss('screen-choose')}
+function goOther(){
+  sk();S.mode='other';
+  $('#qz-title').textContent='替 TA 描绘人格画像';
+  $('#qz-sub').textContent='以下问题请根据你对 TA 的了解来选择～';
+  // Show the type input screen for other
+  showOtherTypeInput();
+}
+function goPickType(){sk();ss('screen-type')}
+function goSelfQuiz(){sk();startQuiz('self')}
 
-function setSyncStatus(msg, ok) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.color = ok ? 'var(--match)' : 'var(--mismatch)';
-  el.style.display = 'block';
-  clearTimeout(el._hide);
-  el._hide = setTimeout(() => el.style.display = 'none', 4000);
+// ===== OTHER: Input type =====
+function showOtherTypeInput() {
+  const html = `
+    <div style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;gap:var(--space-lg)">
+      <div style="text-align:center">
+        <span style="font-size:3rem;display:block;margin-bottom:12px">👀</span>
+        <h2 style="font-size:var(--font-lg);font-weight:900;color:var(--text)">TA 的 MBTI 是什么？</h2>
+        <p style="font-size:var(--font-sm);color:var(--text-light);margin-top:4px">让 TA告诉你 4 个字母，输进去然后替 TA 答题</p>
+      </div>
+      <div class="rp-other-input">
+        <input id="other-type-input" maxlength="4" placeholder="ENFP" style="width:100%;padding:18px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-size:1.5rem;font-weight:800;text-align:center;background:var(--bg-card);color:var(--primary);letter-spacing:8px;text-transform:uppercase;outline:none;font-family:inherit"
+          oninput="this.value=this.value.toUpperCase().replace(/[^EISNTFJP]/g,'');document.getElementById('btn-start-other').disabled=this.value.length!==4"
+          onkeydown="if(event.key==='Enter')startOtherQuiz()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-sm);align-items:center">
+        <button class="btn btn-primary btn-lg" id="btn-start-other" onclick="startOtherQuiz()" disabled>🧩 开始替 TA 答题</button>
+        <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
+      </div>
+      <div class="rp-tips">💡 不知道 TA 的 MBTI？ 先让 TA 点「了解自己」测一下，TA 会告诉你结果的～</div>
+    </div>
+  `;
+  // Use a temporary screen or overlay
+  const temp = document.createElement('div');
+  temp.className = 'screen active';
+  temp.id = 'screen-other-input';
+  temp.innerHTML = html;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.body.insertBefore(temp, document.getElementById('screen-report').nextSibling);
+  // Clean up old
+  const old = document.getElementById('screen-other-input');
+  if(old && old !== temp) old.remove();
 }
 
-async function gistId() {
-  if (_gistId) return _gistId;
-  setSyncStatus('⌛ 连接中...', true);
-  try {
-    const r = await fetch(`${GH_API}?description=${GIST_DESC}&per_page=1`, {
-      headers: { 'Authorization': `Bearer ${_ghToken}` }
-    });
-    if (!r.ok) throw new Error('search failed ' + r.status);
-    const list = await r.json();
-    if (Array.isArray(list) && list.length) {
-      _gistId = list[0].id; localStorage.setItem('_gist_id', _gistId);
-      setSyncStatus('✅ 已连接', true); return _gistId;
-    }
-  } catch(e) { console.warn('gist search:', e.message); }
+function startOtherQuiz(){
+  const inp = document.getElementById('other-type-input');
+  if(!inp || inp.value.length !== 4) return;
+  const t = inp.value;
+  if(!/^[EISNTFJP]{4}$/.test(t)){to('请输入有效的 MBTI 类型');return}
+  S.selfType = t;
+  sk();
+  startQuiz('other');
+}
 
-  try {
-    const cr = await fetch(GH_API, {
-      method: 'POST', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ description: GIST_DESC, public: false, files: { [FILE]: { content: '{}' } } })
-    });
-    if (!cr.ok) throw new Error('create failed ' + cr.status);
-    const c = await cr.json();
-    if (!c || !c.id) throw new Error('no id from create');
-    _gistId = c.id; localStorage.setItem('_gist_id', _gistId);
-    setSyncStatus('✅ 数据库已创建', true); return _gistId;
-  } catch(e) {
-    console.warn('gist create:', e.message);
-    setSyncStatus('⚠️ 离线模式，数据仅存本地', false);
-    return null;
+// ===== TYPE PICKER =====
+const P={EI:null,SN:null,TF:null,JP:null};
+function pickD(el,d,v){sk();document.querySelectorAll(`.dim-opt[data-d="${d}"]`).forEach(e=>e.classList.remove('sel'));el.classList.add('sel');P[d]=v;updT()}
+function updT(){
+  if(Object.values(P).every(v=>v!==null)){
+    const t=P.EI+P.SN+P.TF+P.JP;
+    $('#tp-code').textContent=t;$('#tp-lbl').textContent=TI[t]?.name||'';
+    $('#tp-res').style.display='block';$('#btn-confirm-type').disabled=false;
+    S.selfType=t;
   }
 }
+function confirmSelfType(){if(!S.selfType)return;ck();showSelfReport(S.selfType)}
 
-async function readDB() {
-  const id = await gistId(); if (!id) { console.warn('no gist id'); return {}; }
-  const r = await fetch(`${GH_API}/${id}`, { headers: { 'Authorization': `Bearer ${_ghToken}` } });
-  if (!r.ok) { console.warn('Gist read failed', r.status); return {}; }
-  const g = await r.json();
-  if (!g.files || !g.files[FILE]) { console.warn('Gist missing file'); return {}; }
-  return JSON.parse(g.files[FILE].content || '{}');
+// ===== QUIZ =====
+function startQuiz(mode){
+  S.qi=0;S.answers=Array.from({length:16},()=>null);
+  renderQ(mode);
+  ss('screen-quiz');
 }
-
-async function writeDB(data) {
-  const id = await gistId(); if (!id) return;
-  const r = await fetch(`${GH_API}/${id}`, {
-    method: 'PATCH', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(data) } } })
-  });
-  if (!r.ok) console.warn('Gist write failed', r.status);
+function renderQ(mode){
+  const qi=S.qi,q=QS[qi],t=QS.length;
+  $('#qzf').style.width=`${(qi+1)/t*100}%`;$('#qcount').textContent=`${qi+1}/${t}`;
+  const lt=mode==='other'?q.left.replace(/我/g,'TA'):q.left;
+  const rt=mode==='other'?q.right.replace(/我/g,'TA'):q.right;
+  const sv=S.answers[qi];
+  const dots=[1,2,3,4,5].map(v=>`<div class="sc-opt${sv===v?' sel':''}" data-v="${v}" onclick="${mode}Ans(${v})"><div class="dot">${v}</div><div class="tag">${['非常','比较','中立','比较','非常'][v-1]}</div></div>`).join('');
+  $('#qzc').innerHTML=`<div class="qz-card"><span class="q-dim">${DN[q.dim]}</span><div class="q-em">${q.em}</div><div class="q-t">${lt}</div><div class="qz-opts"><div class="sc-scale"><div class="sc-poles"><span class="sp">${lt}</span><span class="sp rt">${rt}</span></div><div class="sc-options">${dots}</div></div></div></div>`;
+  const pn=$('#btn-qp'),nn=$('#btn-qn'),sb=$('#btn-qs');
+  if(pn)pn.style.visibility=qi===0?'hidden':'visible';
+  if(nn){nn.style.display=qi===t-1?'none':'inline-flex';sb.style.display=qi===t-1?'inline-flex':'none'}
 }
-
-function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<5;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
-
-const API = {
-  async create(t, a) {
-    const code = glc();
-    const room = { selfType: t, selfAnswers: a, status: 'created', otherAnswers: null, createdAt: Date.now() };
-    localStorage.setItem(`rm_${code}`, JSON.stringify(room));
-    try {
-      const db = await readDB();
-      db[code] = room;
-      await writeDB(db);
-    } catch(e) { console.warn('Gist sync failed', e); }
-    return { code };
-  },
-  async get(c) {
-    const local = localStorage.getItem(`rm_${c}`);
-    if (local) {
-      const parsed = JSON.parse(local);
-      // 即使有本地数据，也查询 Gist 看是否有更新
-      try {
-        const db = await readDB();
-        if (db[c] && db[c].status === 'completed' && parsed.status !== 'completed') {
-          localStorage.setItem(`rm_${c}`, JSON.stringify(db[c]));
-          return db[c];
-        }
-      } catch(e) {}
-      return parsed;
-    }
-    try {
-      const db = await readDB();
-      if (db[c]) return db[c];
-    } catch(e) {}
-    return null;
-  },
-  async submit(c, a) {
-    // 始终尝试从 Gist 读取最新数据
-    try {
-      const db = await readDB();
-      if (db[c]) {
-        const rm = db[c];
-        if (rm.status !== 'created') throw Error('ALREADY_DONE');
-        rm.otherAnswers = a; rm.status = 'completed';
-        db[c] = rm;
-        await writeDB(db);
-        localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
-        return { success: true };
-      }
-    } catch(e) {
-      if (e.message === 'ALREADY_DONE') throw e;
-      // 如果 Gist 读不到，尝试本地
-    }
-    // 降级：尝试本地
-    const local = localStorage.getItem(`rm_${c}`);
-    if (local) {
-      const rm = JSON.parse(local);
-      if (rm.status !== 'created') throw Error('ALREADY_DONE');
-      rm.otherAnswers = a; rm.status = 'completed';
-      localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
-      return { success: true };
-    }
-    throw Error('ROOM_NOT_FOUND');
-  }
-};
+function selfAns(v){S.answers[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<15)qNext()},200)}
+function otherAns(v){S.answers[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<15)qNext()},200)}
+function qNext(){if(S.answers[S.qi]===null){to('请选择程度～');return}if(S.qi<15){S.qi++;renderQ(S.mode)}}
+function qPrev(){if(S.qi>0){S.qi--;renderQ(S.mode)}}
 
 function calcMBTI(a){
   const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
   for(const d of dims){
-    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let sum=0,cnt=0;
-    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){sum+=a[i];cnt++}});
-    // 5-level: 1=strongly left, 5=strongly right. <=2.5→left, >2.5→right
-    const avg=cnt?sum/cnt:0;
-    t+=cnt?avg<=2.5?p1[d]:{'EI':'I','SN':'N','TF':'F','JP':'P'}[d]:p1[d];
+    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let s=0,c=0;
+    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){s+=a[i];c++}});
+    const avg=c?s/c:0;
+    t+=c?avg<=2.5?p1[d]:{'EI':'I','SN':'N','TF':'F','JP':'P'}[d]:p1[d];
   }
   return t;
 }
 
-// ============================================================
-// NAV
-// ============================================================
-function goInitiator(){sk();S.mode='initiator';ss('screen-choose')}
-function goOther(){
-  sk();S.mode='other';S.code=null;
-  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
-  $('ce').textContent='';$('btn-cv').disabled=true;
-  $('screen-other-input').querySelector('h2').textContent='输入密令';
-  $('screen-other-input').querySelector('.ot-hdr p').textContent='把 TA 给你的 5 位密令输进去～';
-  $('btn-cv').textContent='🔍 开始答题';
-  ss('screen-other-input');
-  const u=new URLSearchParams(window.location.search);
-  const cd=u.get('code');
-  const tp=u.get('type');
-  // Direct link from QR: has both code and type, skip verification, go straight to quiz
-  if(cd && tp && /^[EISNTFJP]{4}$/.test(tp)){
-    S.code=cd.toUpperCase();S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
-    ck();startOQ(tp);return;
+function calcScores(a){
+  // Returns percentage for first pole (E/S/T/J) per dimension
+  const dims=['EI','SN','TF','JP'];
+  const r={};
+  for(const d of dims){
+    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let s=0,c=0;
+    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){s+=a[i];c++}});
+    const avg=c?s/c:0;
+    // 1=100% left, 5=100% right. Convert to percentage for left pole
+    r[d]=Math.round(((5-avg)/4)*100);
   }
-  if(cd)fillCode(cd.toUpperCase());
+  return r;
 }
-function goCheck(){
-  sk();S.mode='checker';
-  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
-  $('ce').textContent='';$('btn-cv').disabled=true;
-  $('screen-other-input').querySelector('h2').textContent='查询结果';
-  $('screen-other-input').querySelector('.ot-hdr p').textContent='输入之前生成的密令，查看对比报告～';
-  $('btn-cv').textContent='🔍 查看报告';
-  ss('screen-other-input');
-}
-function goKnownType(){sk();ss('screen-type')}
-function goQuiz(){sk();startSQ()}
 
-// ============================================================
-// TYPE PICKER
-// ============================================================
-function pickD(el,d,v){
-  sk();
-  document.querySelectorAll(`.dim-opt[data-d="${d}"]`).forEach(e=>e.classList.remove('sel'));
-  el.classList.add('sel');P[d]=v;updT();
+function qSubmit(){
+  if(S.answers.some(a=>a===null)){to('请完成所有题目～');return}
+  const type = calcMBTI(S.answers);
+  S.selfType = type;
+  ck();
+  if(S.mode === 'self') showSelfReport(type, S.answers);
+  else showCompareReport(S.selfType, S.answers);
 }
-function updT(){
-  if(Object.values(P).every(v=>v!==null)){
-    const t=P.EI+P.SN+P.TF+P.JP;
-    $('tp-code').textContent=t;$('tp-lbl').textContent=TN[t]||'';
-    $('tp-res').style.display='block';$('btn-confirm-type').disabled=false;S.selfType=t;
+
+// ===== SELF REPORT =====
+function showSelfReport(type, answers){
+  const info = TI[type] || {name:'',emoji:'🪞',t:'复杂而独特的你',g:'',w:''};
+  const scores = answers ? calcScores(answers) : null;
+  const dims=['EI','SN','TF','JP'];
+
+  let dimHtml = '';
+  if(scores){
+    dims.forEach((d,i)=>{
+      const pct = scores[d];
+      const lt = DP[d][0], rt = DP[d][1];
+      const pole = pct >= 50 ? lt : rt;
+      const barColor = pct >= 50 ? 'var(--primary)' : 'var(--secondary)';
+      dimHtml += `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:var(--font-sm);font-weight:600"><span>${lt}</span><span>${rt}</span></div>
+        <div class="rp-dim-bar"><div class="f" style="width:${pct}%;background:${barColor};border-radius:3px"></div></div>
+        <div style="text-align:center;font-size:var(--font-sm);font-weight:700;color:var(--text)">偏${pole} ${Math.max(pct,100-pct)}%</div>
+      </div>`;
+    });
   }
-}
-async function confirmType(){
-  if(!S.selfType)return;ck();
-  $('screen-gen').querySelector('.gen-t').textContent='正在生成人格镜像...';
-  $('screen-gen').querySelector('.gen-h').textContent='把你的自我画像装进漂流瓶✨';
-  $('genf').style.width='0%';setTimeout(()=>$('genf').style.width='50%',200);setTimeout(()=>$('genf').style.width='80%',400);
-  ss('screen-gen');
-  try{
-    const r=await API.create(S.selfType,null);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;localStorage.setItem('_my_room',r.code);
-    setTimeout(()=>showCode(),500);
-  }catch(e){console.error(e);$('genf').style.width='0%';ni('📮','创建失败','镜像暂时无法生成...请检查网络后重试。')}
+
+  const report = `
+    <div class="rp-header">
+      <div class="em">${info.emoji}</div>
+      <div class="type">${type}</div>
+      <div class="type-name">${info.name}</div>
+      <div class="tagline">「${info.t}」</div>
+    </div>
+
+    ${answers ? `
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">📊</span> 维度倾向</div>
+      ${dimHtml}
+    </div>
+    ` : ''}
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🔮</span> 人格画像</div>
+      <p>${info.t}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">⭐</span> 你的光芒</div>
+      <p>${info.g}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🌱</span> 成长空间</div>
+      <p>${info.w}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🔎</span> 四维详解</div>
+      ${dims.map(d=>`<div style="margin-bottom:10px">
+        <div style="font-weight:700;font-size:var(--font-sm);color:var(--primary-dark)">${DN[d]}</div>
+        <p style="font-size:var(--font-sm);margin-top:2px">${MT[type[dims.indexOf(d)]]?.desc||''}</p>
+      </div>`).join('')}
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🤝</span> 相处之道</div>
+      <p>${getRelationTip(type)}</p>
+    </div>
+
+    ${answers ? `
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">👀</span> 想知道别人眼中的你吗？</div>
+      <p>让身边的朋友打开这个页面，选「评价他人」<br>输入你的 MBTI 类型 <strong>${type}</strong>，替 TA 答题<br>就能看到你眼中的自己 vs 别人眼中的你的对比分析 ✨</p>
+    </div>
+    ` : ''}
+  `;
+
+  $('#report-content').innerHTML = report;
+  cl();cfeti(5000);
+  ss('screen-report');
 }
 
-// ============================================================
-// SELF QUIZ
-// ============================================================
-function startSQ(){
-  S.qi=0;S.ans=Array.from({length:QS.length},()=>null);
-  renderQ('qzc','qzf','qcount',S.ans,'self');
-  ss('screen-quiz');
-}
-function renderQ(cid,pid,cid2,ans,mode){
-  const qi=S.qi,q=QS[qi],t=QS.length;
-  $(pid).style.width=`${(qi+1)/t*100}%`;$(cid2).textContent=`${qi+1}/${t}`;
-  const leftT=mode==='other'?q.left.replace(/我/g,'TA'):q.left;
-  const rightT=mode==='other'?q.right.replace(/我/g,'TA'):q.right;
-  const selV=ans[qi];
-  const dots=[1,2,3,4,5].map(v=>`<div class="sc-opt${selV===v?' sel':''}" data-v="${v}" onclick="${mode==='self'?'sA':'oA'}(${v})"><div class="sc-dot">${v}</div><div class="sc-tag">${['非常','比较','中立','比较','非常'][v-1]}</div></div>`).join('');
-  $(cid).innerHTML=`<div class="qz-card"><span class="q-dim">${DN[q.dim]}</span><div class="q-em">${q.em}</div><div class="qz-opts" style="margin-bottom:0"><div class="sc-scale"><div class="sc-poles"><span class="sp">${leftT}</span><span class="sp rt">${rightT}</span></div><div class="sc-options">${dots}</div></div></div></div>`;
-  const pn=mode==='self'?$('btn-qp'):$('btn-op'),nn=mode==='self'?$('btn-qn'):$('btn-on'),sb=mode==='self'?$('btn-qs'):$('btn-os');
-  if(pn)pn.style.visibility=qi===0?'hidden':'visible';
-  if(nn){nn.style.display=qi===t-1?'none':'inline-flex';sb.style.display=qi===t-1?'inline-flex':'none'}
-}
-function sA(v){S.ans[S.qi]=v;sk();document.querySelectorAll('#qzc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)qNext()},200)}
-function qNext(){if(S.ans[S.qi]===null){to('请选择程度～');return}if(S.qi<QS.length-1){S.qi++;renderQ('qzc','qzf','qcount',S.ans,'self')}}
-function qPrev(){if(S.qi>0){S.qi--;renderQ('qzc','qzf','qcount',S.ans,'self')}}
-async function qSubmit(){
-  if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}ck();
-  S.selfType=calcMBTI(S.ans);$('screen-gen').querySelector('.gen-t').textContent=`你的类型是 ${S.selfType}！`;
-  $('screen-gen').querySelector('.gen-h').textContent=`${TN[S.selfType]||''} · 正在生成镜像邀请...`;
-  $('genf').style.width='0%';setTimeout(()=>$('genf').style.width='50%',200);setTimeout(()=>$('genf').style.width='80%',400);ss('screen-gen');
-  try{
-    const r=await API.create(S.selfType,S.ans);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;
-    setTimeout(()=>showCode(),500);
-  }catch(e){console.error(e);$('genf').style.width='0%';ni('📮','创建失败','镜像暂时无法生成...请检查网络后重试。')}
+// ===== COMPARE REPORT =====
+function showCompareReport(selfType, otherAnswers){
+  const otherType = calcMBTI(otherAnswers);
+  const scores = calcScores(otherAnswers);
+  const dims=['EI','SN','TF','JP'];
+  const info = TI[selfType] || TI['ENFP'];
+  const otherInfo = TI[otherType] || TI['ENFP'];
+
+  let matchCount = 0;
+  let dimHtml = '';
+  dims.forEach((d,i)=>{
+    const sp = selfType[i], op = otherType[i];
+    const isMatch = sp === op;
+    if(isMatch) matchCount++;
+    const pct = scores[d];
+    const lt = DP[d][0], rt = DP[d][1];
+    const pole = pct >= 50 ? lt : rt;
+    const spLabel = MT[sp]?.name||sp, opLabel = MT[op]?.name||op;
+    dimHtml += `<div class="rp-dim">
+      <span class="dl">${DN[d]}</span>
+      <span class="dv ${isMatch?'match':'mis'}">${isMatch?'✅ '+spLabel:'你'+spLabel+' · TA看'+opLabel}</span>
+    </div>`;
+  });
+
+  const matchPct = Math.round(matchCount/4*100);
+  const analysis = generateAnalysis(selfType, otherType);
+
+  // Get self descriptions
+  const selfInfo = TI[selfType];
+
+  const report = `
+    <div class="rp-header">
+      <div class="em">🪞</div>
+      <div class="type">${selfType} vs ${otherType}</div>
+      <div class="type-name">自我认知 vs 他人眼中</div>
+    </div>
+
+    <div class="rp-sec" style="text-align:center">
+      <div class="rp-score"><span class="num">${matchPct}%</span><div class="lbl">维度一致率（${matchCount}/4）</div></div>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">📊</span> 逐维对比</div>
+      ${dimHtml}
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">💡</span> 深度解读</div>
+      <p>${analysis}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🔮</span> TA 心目中你的样子</div>
+      <p>在 TA 眼中，你是 <strong>${otherType} ${otherInfo.name}</strong> 类型。</p>
+      <p>${otherInfo.t}</p>
+    </div>
+
+    <div class="rp-sec">
+      <div class="sec-t"><span class="ic">🪞</span> 你眼中的自己</div>
+      <p>你认为自己是 <strong>${selfType} ${selfInfo.name}</strong> 类型。</p>
+      <p>${selfInfo.t}</p>
+    </div>
+
+    <div class="rp-sec" style="text-align:center">
+      <div class="sec-t"><span class="ic">💝</span></div>
+      <p>${matchPct >= 75 ? '你们真的很了解彼此！这份默契让人羡慕 ✨' : matchPct >= 50 ? '有一些默契，但还有更多惊喜等着你去发现 🌱' : '每个人都是一面多棱镜，在不同角度下折射出不同的光。这些差异不是对错，而是你丰富人格的体现 🌈'}</p>
+    </div>
+  `;
+
+  $('#report-content').innerHTML = report;
+  cl();cfeti(5000);
+  ss('screen-report');
 }
 
-// ============================================================
-// CODE SCREEN
-// ============================================================
-function showCode(){
-  ss('screen-code');ck();
-  const d=$('cd-disp');d.innerHTML='';
-  for(const c of S.code){const e=document.createElement('div');e.className='cd-char';e.textContent=c;d.appendChild(e)}
-  const qr=$('qr-c');qr.innerHTML='';
-  const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
-  try{if(typeof QRCode!=='undefined')new QRCode(qr,{text:u,width:160,height:160,colorDark:'#7C5CBF',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});else throw Error('')}catch(e){qr.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(u)}" alt="QR" style="border-radius:8px">`}
-  pollStart();
-}
-function copyLink(){
-  const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
-  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(l).then(()=>to('链接已复制！✨'));
-  else{const t=document.createElement('textarea');t.value=l;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);to('链接已复制！✨')}
-}
-function pollStart(){
-  pollStop();
-  S.timer=setInterval(async()=>{
-    try{
-      const d=await API.get(S.code);
-      if(d&&d.status==='completed'){pollStop();S.roomData=d;showRes()}
-    }catch(e){}
-  },CFG.POLL_MS);
-}
-function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
-async function checkResults(){
-  if(!S.code){to('没有密令');return}
-  const d=await API.get(S.code);
-  if(d&&d.status==='completed'){pollStop();S.roomData=d;showRes()}
-  else to('还没收到评价，再等等～');
-}
-
-// ============================================================
-// RESULTS
-// ============================================================
-function showRes(){
-  const rm=S.roomData||S.room;if(!rm||!rm.selfType)return;
-  const st=rm.selfType,oa=rm.otherAnswers,ot=oa?calcMBTI(oa):'????';
-  cl();cfeti(4000);
-  const dims=['EI','SN','TF','JP'];let sc=[],mt=0;
+// ===== ANALYSIS =====
+function generateAnalysis(self, other){
+  const dims=['EI','SN','TF','JP'];
+  const diffs = [];
   for(let i=0;i<4;i++){
-    const d=dims[i],sp=st[i],op=ot[i],is=sp===op;
-    if(is)mt++;
-    sc.push({d,sp,op,is});
-  }
-  const pct=Math.round(mt/4*100);
-  const pl=(t,d)=>{const i=dims.indexOf(d);const l=t[i];return{'E':'外向','I':'内向','S':'感觉','N':'直觉','T':'理性','F':'感性','J':'计划','P':'随性'}[l]||l};
-  const an=sc.filter(s=>!s.is).length?`${sc.filter(s=>!s.is).map(s=>`<strong>${DN[s.d]}</strong>维度有差异：你 ${pl(st,s.d)}，TA 看你 ${pl(ot,s.d)}`).join('<br>')}<br><br>每个人都是一面多棱镜，在不同角度下折射出不同的光。这些差异不是对错，而是你丰富人格的体现 ✨`:'🎯 四个维度全部一致！你在他人眼中展现出的样子，就是你内心真实的自己 ✨';
-  $('rs-c').innerHTML=`
-    <div class="rs-hero"><div class="emoji">🪞</div><h2>人格镜像对比</h2><div class="tc"><div class="tb"><div class="lbl">自我认知</div><div class="code">${st}</div></div><div class="vs">VS</div><div class="tb"><div class="lbl">他人眼中</div><div class="code">${ot}</div></div></div><div style="font-size:var(--font-lg);opacity:.9">维度吻合度 ${pct}% (${mt}/4)</div></div>
-    <div class="sec-t">逐维对比</div>
-    ${sc.map(s=>`<div class="dc"><div class="dh"><span class="dn">${DN[s.d]}</span><span class="dr ${s.is?'match':'mis'}">${s.is?'✅ 一致':'❌ 有差异'}</span></div><div class="db"><span class="sp">我：${pl(st,s.d)}</span><span class="so">TA看：${pl(ot,s.d)}</span></div></div>`).join('')}
-    <div class="an-box"><div class="icon">💡</div>${an}</div>`;
-  ss('screen-results');
-}
-
-// ============================================================
-// OTHER: CODE INPUT
-// ============================================================
-function ciIn(inp,idx){
-  let v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');inp.value=v;
-  if(v)inp.classList.add('filled');else inp.classList.remove('filled');
-  if(v&&idx<CFG.CODE_LEN-1){const n=document.querySelector(`.ci-box[data-idx="${idx+1}"]`);if(n)n.focus()}
-  $('btn-cv').disabled=!Array.from(document.querySelectorAll('.ci-box')).every(i=>i.value.length===1);
-}
-function ciKey(e,inp,idx){if(e.key==='Backspace'&&!inp.value&&idx>0){const p=document.querySelector(`.ci-box[data-idx="${idx-1}"]`);if(p){p.focus();p.value='';p.classList.remove('filled')}}if(e.key==='Enter')verifyCode()}
-function fillCode(cd){
-  if(cd.length!==CFG.CODE_LEN)return;
-  const ins=document.querySelectorAll('.ci-box');
-  for(let i=0;i<cd.length&&i<ins.length;i++){ins[i].value=cd[i];ins[i].classList.add('filled')}
-  $('btn-cv').disabled=false;setTimeout(()=>verifyCode(),300);
-}
-async function verifyCode(){
-  const ins=document.querySelectorAll('.ci-box');let cd='';ins.forEach(i=>cd+=i.value.toUpperCase());
-  if(cd.length!==CFG.CODE_LEN)return;
-  const isCh=S.mode==='checker';$('btn-cv').disabled=true;$('btn-cv').textContent='⏳ 验证中...';
-  const d=await API.get(cd);
-  if(isCh){
-    if(!d){ni('📮','密令无效','不存在或已过期。如果是跨设备，请用结果码导入。');rv();er();return}
-    if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
-    S.code=cd;S.room=d;showRes();return;
-  }
-  if(!d){
-    // Maybe it's a code from another device - try URL type param
-    const tp=new URLSearchParams(window.location.search).get('type');
-    if(tp&&/^[EISNTFJP]{4}$/.test(tp)){
-      S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
-      ck();startOQ(tp);return;
+    if(self[i] !== other[i]){
+      const d = dims[i];
+      diffs.push(`<strong>${DN[d]}</strong>维度上，你觉得自己偏${MT[self[i]]?.name||self[i]}，但 TA 觉得你更像${MT[other[i]]?.name||other[i]}。`);
     }
-    ni('📮','密令无效','请确保用 TA 分享的链接扫码打开，或在同一设备上操作。跨设备请用结果码导入。');
-    rv();er();return
   }
-  if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
-  if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
-  S.code=cd;S.room=d;ck();startOQ(d.selfType);
-}
-function rv(){$('btn-cv').textContent=S.mode==='checker'?'🔍 查看报告':'🔍 开始答题';$('btn-cv').disabled=false}
-
-// ============================================================
-// OTHER QUIZ
-// ============================================================
-function startOQ(st){
-  S.qi=0;S.ans=Array.from({length:QS.length},()=>null);
-  $('oq-banner').innerHTML=`<div class="emoji">👀</div><h2>替 TA 描绘人格画像</h2><p>TA 的类型是 <strong>${st}</strong>（${TN[st]||''}）<br>以下题请根据你对 TA 的观察回答～</p>`;
-  renderQ('oqc','oqzf','ocount',S.ans,'other');ss('screen-other-quiz');
-}
-function oA(v){S.ans[S.qi]=v;sk();document.querySelectorAll('#oqc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#oqc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)oNext()},200)}
-function oNext(){if(S.ans[S.qi]===null){to('请选择程度～');return}if(S.qi<QS.length-1){S.qi++;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
-function oPrev(){if(S.qi>0){S.qi--;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
-function encodeResult(ans){
-  // Encode 16 answers (1-5 each) as a compact code: R:3-5-2-1-...
-  return 'R:'+ans.join('-');
-}
-async function oSubmit(){
-  if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
-  $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
-  try{await API.submit(S.code,S.ans)}catch(e){}
-  $('cel-d').innerHTML = '🎉 评价完成！<br>TA 那边会自动收到结果 ✨';
-  cl();cfeti(5000);ss('screen-cel');
-}
-
-function resetAll(){
-  pollStop();
-  Object.assign(S,{mode:null,selfType:null,selfAns:null,code:null,room:null,qi:0,ans:[],timer:null});
-  for(const k of Object.keys(P))P[k]=null;
-  document.querySelectorAll('.dim-opt').forEach(e=>e.classList.remove('sel'));
-  $('tp-res').style.display='none';$('btn-confirm-type').disabled=true;
-  $('btn-os').disabled=false;$('btn-os').textContent='✅ 提交评价';
-  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
-  ss('screen-landing');
-}
-
-// ============================================================
-// 跨标签页同步 → 监听 localStorage 变化
-// ============================================================
-window.addEventListener('storage', (e) => {
-  if (e.key && e.key.startsWith('rm_') && S.code && e.key === 'rm_'+S.code) {
-    try {
-      const rm = JSON.parse(e.newValue);
-      if (rm && rm.status === 'completed') {
-        pollStop(); S.roomData = rm; showRes();
-      }
-    } catch(ex) {}
+  if(diffs.length === 0){
+    return '🎯 四个维度全部一致！你在他人眼中展现出的样子，就是你内心真实的自己。这种内外一致性非常珍贵——你活得真实、通透，身边的人看到的也是真正的你。';
   }
-});
+  let r = '你们的认知存在一些有趣的差异：<br><br>'+diffs.join('<br><br>');
+  r += '<br><br>每个人都是一面多棱镜，在不同角度下折射出不同的光。这些差异不是谁的"错"，而是你丰富人格在不同人眼中的真实投影。';
+  return r;
+}
 
-// ============================================================
-// INIT
-// ============================================================
+function getRelationTip(type){
+  const tips = {
+    'ENFJ':'你需要深度的情感交流和认可。给你真诚的赞美和信任，你会成为最可靠的伙伴。',
+    'ENFP':'你需要自由和新鲜感。别试图控制你，陪你去冒险就够了。你的快乐会感染所有人。',
+    'ENTJ':'你需要尊重和目标感。给你清晰的规划和自主权，你会爆发出惊人的能量。',
+    'ENTP':'你需要智力上的刺激。和你辩论、给你新点子，你会玩得很开心。',
+    'ESFJ':'你需要被需要的感觉。给你表达关心的机会，你会用温暖回报整个世界。',
+    'ESFP':'你需要快乐和被关注。给你舞台和掌声，你就是最闪亮的那颗星。',
+    'ESTJ':'你需要秩序和效率。给你明确的目标和规则，你会是团队里最可靠的人。',
+    'ESTP':'你需要挑战和行动。别让你无聊，有趣的事加上一点冒险你就停不下来。',
+    'INFJ':'你需要深度和理解。给你真诚的倾听和陪伴，你会展现出惊人的洞察力。',
+    'INFP':'你需要真诚和诗意。给你温柔和信任，你会把内心最美的世界分享出来。',
+    'INTJ':'你需要尊重和空间。别打扰你的专注，但也别忘了让你走出自己的世界吃饭。',
+    'INTP':'你需要思考的自由。给你时间和知识，你会还以一个精彩的洞见。',
+    'ISFJ':'你需要被看见和感谢。你默默付出的一切，一句"谢谢"就能让你开心很久。',
+    'ISFP':'你需要温柔和理解。别催你，给你时间和空间，你的美会自然绽放。',
+    'ISTJ':'你需要规律和信赖。别打乱你的计划，答应了的事一定要做到。',
+    'ISTP':'你需要自由和空间。给你动手的机会，别问太多问题，你会默默搞定一切。',
+  };
+  return tips[type] || '理解你的性格类型是第一步，接纳它、善用它，你会在生活中找到属于自己的节奏。';
+}
+
+// ===== INIT =====
 document.addEventListener('DOMContentLoaded',()=>{
-  const u=new URLSearchParams(window.location.search);
-  const code=u.get('code');
-  const type=u.get('type');
-  // 扫码/链接直达：code+type → 跳过验证直接答题
-  if(code && type && /^[EISNTFJP]{4}$/.test(type)){
-    S.code=code.toUpperCase();S.roomData={selfType:type,selfAnswers:null,otherAnswers:null,status:'created'};
-    setTimeout(()=>{ck();startOQ(type)},300);
-    return;
-  }
-  // 手动输入密令
-  if(code&&code.length===CFG.CODE_LEN)goOther();
   console.log('🪞 人格镜像已加载');
 });
 </script>
