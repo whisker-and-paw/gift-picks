@@ -263,7 +263,7 @@ button{cursor:pointer;background:none;padding:0}
         <span class="arrow">→</span>
       </button>
     </div>
-    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a></div>
+    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a>　<a onclick="showImport()">📋 有结果码？导入对比</a></div>
   </div>
 </div>
 
@@ -410,19 +410,38 @@ button{cursor:pointer;background:none;padding:0}
   </div>
 </div>
 
+<!-- IMPORT RESULT -->
+<div class="screen" id="screen-import">
+  <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center">
+    <span style="font-size:3rem">📋</span>
+    <h2 style="font-size:var(--font-lg);font-weight:800;color:var(--text)">导入结果码</h2>
+    <p style="font-size:var(--font-sm);color:var(--text-light);line-height:1.6">把 TA 发给你的结果码粘贴进来<br>就能看到人格对比报告啦～</p>
+    <textarea id="import-input" style="width:100%;max-width:360px;height:80px;padding:14px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-family:monospace;font-size:1rem;resize:none;text-align:center;background:var(--bg-card);color:var(--text);outline:none" placeholder="在此粘贴结果码..."></textarea>
+    <div class="ci-acts">
+      <button class="btn btn-primary btn-lg" id="btn-import" onclick="importResult()" disabled>🔍 查看对比报告</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
+    </div>
+  </div>
+</div>
+
 <!-- CELEBRATION -->
 <div class="screen" id="screen-cel">
   <div class="content">
     <span class="cel-em">🎉</span>
     <div class="cel-t">评价已提交！</div>
-    <div class="cel-d">你的人格观察已发送回去～<br>TA 很快就能看到对比结果 ✨</div>
-    <div class="cel-acts"><button class="btn btn-primary" onclick="resetAll()">🏠 回到首页</button></div>
+    <div class="cel-d" id="cel-d">你的人格观察已发送回去～<br>把下面的结果码发给 TA，TA 就能看到对比了 ✨</div>
+    <div style="background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);text-align:center;box-shadow:var(--shadow-sm);width:100%;max-width:320px;display:none" id="cel-result-area">
+      <div style="font-size:var(--font-sm);color:var(--text-light);margin-bottom:8px">📋 把结果码发给 TA</div>
+      <div style="font-size:1.1rem;font-weight:900;color:var(--primary);word-break:break-all;background:var(--bg);padding:12px;border-radius:var(--radius-sm);font-family:monospace;letter-spacing:1px" id="cel-result-code">-</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="copyResultCode()">📋 复制结果码</button>
+    </div>
+    <div class="cel-acts"><button class="btn btn-secondary" onclick="resetAll()">🏠 回到首页</button></div>
   </div>
 </div>
 
 <script>
 // ============================================================
-const CFG = { API_BASE:'https://gift-picks.2656153330-35a.workers.dev', CODE_LEN:5, POLL_MS:5000, DEMO:false };
+const CFG = { API_BASE:'https://gift-picks.2656153330-35a.workers.dev', CODE_LEN:5, POLL_MS:5000, DEMO:true };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -611,12 +630,12 @@ function showCode(){
   const d=$('cd-disp');d.innerHTML='';
   for(const c of S.code){const e=document.createElement('div');e.className='cd-char';e.textContent=c;d.appendChild(e)}
   const qr=$('qr-c');qr.innerHTML='';
-  const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}`;
+  const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
   try{if(typeof QRCode!=='undefined')new QRCode(qr,{text:u,width:160,height:160,colorDark:'#7C5CBF',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});else throw Error('')}catch(e){qr.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(u)}" alt="QR" style="border-radius:8px">`}
   pollStart();
 }
 function copyLink(){
-  const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}`;
+  const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}&type=${S.selfType}`;
   if(navigator.clipboard?.writeText)navigator.clipboard.writeText(l).then(()=>to('链接已复制！✨'));
   else{const t=document.createElement('textarea');t.value=l;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);to('链接已复制！✨')}
 }
@@ -676,6 +695,14 @@ async function verifyCode(){
       if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
       S.code=cd;S.room=d;showRes();return;
     }
+    // Cross-device fallback: if room not found in localStorage, get type from URL
+    if(!d && CFG.DEMO){
+      const tp=new URLSearchParams(window.location.search).get('type');
+      if(tp && /^[EISNTFJP]{4}$/.test(tp)){
+        S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
+        ck();startOQ(tp);return;
+      }
+    }
     if(!d){ni('📮','密令无效','不存在或已过期');rv();er();return}
     if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
     if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
@@ -695,16 +722,68 @@ function startOQ(st){
 function oA(v){S.ans[S.qi]=v;sk();document.querySelectorAll('#oqc .sc-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#oqc .sc-opt[data-v="${v}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)oNext()},200)}
 function oNext(){if(S.ans[S.qi]===null){to('请选择程度～');return}if(S.qi<QS.length-1){S.qi++;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
 function oPrev(){if(S.qi>0){S.qi--;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
+function encodeResult(ans){
+  // Encode 16 answers (1-5 each) as a compact code: R:3-5-2-1-...
+  return 'R:'+ans.join('-');
+}
 async function oSubmit(){
   if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
   $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
-  try{await API.submit(S.code,S.ans);cl();cfeti(5000);ss('screen-cel')}
-  catch(e){console.error(e);ni('📮','提交失败','提交出问题了，请重试。');er();$('btn-os').disabled=false;$('btn-os').textContent='✅ 提交评价'}
+  try{
+    await API.submit(S.code,S.ans);
+    const rc=encodeResult(S.ans);
+    $('cel-result-code').textContent=rc;
+    $('cel-result-area').style.display='block';
+    cl();cfeti(5000);ss('screen-cel');
+  }catch(e){
+    // Still show result code even if API fails (DEMO cross-device)
+    const rc=encodeResult(S.ans);
+    $('cel-result-code').textContent=rc;
+    $('cel-result-area').style.display='block';
+    $('cel-d').innerHTML='小瓶暂时漂不回去～<br>把结果码发给 TA，让 TA 手动导入吧 📋';
+    cl();cfeti(5000);ss('screen-cel');
+    console.error(e);
+  }
+}
+function copyResultCode(){
+  const t=$('cel-result-code').textContent;
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>to('结果码已复制 ✅'));
+  else{const e=document.createElement('textarea');e.value=t;e.style.position='fixed';e.style.opacity='0';document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);to('结果码已复制 ✅')}
 }
 
 // ============================================================
 // RESET
 // ============================================================
+function showImport(){
+  sk();$('import-input').value='';$('btn-import').disabled=true;ss('screen-import');
+}
+$('import-input')?.addEventListener('input',function(){
+  $('btn-import').disabled=!this.value.trim().startsWith('R:');
+});
+function importResult(){
+  const raw=$('import-input').value.trim();
+  if(!raw.startsWith('R:')){to('格式不对～请粘贴完整的结果码');return}
+  const nums=raw.slice(2).split('-').map(Number);
+  if(nums.length!==16||nums.some(n=>isNaN(n)||n<1||n>5)){to('结果码数据异常，请检查');return}
+  // Find the initiator's room in localStorage
+  const allKeys=Object.keys(localStorage).filter(k=>k.startsWith('room_'));
+  let found=null;
+  for(const k of allKeys){
+    try{
+      const rm=JSON.parse(localStorage.getItem(k));
+      if(rm&&rm.selfType&&rm.status==='created'){
+        found=rm;break;
+      }
+    }catch(e){}
+  }
+  if(found){
+    found.otherAnswers=nums;found.status='completed';
+    S.room=found;showRes();
+  }else{
+    // No room found locally - try last used room
+    ni('📮','没找到本地数据','先把你的密令保存在这个浏览器上再导入结果码～<br>或者用「查询结果」功能输入你的密令先加载数据。');
+  }
+}
 function resetAll(){
   pollStop();
   Object.assign(S,{mode:null,selfType:null,selfAns:null,code:null,room:null,qi:0,ans:[],timer:null});
@@ -721,8 +800,12 @@ function resetAll(){
 // ============================================================
 document.addEventListener('DOMContentLoaded',()=>{
   const u=new URLSearchParams(window.location.search);
-  if(u.get('code')&&u.get('code').length===CFG.CODE_LEN)goOther();
+  if(u.get('code')&&u.get('code').length===CFG.CODE_LEN){
+    // Check if it has a result code (R: prefix in a different param or in hash)
+    goOther();
+  }
   console.log('🪞 人格镜像已加载');
+  if(CFG.DEMO)console.log('📮 Demo模式：数据存本地，跨设备请用结果码');
 });
 </script>
 </body>
