@@ -242,6 +242,7 @@ button{cursor:pointer;background:none;padding:0}
 </div>
 
 <div id="tc"></div>
+<div id="sync-status" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:20px;background:var(--bg-card);box-shadow:var(--shadow-md);font-size:12px;font-weight:600;z-index:150;display:none;transition:opacity .3s"></div>
 <canvas id="confetti-canvas"></canvas>
 
 <!-- LANDING -->
@@ -494,24 +495,52 @@ function cfeti(d=4000){
 const GH_API = 'https://api.github.com/gists';
 const GIST_DESC = 'gift-picks-db';
 const FILE = 'db.json';
-let _gistId = localStorage.getItem('_gist_id');
+// ★★★ 清除旧 Gist 缓存，用新 Token 重建 ★★★
+localStorage.removeItem('_gist_id');
+let _gistId = null;
 let _ghToken = localStorage.getItem('_gh_token') || atob('Z2hwXzAwRWlzdm5oOXV2ZlJicWY5Y3hmM3BXSkMxSk15aDRiM0p1bA==');
 if (!localStorage.getItem('_gh_token')) localStorage.setItem('_gh_token', _ghToken);
 
+function setSyncStatus(msg, ok) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? 'var(--match)' : 'var(--mismatch)';
+  el.style.display = 'block';
+  clearTimeout(el._hide);
+  el._hide = setTimeout(() => el.style.display = 'none', 4000);
+}
+
 async function gistId() {
   if (_gistId) return _gistId;
-  const r = await fetch(`${GH_API}?description=${GIST_DESC}&per_page=1`, {
-    headers: { 'Authorization': `Bearer ${_ghToken}` }
-  });
-  const list = await r.json();
-  if (Array.isArray(list) && list.length) {
-    _gistId = list[0].id; localStorage.setItem('_gist_id', _gistId); return _gistId;
+  setSyncStatus('⌛ 连接中...', true);
+  try {
+    const r = await fetch(`${GH_API}?description=${GIST_DESC}&per_page=1`, {
+      headers: { 'Authorization': `Bearer ${_ghToken}` }
+    });
+    if (!r.ok) throw new Error('search failed ' + r.status);
+    const list = await r.json();
+    if (Array.isArray(list) && list.length) {
+      _gistId = list[0].id; localStorage.setItem('_gist_id', _gistId);
+      setSyncStatus('✅ 已连接', true); return _gistId;
+    }
+  } catch(e) { console.warn('gist search:', e.message); }
+
+  try {
+    const cr = await fetch(GH_API, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description: GIST_DESC, public: false, files: { [FILE]: { content: '{}' } } })
+    });
+    if (!cr.ok) throw new Error('create failed ' + cr.status);
+    const c = await cr.json();
+    if (!c || !c.id) throw new Error('no id from create');
+    _gistId = c.id; localStorage.setItem('_gist_id', _gistId);
+    setSyncStatus('✅ 数据库已创建', true); return _gistId;
+  } catch(e) {
+    console.warn('gist create:', e.message);
+    setSyncStatus('⚠️ 离线模式，数据仅存本地', false);
+    return null;
   }
-  const cr = await fetch(GH_API, {
-    method: 'POST', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ description: GIST_DESC, public: false, files: { [FILE]: { content: '{}' } } })
-  });
-  const c = await cr.json(); _gistId = c.id; localStorage.setItem('_gist_id', _gistId); return _gistId;
 }
 
 async function readDB() {
