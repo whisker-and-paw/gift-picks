@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: gift-picks-api
+    runtime: node
+    repo: https://github.com/whisker-and-paw/gift-picks
+    branch: master
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
