@@ -544,7 +544,18 @@ const API = {
   },
   async get(c) {
     const local = localStorage.getItem(`rm_${c}`);
-    if (local) return JSON.parse(local);
+    if (local) {
+      const parsed = JSON.parse(local);
+      // 即使有本地数据，也查询 Gist 看是否有更新
+      try {
+        const db = await readDB();
+        if (db[c] && db[c].status === 'completed' && parsed.status !== 'completed') {
+          localStorage.setItem(`rm_${c}`, JSON.stringify(db[c]));
+          return db[c];
+        }
+      } catch(e) {}
+      return parsed;
+    }
     try {
       const db = await readDB();
       if (db[c]) return db[c];
@@ -552,16 +563,29 @@ const API = {
     return null;
   },
   async submit(c, a) {
+    // 始终尝试从 Gist 读取最新数据
+    try {
+      const db = await readDB();
+      if (db[c]) {
+        const rm = db[c];
+        if (rm.status !== 'created') throw Error('ALREADY_DONE');
+        rm.otherAnswers = a; rm.status = 'completed';
+        db[c] = rm;
+        await writeDB(db);
+        localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
+        return { success: true };
+      }
+    } catch(e) {
+      if (e.message === 'ALREADY_DONE') throw e;
+      // 如果 Gist 读不到，尝试本地
+    }
+    // 降级：尝试本地
     const local = localStorage.getItem(`rm_${c}`);
     if (local) {
       const rm = JSON.parse(local);
       if (rm.status !== 'created') throw Error('ALREADY_DONE');
       rm.otherAnswers = a; rm.status = 'completed';
       localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
-      try {
-        const db = await readDB();
-        if (db[c]) { db[c] = rm; await writeDB(db); }
-      } catch(e) { console.warn('Gist sync failed', e); }
       return { success: true };
     }
     throw Error('ROOM_NOT_FOUND');
