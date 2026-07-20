@@ -445,7 +445,7 @@ button{cursor:pointer;background:none;padding:0}
 
 <script>
 // ============================================================
-const CFG = { API_BASE:'https://gift-picks.vercel.app', CODE_LEN:5, POLL_MS:5000, DEMO:false };
+const CFG = { API_BASE:'https://gift-picks.vercel.app', CODE_LEN:5, POLL_MS:5000, API_TIMEOUT:3000 };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -506,25 +506,65 @@ function cfeti(d=4000){
 }
 
 // ============================================================
-// API
+// API — 智能降级: 优先 API, 不通自动切 localStorage
 // ============================================================
+function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<CFG.CODE_LEN;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
+function apiOk(){return localStorage.getItem('_api_ok')!=='no'}
+function setApiOk(v){localStorage.setItem('_api_ok',v?'yes':'no')}
+
+async function rf(u,opt={}){
+  const c=new AbortController();
+  const t=setTimeout(()=>c.abort(),CFG.API_TIMEOUT);
+  try{const r=await fetch(u,{...opt,signal:c.signal});clearTimeout(t);return r}
+  catch(e){clearTimeout(t);throw e}
+}
+
 const API = {
   async create(t,a){
-    if(CFG.DEMO){const c=glc();localStorage.setItem(`room_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));return{code:c}}
-    return rpc('/api/create-room',{selfType:t,selfAnswers:a})
+    // Try remote first
+    try{
+      const r=await rf(CFG.API_BASE+'/api/create-room',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({selfType:t,selfAnswers:a})});
+      const d=await r.json();if(!r.ok)throw Error(d.error);
+      setApiOk(true);return d;
+    }catch(e){
+      // Fallback to local
+      if(apiOk())setApiOk(false);
+      const c=glc();
+      localStorage.setItem(`rm_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
+      return {code:c};
+    }
   },
   async get(c){
-    if(CFG.DEMO){const r=localStorage.getItem(`room_${c}`);return r?JSON.parse(r):null}
-    return rpcG(`/api/room/${c}`)
+    try{
+      const r=await rf(CFG.API_BASE+`/api/room/${c}`);
+      const d=await r.json();if(!r.ok)throw Error(d.error||'fail');
+      setApiOk(true);return d;
+    }catch(e){
+      setApiOk(false);
+      const raw=localStorage.getItem(`rm_${c}`);
+      if(!raw)return null;
+      // Check if on same device - if room was created locally, data is here
+      try{return JSON.parse(raw)}
+      catch(e2){return null}
+    }
   },
   async submit(c,a){
-    if(CFG.DEMO){const r=localStorage.getItem(`room_${c}`);if(!r)throw Error('ROOM_NOT_FOUND');const rm=JSON.parse(r);if(rm.status!=='created')throw Error('ALREADY_DONE');rm.otherAnswers=a;rm.status='completed';localStorage.setItem(`room_${c}`,JSON.stringify(rm));return{success:true}}
-    return rpc(`/api/room/${c}/submit-other`,{answers:a})
+    try{
+      const r=await rf(CFG.API_BASE+`/api/room/${c}/submit-other`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:a})});
+      const d=await r.json();if(!r.ok)throw Error(d.error||'fail');
+      setApiOk(true);return d;
+    }catch(e){
+      setApiOk(false);
+      const raw=localStorage.getItem(`rm_${c}`);
+      if(!raw)throw Error('ROOM_NOT_FOUND');
+      const rm=JSON.parse(raw);
+      if(rm.status!=='created')throw Error('ALREADY_DONE');
+      rm.otherAnswers=a;rm.status='completed';
+      localStorage.setItem(`rm_${c}`,JSON.stringify(rm));
+      return {success:true};
+    }
   }
 };
-function glc(){const ccs='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let cd;do{cd='';for(let i=0;i<CFG.CODE_LEN;i++)cd+=ccs[~~(Math.random()*ccs.length)]}while(localStorage.getItem(`room_${cd}`));return cd}
-async function rpc(p,b){for(let a=0;a<2;a++){try{const r=await fetch(CFG.API_BASE+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const d=await r.json();if(!r.ok)throw Error(d.error);return d}catch(e){if(a===1)throw e;await new Promise(r=>setTimeout(r,1000*(a+1)))}}}
-async function rpcG(p){for(let a=0;a<2;a++){try{const r=await fetch(CFG.API_BASE+p);const d=await r.json();if(!r.ok)throw Error(d.error);return d}catch(e){if(a===1)throw e;await new Promise(r=>setTimeout(r,1000*(a+1)))}}}
 
 function calcMBTI(a){
   const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
@@ -651,7 +691,14 @@ function copyLink(){
   else{const t=document.createElement('textarea');t.value=l;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);to('链接已复制！✨')}
 }
 function pollStart(){
-  pollStop();S.timer=setInterval(async()=>{try{const d=await API.get(S.code);if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}}catch(e){}},CFG.POLL_MS);
+  pollStop();
+  // In fallback mode, polling won't work cross-device — show hint
+  if(!apiOk()){
+    const el=document.querySelector('#screen-code .wait-st');
+    if(el)el.innerHTML='📋 TA 答完后会看到结果码，复制发给你～<br>然后点首页「有结果码？导入对比」查看报告';
+    return;
+  }
+  S.timer=setInterval(async()=>{try{const d=await API.get(S.code);if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}}catch(e){}},CFG.POLL_MS);
 }
 function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
 
@@ -707,9 +754,13 @@ async function verifyCode(){
       S.code=cd;S.room=d;showRes();return;
     }
     if(!d){
-      // DEMO: friend may try manual code entry on different device
-      // Tell them to use the QR/scan link instead
-      ni('📮','请用二维码打开','用手机扫 TA 分享的二维码可以直接答题哦～<br>手动输入密令仅限同一设备。');
+      // API unreachable + room not local. Try getting type from URL as fallback
+      const tp=new URLSearchParams(window.location.search).get('type');
+      if(tp&&/^[EISNTFJP]{4}$/.test(tp)){
+        S.code=cd;S.room={selfType:tp,selfAnswers:null,otherAnswers:null,status:'created'};
+        ck();startOQ(tp);return;
+      }
+      ni('📮','无法验证密令','API 暂时不可用。请确保用 TA 分享的链接打开（自带密令），或在同一设备上操作。');
       rv();er();return
     }
     if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
