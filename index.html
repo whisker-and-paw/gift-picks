@@ -509,60 +509,42 @@ function cfeti(d=4000){
 // API — 智能降级: 优先 API, 不通自动切 localStorage
 // ============================================================
 function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<CFG.CODE_LEN;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
-function apiOk(){return localStorage.getItem('_api_ok')!=='no'}
-function setApiOk(v){localStorage.setItem('_api_ok',v?'yes':'no')}
 
-async function rf(u,opt={}){
-  const c=new AbortController();
-  const t=setTimeout(()=>c.abort(),CFG.API_TIMEOUT);
-  try{const r=await fetch(u,{...opt,signal:c.signal});clearTimeout(t);return r}
-  catch(e){clearTimeout(t);throw e}
-}
-
+// 所有 create 操作只用 localStorage（秒完成，不碰网络）
+// get/submit 先试 localStorage，没有再试 API
 const API = {
   async create(t,a){
-    // Try remote first
-    try{
-      const r=await rf(CFG.API_BASE+'/api/create-room',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({selfType:t,selfAnswers:a})});
-      const d=await r.json();if(!r.ok)throw Error(d.error);
-      setApiOk(true);return d;
-    }catch(e){
-      // Fallback to local
-      if(apiOk())setApiOk(false);
-      const c=glc();
-      localStorage.setItem(`rm_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
-      return {code:c};
-    }
+    const c=glc();
+    localStorage.setItem(`rm_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
+    return {code:c};
   },
   async get(c){
+    // Try local first (same device)
+    const raw=localStorage.getItem(`rm_${c}`);
+    if(raw)return JSON.parse(raw);
+    // Try API
     try{
-      const r=await rf(CFG.API_BASE+`/api/room/${c}`);
-      const d=await r.json();if(!r.ok)throw Error(d.error||'fail');
-      setApiOk(true);return d;
-    }catch(e){
-      setApiOk(false);
-      const raw=localStorage.getItem(`rm_${c}`);
-      if(!raw)return null;
-      // Check if on same device - if room was created locally, data is here
-      try{return JSON.parse(raw)}
-      catch(e2){return null}
-    }
+      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),3000);
+      const r=await fetch(CFG.API_BASE+`/api/room/${c}`,{signal:ac.signal});clearTimeout(tid);
+      const d=await r.json();if(!r.ok)throw Error(d.error);return d;
+    }catch(e){return null}
   },
   async submit(c,a){
-    try{
-      const r=await rf(CFG.API_BASE+`/api/room/${c}/submit-other`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:a})});
-      const d=await r.json();if(!r.ok)throw Error(d.error||'fail');
-      setApiOk(true);return d;
-    }catch(e){
-      setApiOk(false);
-      const raw=localStorage.getItem(`rm_${c}`);
-      if(!raw)throw Error('ROOM_NOT_FOUND');
+    // Try local first
+    const raw=localStorage.getItem(`rm_${c}`);
+    if(raw){
       const rm=JSON.parse(raw);
       if(rm.status!=='created')throw Error('ALREADY_DONE');
       rm.otherAnswers=a;rm.status='completed';
       localStorage.setItem(`rm_${c}`,JSON.stringify(rm));
       return {success:true};
     }
+    // Try API
+    try{
+      const ac=new AbortController(),tid=setTimeout(()=>ac.abort(),3000);
+      const r=await fetch(CFG.API_BASE+`/api/room/${c}/submit-other`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:a}),signal:ac.signal});clearTimeout(tid);
+      const d=await r.json();if(!r.ok)throw Error(d.error);return d;
+    }catch(e){throw Error('ROOM_NOT_FOUND')}
   }
 };
 
@@ -692,13 +674,13 @@ function copyLink(){
 }
 function pollStart(){
   pollStop();
-  // In fallback mode, polling won't work cross-device — show hint
-  if(!apiOk()){
-    const el=document.querySelector('#screen-code .wait-st');
-    if(el)el.innerHTML='📋 TA 答完后会看到结果码，复制发给你～<br>然后点首页「有结果码？导入对比」查看报告';
-    return;
-  }
-  S.timer=setInterval(async()=>{try{const d=await API.get(S.code);if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}}catch(e){}},CFG.POLL_MS);
+  // Poll local storage first (same device). Also try API.
+  S.timer=setInterval(async()=>{
+    try{
+      const d=await API.get(S.code);
+      if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}
+    }catch(e){}
+  },CFG.POLL_MS);
 }
 function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
 
@@ -790,19 +772,15 @@ async function oSubmit(){
   $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
   try{
     await API.submit(S.code,S.ans);
-    const rc=encodeResult(S.ans);
-    $('cel-result-code').textContent=rc;
-    $('cel-result-area').style.display='block';
-    cl();cfeti(5000);ss('screen-cel');
   }catch(e){
-    // Still show result code even if API fails (DEMO cross-device)
-    const rc=encodeResult(S.ans);
-    $('cel-result-code').textContent=rc;
-    $('cel-result-area').style.display='block';
-    $('cel-d').innerHTML='小瓶暂时漂不回去～<br>把结果码发给 TA，让 TA 手动导入吧 📋';
-    cl();cfeti(5000);ss('screen-cel');
-    console.error(e);
+    // Cross-device: API failed, but we still have the result code
+    console.error('API submit failed:', e);
   }
+  const rc=encodeResult(S.ans);
+  $('cel-result-code').textContent=rc;
+  $('cel-result-area').style.display='block';
+  $('cel-d').innerHTML='把下面的 <strong>结果码</strong> 发给 TA<br>TA 点首页「有结果码？导入对比」就能看到报告 📋';
+  cl();cfeti(5000);ss('screen-cel');
 }
 function copyResultCode(){
   const t=$('cel-result-code').textContent;
@@ -828,7 +806,7 @@ function importResult(){
   const roomCode=localStorage.getItem('_my_room');
   let found=null;
   if(roomCode){
-    try{found=JSON.parse(localStorage.getItem('room_'+roomCode))}catch(e){}
+    try{found=JSON.parse(localStorage.getItem('rm_'+roomCode))}catch(e){}
   }
   if(found&&found.selfType){
     found.otherAnswers=nums;found.status='completed';
