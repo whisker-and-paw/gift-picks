@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FF7E7E">
+<title>礼物信使 · 生日礼物挑选助手</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ===== Reset & Base ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100dvh;
+  overflow-x:hidden;transition:background .6s,color .6s;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+button,input{font-family:inherit;font-size:inherit;border:none;outline:none}
+button{cursor:pointer;background:none;padding:0}
+a{color:inherit;text-decoration:none}
+:root{
+  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;--radius-xl:32px;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.06);--shadow-md:0 4px 20px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.1);--shadow-glow:0 0 30px var(--shadow);
+  --font-xl:1.75rem;--font-lg:1.25rem;--font-md:1rem;--font-sm:.875rem;
+  --space-xs:6px;--space-sm:12px;--space-md:20px;--space-lg:32px;--space-xl:48px;
+}
+
+/* ===== Theme: Friend (活泼) ===== */
+body.theme-friend{--primary:#FF7E7E;--primary-light:#FFB5B5;--primary-dark:#E05959;
+  --secondary:#6EC6FF;--secondary-light:#B0DEFF;--accent:#FFD93D;--accent-light:#FFE680;
+  --bg:#FFFAF5;--bg-card:#FFFFFF;--text:#4A3728;--text-light:#9B8A7B;--text-muted:#C0B0A0;
+  --shadow:rgba(255,126,126,.2);--gradient:linear-gradient(135deg,#FF7E7E,#FFB06A);
+  --glow:0 0 20px rgba(255,126,126,.15);
+}
+/* ===== Theme: Lover (浪漫) ===== */
+body.theme-lover{--primary:#FF8FAB;--primary-light:#FFC8D8;--primary-dark:#E56A8A;
+  --secondary:#C9A7EB;--secondary-light:#E0D0F5;--accent:#FFD700;--accent-light:#FFE44D;
+  --bg:#FFF5F8;--bg-card:#FFFFFF;--text:#4A3040;--text-light:#9B7A8A;--text-muted:#C0A0B0;
+  --shadow:rgba(255,143,171,.2);--gradient:linear-gradient(135deg,#FF8FAB,#C9A7EB);
+  --glow:0 0 20px rgba(255,143,171,.15);
+}
+/* ===== Theme: Elder (温馨) ===== */
+body.theme-elder{--primary:#D4A574;--primary-light:#E8CDA6;--primary-dark:#B8895A;
+  --secondary:#8FBC8F;--secondary-light:#BFDDBF;--accent:#C41E3A;--accent-light:#D46070;
+  --bg:#F8F3EA;--bg-card:#FFFFFF;--text:#3C3228;--text-light:#8B7A6B;--text-muted:#B0A090;
+  --shadow:rgba(212,165,116,.2);--gradient:linear-gradient(135deg,#D4A574,#8FBC8F);
+  --glow:0 0 20px rgba(212,165,116,.15);
+}
+
+/* ===== Common Styles ===== */
+.screen{display:none;flex-direction:column;min-height:100dvh;padding:var(--space-md);
+  animation:fadeIn .4s ease;position:relative}
+.screen.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-8px) rotate(3deg)}75%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes confettiFall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 32px;border-radius:50px;font-weight:700;font-size:var(--font-md);
+  transition:all .3s ease;position:relative;overflow:hidden;
+}
+.btn-primary{background:var(--gradient);color:#fff;box-shadow:0 4px 15px var(--shadow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px var(--shadow)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:var(--bg-card);color:var(--text);border:2px solid var(--primary-light)}
+.btn-secondary:hover{background:var(--primary-light);border-color:var(--primary)}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-sm{padding:10px 20px;font-size:var(--font-sm)}
+.btn-lg{padding:18px 40px;font-size:var(--font-lg)}
+
+/* ===== Header ===== */
+.app-header{text-align:center;padding:var(--space-lg) 0 var(--space-md)}
+.app-logo{font-size:2.5rem;margin-bottom:4px;display:block;line-height:1}
+.app-title{font-size:var(--font-xl);font-weight:900;background:var(--gradient);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app-subtitle{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
+
+/* ===== Landing Screen ===== */
+#screen-landing .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
+.landing-hero{text-align:center;animation:fadeUp .8s ease}
+.landing-hero .emoji-big{font-size:4rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+.landing-hero h1{font-size:2rem;font-weight:900;color:var(--text);margin-bottom:8px}
+.landing-hero p{color:var(--text-light);line-height:1.7;max-width:300px;margin:0 auto}
+.role-buttons{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;animation:fadeUp 1s ease}
+.role-btn{display:flex;align-items:center;gap:14px;padding:18px 24px;background:var(--bg-card);
+  border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;
+  transition:all .3s ease;width:100%;text-align:left}
+.role-btn:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.role-btn .icon{font-size:2rem;width:48px;text-align:center}
+.role-btn .info{flex:1}
+.role-btn .info strong{display:block;font-size:var(--font-md);font-weight:800;color:var(--text)}
+.role-btn .info span{font-size:var(--font-sm);color:var(--text-light)}
+.role-btn .arrow{font-size:1.2rem;color:var(--text-muted);transition:transform .3s ease}
+.role-btn:hover .arrow{transform:translateX(4px);color:var(--primary)}
+.landing-footer{text-align:center;padding:var(--space-md) 0}
+.landing-footer a{color:var(--text-light);font-size:var(--font-sm);text-decoration:underline;cursor:pointer}
+.landing-footer a:hover{color:var(--primary)}
+
+/* ===== Form Screen (Giver) ===== */
+#screen-giver-form .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.form-step{font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-md);text-align:center}
+.form-step span{display:inline-block;padding:4px 14px;background:var(--primary-light);border-radius:20px;color:var(--primary-dark);font-weight:700}
+.section-label{font-size:var(--font-lg);font-weight:800;margin-bottom:var(--space-sm);color:var(--text)}
+.section-hint{font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-md)}
+.option-grid{display:grid;gap:var(--space-sm);margin-bottom:var(--space-lg)}
+.option-grid-2{grid-template-columns:1fr 1fr}
+.option-grid-3{grid-template-columns:1fr 1fr 1fr}
+.option-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:16px 12px;background:var(--bg-card);border:2px solid transparent;
+  border-radius:var(--radius-md);box-shadow:var(--shadow-sm);transition:all .3s ease;
+  text-align:center;min-height:80px;font-weight:700;font-size:var(--font-md);color:var(--text)}
+.option-btn .opt-emoji{font-size:1.8rem;display:block}
+.option-btn .opt-price{font-size:var(--font-sm);color:var(--text-light);font-weight:400}
+.option-btn:hover{border-color:var(--primary-light);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.option-btn.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 4px var(--shadow)}
+.option-btn .coming-soon-badge{font-size:10px;background:var(--text-muted);color:#fff;padding:2px 8px;border-radius:10px;margin-top:2px}
+.option-btn.coming-soon{opacity:.6;position:relative}
+.option-btn.coming-soon::after{content:'即将上线';position:absolute;top:-6px;right:-6px;font-size:10px;
+  background:var(--text-muted);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600}
+.form-nav{display:flex;gap:var(--space-sm);margin-top:var(--space-md)}
+.form-nav .btn{flex:1}
+
+/* ===== Generating Screen ===== */
+#screen-generating .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center}
+.generating-animation{position:relative;width:120px;height:120px}
+.generating-animation .mail-icon{font-size:3.5rem;animation:bounce 1.2s ease-in-out infinite;position:relative;z-index:2}
+.generating-animation .ring{position:absolute;inset:-10px;border:3px solid var(--primary-light);border-top-color:var(--primary);
+  border-radius:50%;animation:spin 1s linear infinite}
+.generating-ring-2{position:absolute;inset:-20px;border:2px dashed var(--secondary);border-radius:50%;animation:spin 1.5s linear infinite reverse}
+.generating-text{font-size:var(--font-lg);font-weight:700;color:var(--text)}
+.generating-hint{font-size:var(--font-sm);color:var(--text-light);max-width:280px;line-height:1.6}
+.generating-progress{width:200px;height:4px;background:var(--primary-light);border-radius:4px;overflow:hidden}
+.generating-progress .bar{height:100%;background:var(--gradient);width:0%;border-radius:4px;transition:width .3s ease}
+
+/* ===== Code Screen ===== */
+#screen-code .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
+.code-emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
+.code-title{font-size:var(--font-lg);font-weight:800;text-align:center}
+.code-title small{display:block;font-weight:400;font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
+.code-display{display:flex;gap:10px;justify-content:center;padding:var(--space-md) var(--space-lg);
+  background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);
+  border:2px solid var(--primary-light);animation:pulse 2s ease-in-out infinite}
+.code-char{width:52px;height:64px;display:flex;align-items:center;justify-content:center;
+  font-size:2rem;font-weight:900;color:var(--primary);background:var(--bg);
+  border-radius:var(--radius-sm);letter-spacing:2px}
+.qr-container{width:180px;height:180px;background:var(--bg-card);border-radius:var(--radius-md);
+  padding:12px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center}
+.qr-container img,.qr-container canvas{width:100%!important;height:100%!important}
+.qr-label{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:-8px}
+.code-actions{display:flex;flex-wrap:wrap;gap:var(--space-sm);justify-content:center;width:100%}
+.waiting-status{display:flex;align-items:center;gap:8px;font-size:var(--font-sm);color:var(--text-light);
+  padding:10px 20px;background:var(--bg-card);border-radius:50px;box-shadow:var(--shadow-sm)}
+.waiting-status .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.5s ease-in-out infinite}
+.code-back-btn{position:absolute;top:var(--space-md);left:var(--space-md);font-size:var(--font-sm);
+  color:var(--text-light);display:flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;border-radius:20px;transition:all .3s}
+.code-back-btn:hover{background:var(--primary-light);color:var(--primary)}
+
+/* ===== Results Screen ===== */
+#screen-results .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.results-header{text-align:center;margin-bottom:var(--space-lg);animation:fadeUp .6s ease}
+.results-header .big-emoji{font-size:3.5rem;display:block;margin-bottom:8px}
+.results-header h2{font-size:var(--font-xl);font-weight:900;color:var(--text)}
+.results-header p{color:var(--text-light);margin-top:4px}
+.result-card{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
+  box-shadow:var(--shadow-sm);margin-bottom:var(--space-sm);border-left:4px solid var(--primary);
+  animation:fadeUp .4s ease;transition:all .3s}
+.result-card:nth-child(2){animation-delay:.1s}
+.result-card .gift-emoji{font-size:2rem;margin-bottom:4px}
+.result-card .gift-name{font-weight:800;font-size:var(--font-md);color:var(--text)}
+.result-card .gift-desc{font-size:var(--font-sm);color:var(--text-light);margin:4px 0;line-height:1.5}
+.result-card .gift-price{font-weight:800;color:var(--primary);font-size:var(--font-lg);margin-top:4px}
+.result-card .gift-tag{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;
+  background:var(--primary-light);color:var(--primary-dark);font-weight:600;margin-top:6px}
+.budget-summary{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
+  box-shadow:var(--shadow-sm);margin:var(--space-md) 0;text-align:center}
+.budget-summary .total{font-size:var(--font-xl);font-weight:900;color:var(--text)}
+.budget-summary .total .over{color:var(--accent)}
+.budget-summary .label{font-size:var(--font-sm);color:var(--text-light);margin-bottom:4px}
+.budget-over{background:#FFF0F0;border-radius:var(--radius-md);padding:var(--space-md);
+  margin:var(--space-sm) 0;text-align:center;border:1px solid #FFD0D0}
+.budget-over p{font-size:var(--font-sm);color:#C04040;line-height:1.6}
+.results-footer{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md);align-items:center}
+.results-footer .btn{min-width:200px}
+
+/* ===== Receiver Code Input ===== */
+#screen-receiver-input .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
+.receiver-header{text-align:center}
+.receiver-header .emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
+.receiver-header h2{font-size:var(--font-xl);font-weight:900;margin-top:8px;color:var(--text)}
+.receiver-header p{color:var(--text-light);font-size:var(--font-sm);margin-top:4px}
+.code-input-grid{display:flex;gap:8px;justify-content:center;margin:var(--space-md) 0}
+.code-input-box{width:48px;height:56px;border:2px solid var(--primary-light);border-radius:var(--radius-sm);
+  text-align:center;font-size:1.6rem;font-weight:800;color:var(--primary);background:var(--bg-card);
+  transition:all .3s ease;caret-color:var(--primary);text-transform:uppercase}
+.code-input-box:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow);outline:none}
+.code-input-box.filled{border-color:var(--primary);background:var(--primary-light)}
+.code-error{font-size:var(--font-sm);color:#E05959;min-height:20px;text-align:center}
+.code-input-actions{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;align-items:center}
+.code-input-actions .btn{min-width:180px}
+.scan-hint{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:4px}
+
+/* ===== Receiver Gifts Screen ===== */
+#screen-receiver-gifts .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.theme-banner{text-align:center;padding:var(--space-lg) var(--space-md);border-radius:var(--radius-lg);
+  background:var(--gradient);color:#fff;margin-bottom:var(--space-lg);position:relative;overflow:hidden}
+.theme-banner::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='.08'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.theme-banner .banner-emoji{font-size:2.5rem;display:block;position:relative}
+.theme-banner h2{font-size:var(--font-lg);font-weight:800;margin:8px 0 4px;position:relative}
+.theme-banner p{font-size:var(--font-sm);opacity:.9;position:relative;line-height:1.6}
+.theme-message{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
+  margin-bottom:var(--space-md);box-shadow:var(--shadow-sm);text-align:center;
+  border:1px dashed var(--primary-light);line-height:1.6;font-size:var(--font-sm);color:var(--text-light)}
+.gift-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);margin-bottom:var(--space-lg)}
+.gift-card{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
+  box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;
+  cursor:pointer;text-align:center;position:relative}
+.gift-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--primary-light)}
+.gift-card .gift-emoji{font-size:2.2rem;display:block;margin-bottom:8px}
+.gift-card .gift-name{font-weight:800;font-size:var(--font-md);color:var(--text);margin-bottom:4px}
+.gift-card .gift-desc{font-size:var(--font-sm);color:var(--text-light);line-height:1.5;margin-bottom:4px}
+.gift-card .gift-tag{display:inline-block;font-size:10px;padding:2px 10px;border-radius:10px;
+  background:var(--bg);color:var(--text-light);font-weight:600;margin-top:2px}
+.gift-card.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 4px var(--shadow)}
+.gift-card .check-mark{position:absolute;top:-6px;right:-6px;width:24px;height:24px;
+  border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:14px;font-weight:900;opacity:0;transform:scale(0);transition:all .3s ease}
+.gift-card.selected .check-mark{opacity:1;transform:scale(1)}
+.selection-counter{text-align:center;font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-sm)}
+.selection-counter strong{color:var(--primary);font-size:var(--font-md)}
+.gift-submit-area{text-align:center;position:sticky;bottom:0;padding:var(--space-md) 0;
+  background:linear-gradient(transparent,var(--bg) 30%);z-index:10}
+.gift-submit-area .btn{min-width:200px;animation:fadeUp .3s ease}
+
+/* ===== Celebration Screen ===== */
+#screen-celebration .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center;position:relative;z-index:2}
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:100}
+.celebration-emoji{font-size:4rem;animation:bounce 1.5s ease-in-out infinite;display:block}
+.celebration-title{font-size:var(--font-xl);font-weight:900;color:var(--text)}
+.celebration-desc{font-size:var(--font-md);color:var(--text-light);max-width:300px;line-height:1.7}
+.celebration-actions{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)}
+.celebration-actions .btn{min-width:200px}
+
+/* ===== Error / Notification Overlay ===== */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
+  z-index:200;align-items:center;justify-content:center;padding:var(--space-md);animation:fadeIn .2s ease}
+.overlay.active{display:flex}
+.overlay-box{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-lg);
+  max-width:360px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:pop .3s ease}
+.overlay-box .icon{font-size:3rem;display:block;margin-bottom:12px}
+.overlay-box h3{font-size:var(--font-lg);font-weight:800;margin-bottom:8px;color:var(--text)}
+.overlay-box p{font-size:var(--font-sm);color:var(--text-light);line-height:1.7;margin-bottom:var(--space-md)}
+.overlay-box .btn{width:100%}
+
+/* ===== Toast ===== */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;
+  background:var(--text);color:#fff;border-radius:50px;font-size:var(--font-sm);font-weight:600;
+  box-shadow:var(--shadow-lg);z-index:300;animation:slideUp .3s ease;max-width:90%;text-align:center}
+.toast.success{background:var(--primary);color:#fff}
+.toast.error{background:#E05959;color:#fff}
+
+/* ===== Loading Spinner ===== */
+.spinner{width:24px;height:24px;border:3px solid var(--primary-light);border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:4px}
+
+/* ===== Responsive ===== */
+@media(max-width:400px){
+  html{font-size:14px}
+  .code-input-box{width:42px;height:48px;font-size:1.4rem}
+  .option-btn{padding:12px 8px;min-height:68px}
+  .gift-card{padding:var(--space-sm)}
+  .theme-banner{padding:var(--space-md)}
+}
+@media(min-width:600px){
+  .gift-grid{grid-template-columns:1fr 1fr 1fr}
+  .landing-hero .emoji-big{font-size:5rem}
+  .code-display{gap:14px}
+  .code-char{width:60px;height:72px;font-size:2.2rem}
+}
+@media(min-width:768px){
+  .screen{padding:var(--space-lg)}
+  #screen-landing .content{max-width:480px}
+  .role-buttons{flex-direction:row;gap:var(--space-md)}
+  .role-btn{flex-direction:column;text-align:center;padding:24px}
+  .role-btn .icon{font-size:2.5rem}
+}
+</style>
+</head>
+<body>
+<!-- ===== OVERLAY: Error / Notification ===== -->
+<div class="overlay" id="overlay-notification">
+  <div class="overlay-box">
+    <span class="icon" id="overlay-icon">📮</span>
+    <h3 id="overlay-title">出了一点小问题</h3>
+    <p id="overlay-message">请检查网络连接后重试</p>
+    <button class="btn btn-primary" id="overlay-btn">知道了</button>
+  </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toast-container"></div>
+
+<!-- ===== CONFETTI CANVAS ===== -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ======================== -->
+<!--        SCREEN: LANDING    -->
+<!-- ======================== -->
+<div class="screen active" id="screen-landing">
+  <div class="content">
+    <div class="landing-hero">
+      <span class="emoji-big">🧸</span>
+      <h1>礼物信使</h1>
+      <p>小邮差带着满满的生日祝福出发啦～<br>帮你在星星中找到最特别的那份礼物 ✨</p>
+    </div>
+    <div class="role-buttons">
+      <button class="role-btn" onclick="enterGiverFlow()">
+        <span class="icon">🎁</span>
+        <span class="info">
+          <strong>我要送礼</strong>
+          <span>挑选预算，生成专属密令</span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+      <button class="role-btn" onclick="enterReceiverFlow()">
+        <span class="icon">💌</span>
+        <span class="info">
+          <strong>我来收礼</strong>
+          <span>输入密令，挑选心仪礼物</span>
+        </span>
+        <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="landing-footer">
+      <a onclick="showCheckResults()">🔍 已有密令？查询结果</a>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--    SCREEN: GIVER FORM     -->
+<!-- ======================== -->
+<div class="screen" id="screen-giver-form">
+  <div class="content">
+    <div class="form-step"><span>第 1 步 · 选择预算</span></div>
+    <div class="section-label">💰 这次生日预算大概是？</div>
+    <div class="section-hint">选个范围，礼物信使会按预算帮你筛选合适又用心的礼物～</div>
+    <div class="option-grid option-grid-2" id="budget-grid">
+      <button class="option-btn" data-value="50以下" onclick="selectBudget(this)"><span class="opt-emoji">🪙</span>50以下</button>
+      <button class="option-btn" data-value="50-100" onclick="selectBudget(this)"><span class="opt-emoji">🍬</span>50-100</button>
+      <button class="option-btn" data-value="100-150" onclick="selectBudget(this)"><span class="opt-emoji">🎨</span>100-150</button>
+      <button class="option-btn" data-value="150-200" onclick="selectBudget(this)"><span class="opt-emoji">🎁</span>150-200</button>
+      <button class="option-btn" data-value="200-300" onclick="selectBudget(this)"><span class="opt-emoji">🌟</span>200-300</button>
+      <button class="option-btn" data-value="300-400" onclick="selectBudget(this)"><span class="opt-emoji">✨</span>300-400</button>
+      <button class="option-btn" data-value="400-500" onclick="selectBudget(this)"><span class="opt-emoji">💎</span>400-500</button>
+      <button class="option-btn" data-value="500以上" onclick="selectBudget(this)"><span class="opt-emoji">👑</span>500以上</button>
+    </div>
+
+    <div class="section-label">💝 你和收礼人的关系是？</div>
+    <div class="section-hint">不同关系会有不同的推荐风格哦～</div>
+    <div class="option-grid option-grid-3" id="relation-grid">
+      <button class="option-btn" data-value="friend" onclick="selectRelation(this)">
+        <span class="opt-emoji">🤝</span>朋友
+      </button>
+      <button class="option-btn" data-value="lover" onclick="selectRelation(this)">
+        <span class="opt-emoji">💕</span>恋人
+      </button>
+      <button class="option-btn" data-value="elder" onclick="selectRelation(this)">
+        <span class="opt-emoji">🧓</span>长辈
+      </button>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
+      <button class="btn btn-primary" id="btn-generate" onclick="generateRoom()" disabled>
+        🪄 生成密令
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--   SCREEN: GENERATING      -->
+<!-- ======================== -->
+<div class="screen" id="screen-generating">
+  <div class="content">
+    <div class="generating-animation">
+      <div class="ring"></div>
+      <div class="generating-ring-2"></div>
+      <span class="mail-icon">🧸</span>
+    </div>
+    <div class="generating-text">小邮差正在准备密令...</div>
+    <div class="generating-hint">背着装满祝福的邮包，跨越彩虹桥，<br>为你的心意找到最美的表达方式 ✨</div>
+    <div class="generating-progress"><div class="bar" id="gen-progress-bar"></div></div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--    SCREEN: CODE DISPLAY   -->
+<!-- ======================== -->
+<div class="screen" id="screen-code">
+  <button class="code-back-btn" onclick="showScreen('screen-giver-form')">← 重新选择</button>
+  <div class="content">
+    <span class="code-emoji">🧸</span>
+    <div class="code-title">
+      分享这个密令给 TA 🎀
+      <small>收礼方扫码或输入密令即可查看礼物清单</small>
+    </div>
+    <div class="code-display" id="code-display"></div>
+    <div class="qr-container" id="qr-container"></div>
+    <div class="qr-label">📱 扫一扫，直达礼物清单</div>
+    <div class="code-actions">
+      <button class="btn btn-primary btn-sm" onclick="copyShareLink()">📋 复制分享链接</button>
+    </div>
+    <div class="waiting-status" id="waiting-status">
+      <span class="dot"></span>
+      <span>等待收礼方选择...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--   SCREEN: RESULTS (GIVER) -->
+<!-- ======================== -->
+<div class="screen" id="screen-results">
+  <div class="content">
+    <div class="results-header">
+      <span class="big-emoji">🎉</span>
+      <h2>收礼方已做出选择！</h2>
+      <p>来看看 TA 最心动的是哪些礼物吧 ✨</p>
+    </div>
+    <div id="results-container"></div>
+    <div class="results-footer">
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('screen-landing')">🏠 返回首页</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--  SCREEN: RECEIVER INPUT   -->
+<!-- ======================== -->
+<div class="screen" id="screen-receiver-input">
+  <div class="content">
+    <div class="receiver-header">
+      <span class="emoji">💌</span>
+      <h2>输入密令</h2>
+      <p>把送礼方给你的 5 位密令输进去～</p>
+    </div>
+    <div class="code-input-grid" id="code-input-grid">
+      <input class="code-input-box" maxlength="1" data-index="0" oninput="handleCodeInput(this,0)" onkeydown="handleCodeKeydown(event,this,0)">
+      <input class="code-input-box" maxlength="1" data-index="1" oninput="handleCodeInput(this,1)" onkeydown="handleCodeKeydown(event,this,1)">
+      <input class="code-input-box" maxlength="1" data-index="2" oninput="handleCodeInput(this,2)" onkeydown="handleCodeKeydown(event,this,2)">
+      <input class="code-input-box" maxlength="1" data-index="3" oninput="handleCodeInput(this,3)" onkeydown="handleCodeKeydown(event,this,3)">
+      <input class="code-input-box" maxlength="1" data-index="4" oninput="handleCodeInput(this,4)" onkeydown="handleCodeKeydown(event,this,4)">
+    </div>
+    <div class="code-error" id="code-error"></div>
+    <div class="code-input-actions">
+      <button class="btn btn-primary btn-lg" id="btn-verify-code" onclick="verifyCode()" disabled>🔍 查看礼物</button>
+      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
+    </div>
+    <div class="scan-hint">✨ 用手机扫送礼方分享的二维码可以自动填入哦</div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!--  SCREEN: RECEIVER GIFTS   -->
+<!-- ======================== -->
+<div class="screen" id="screen-receiver-gifts">
+  <div class="content">
+    <div class="theme-banner" id="theme-banner">
+      <span class="banner-emoji" id="banner-emoji">🧸</span>
+      <h2 id="banner-title">礼物信使来啦！</h2>
+      <p id="banner-subtitle">带着满满的祝福，为你推荐这些心意满满的礼物～</p>
+    </div>
+    <div class="theme-message" id="theme-message">
+      💌 礼物信使小邮差说：<br>
+      「不用纠结～挑你第一眼就喜欢的就好！可以选 1~2 个哦！」
+    </div>
+    <div class="gift-grid" id="gift-grid"></div>
+    <div class="selection-counter">已选 <strong id="select-count">0</strong> / 2</div>
+    <div class="gift-submit-area">
+      <button class="btn btn-primary btn-lg" id="btn-submit-gifts" onclick="submitGifts()" disabled>
+        ✅ 确定选择
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== -->
+<!-- SCREEN: CELEBRATION       -->
+<!-- ======================== -->
+<div class="screen" id="screen-celebration">
+  <div class="content">
+    <span class="celebration-emoji">🎉</span>
+    <div class="celebration-title">心意已送达！</div>
+    <div class="celebration-desc">
+      小邮差已经背着你的选择飞奔回去啦～<br>
+      送礼方很快就会看到结果 ✨
+    </div>
+    <div class="celebration-actions">
+      <button class="btn btn-primary" onclick="resetAll()">🏠 回到首页</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ============================================================
+//  CONFIGURATION
+// ============================================================
+const CONFIG = {
+  // ★★★ 使用已部署的 Cloudflare Worker ★★★
+  API_BASE: 'https://gift-picks.2656153330-35a.workers.dev',
+  CODE_LENGTH: 5,
+  POLL_INTERVAL: 5000, // ms
+  MAX_SELECTIONS: 2,
+  RETRY_DELAY: 1000,
+  MAX_RETRIES: 3,
+};
+
+// ============================================================
+//  GIFT DATA
+// ============================================================
+const GIFT_DATA = {
+  friend: {
+    '50以下': [
+      { id:0, name:'可爱搞怪生日贺卡', desc:'手绘风格、可以录一段语音祝福的智能贺卡，扫描二维码就能听到你的声音', price:39, category:'实物精品', emoji:'💌' },
+      { id:1, name:'定制钥匙扣/冰箱贴', desc:'可以定制名字或日期的亚克力小挂件，精致又有纪念意义', price:29, category:'实物精品', emoji:'🔑' },
+      { id:2, name:'手机支架+数据线收纳', desc:'可爱动物造型的桌面套装，让朋友的桌面告别凌乱', price:45, category:'实物精品', emoji:'📱' },
+      { id:3, name:'蒸汽眼罩 5 片装', desc:'真丝材质、薰衣草香型，适合经常熬夜的上班族朋友', price:35, category:'实物精品', emoji:'😴' },
+      { id:4, name:'QQ 音乐/网易云月卡', desc:'一个人的时候有好音乐陪伴，是最温暖的礼物', price:15, category:'虚拟礼物', emoji:'🎵' },
+      { id:5, name:'微信读书月卡', desc:'送给爱看书的朋友，整个月畅读无限', price:19, category:'虚拟礼物', emoji:'📚' },
+    ],
+    '50-100': [
+      { id:0, name:'手账本+和纸胶带套装', desc:'一本精致的空白手账本配 3 卷和纸胶带，适合爱写写画画的文艺朋友', price:68, category:'实物精品', emoji:'📔' },
+      { id:1, name:'原创IP卡通公仔盲盒', desc:'POPMART或其他热门系列的随机公仔，拆盒的惊喜感本身就是礼物', price:69, category:'实物精品', emoji:'🎁' },
+      { id:2, name:'ins风桌面加湿器', desc:'迷你静音加湿器带小夜灯，北方暖气房/空调房必备', price:79, category:'实物精品', emoji:'💨' },
+      { id:3, name:'电影票两张', desc:'本地影城的通兑券，约朋友一起看场电影吧', price:80, category:'体验类', emoji:'🎬' },
+      { id:4, name:'王者荣耀/原神 月卡+', desc:'游戏内月卡或小面值皮肤礼包，让朋友的游戏体验更快乐', price:68, category:'虚拟礼物', emoji:'🎮' },
+      { id:5, name:'手工香薰蜡烛杯', desc:'大豆蜡+精油手工制作，三款香型可选，点燃时整个房间都温馨起来', price:88, category:'实物精品', emoji:'🕯️' },
+      { id:6, name:'随身咖啡手冲套装', desc:'便携式手冲咖啡套装含滤杯和滤纸，送喜欢咖啡的朋友', price:95, category:'实物精品', emoji:'☕' },
+    ],
+    '100-150': [
+      { id:0, name:'DIY 数字油画套装', desc:'40×50cm 画板+全套丙烯颜料，画完可以裱起来挂在家里，超有成就感', price:128, category:'实物精品', emoji:'🎨' },
+      { id:1, name:'香薰蜡烛+扩香石礼盒', desc:'含大豆蜡蜡烛、精油扩香石和火柴，三款香型可选，温暖治愈', price:138, category:'实物精品', emoji:'🕯️' },
+      { id:2, name:'双人电影票+爆米花套餐', desc:'IMAX 通兑券两张 + 爆米花兑换券，和朋友一起看电影最开心了', price:128, category:'体验类', emoji:'🎬' },
+      { id:3, name:'网易云音乐/QQ音乐年卡', desc:'一整年的会员，想听什么听什么，是陪伴感最强的礼物', price:128, category:'虚拟礼物', emoji:'🎵' },
+      { id:4, name:'网红甜品店双人下午茶', desc:'市区高评分甜品店的精选双人下午茶套餐，含蛋糕+饮品+小食', price:148, category:'体验类', emoji:'🍰' },
+      { id:5, name:'精品咖啡豆礼盒', desc:'4 种产地精品咖啡豆各 100g，附手冲指南，适合咖啡深度爱好者', price:138, category:'实物精品', emoji:'☕' },
+      { id:6, name:'主题乐园/展览双人票', desc:'本地当月热门的艺术展/博物馆/主题乐园双人门票', price:120, category:'体验类', emoji:'🎫' },
+    ],
+    '150-200': [
+      { id:0, name:'复古手账本礼盒', desc:'皮质封面手账本 + 彩色钢笔 + 和纸胶带 + 火漆印章，全套文艺装备', price:168, category:'实物精品', emoji:'📔' },
+      { id:1, name:'某游戏传说皮肤/大礼包', desc:'王者荣耀传说皮肤 / 原神创世结晶 / LOL 皮肤任选其一', price:168, category:'虚拟礼物', emoji:'🎮' },
+      { id:2, name:'双人自助餐券', desc:'本地五星级酒店/知名自助餐厅的双人午餐券，约出来大吃一顿', price:198, category:'体验类', emoji:'🍣' },
+      { id:3, name:'手工皮具 DIY 材料包', desc:'卡包或钥匙扣的完整皮料和工具套件，可以一起做手工，做完很有成就感', price:158, category:'实物精品', emoji:'👜' },
+      { id:4, name:'美术馆/博物馆年卡', desc:'本地美术馆或博物馆的全年通卡，适合喜欢艺术文化的朋友', price:180, category:'体验类', emoji:'🖼️' },
+      { id:5, name:'云鲸/泡泡玛特限定盲盒整套', desc:'热门系列的整盒盲盒（不重复），拆盒的快乐加满', price:188, category:'实物精品', emoji:'🧸' },
+      { id:6, name:'品牌香薰机+精油套装', desc:'超声波冷雾香薰机配 2 瓶精油，提升居家幸福感的神器', price:178, category:'实物精品', emoji:'💨' },
+    ],
+    '200-300': [
+      { id:0, name:'星巴克/瑞幸储蓄卡', desc:'储值卡里面充好余额，让朋友请同事喝咖啡，倍有面子', price:200, category:'虚拟礼物', emoji:'☕' },
+      { id:1, name:'凌美/百乐钢笔礼盒', desc:'入门级精品钢笔 + 墨水礼盒，送给写字好看的文艺朋友', price:258, category:'实物精品', emoji:'🖊️' },
+      { id:2, name:'自助烤肉/火锅双人餐', desc:'高分自助餐厅双人晚餐券，和好朋友一起吃到撑', price:268, category:'体验类', emoji:'🥩' },
+      { id:3, name:'游戏主机游戏光盘', desc:'Switch/PS5 热门游戏实体版，适合有主机的朋友', price:268, category:'实物精品', emoji:'🎮' },
+      { id:4, name:'品牌护手霜/护唇膏套装', desc:'欧舒丹/祖玛珑等品牌的护手霜护唇膏礼盒，精致实用', price:248, category:'实物精品', emoji:'🧴' },
+      { id:5, name:'精品民宿/酒店体验券', desc:'本地或周边特色民宿/精品酒店的周末住宿体验', price:268, category:'体验类', emoji:'🏡' },
+    ],
+    '300-400': [
+      { id:0, name:'小众香水/淡香水', desc:'30ml 左右的精品小众香水，祖玛珑/蒂普提克等入门款', price:380, category:'实物精品', emoji:'🌸' },
+      { id:1, name:'精品西餐/日料双人套餐', desc:'本地高评分西餐厅或日料店的精选双人套餐', price:368, category:'体验类', emoji:'🍣' },
+      { id:2, name:'主动降噪耳机', desc:'入门级主动降噪 TWS 耳机，通勤听歌的好伙伴', price:350, category:'实物精品', emoji:'🎧' },
+      { id:3, name:'写真/证件照拍摄套餐', desc:'专业摄影工作室的个人写真或最美证件照套餐', price:380, category:'体验类', emoji:'📸' },
+      { id:4, name:'品牌保温杯+茶礼盒', desc:'知名品牌的保温杯配精选茶叶礼盒，实用又体面', price:328, category:'实物精品', emoji:'🍵' },
+    ],
+    '400-500': [
+      { id:0, name:'品牌口红/彩妆礼盒', desc:'2-3 支热门色号品牌口红或眼影盘礼盒，包装精美上档次', price:450, category:'实物精品', emoji:'💄' },
+      { id:1, name:'Livehouse/演唱会门票', desc:'当月本地热门乐队或歌手的 livehouse 演出门票两张', price:400, category:'体验类', emoji:'🎤' },
+      { id:2, name:'Kindle 青春版', desc:'全新 kindle 青春版或同价位电子书阅读器，送给爱读书的朋友', price:468, category:'实物精品', emoji:'📖' },
+      { id:3, name:'品牌运动手环', desc:'某品牌入门款运动手环，记录健康数据，实用又时尚', price:400, category:'实物精品', emoji:'⌚' },
+      { id:4, name:'SPA/按摩体验券', desc:'本地高评分 SPA 会所或按摩馆的单人/双人体验券', price:460, category:'体验类', emoji:'💆' },
+    ],
+    '500以上': [
+      { id:0, name:'品牌手表/时装表', desc:'DW/CK 等品牌的入门款时装表，经典耐看', price:680, category:'实物精品', emoji:'⌚' },
+      { id:1, name:'AirPods/同档次蓝牙耳机', desc:'主动降噪真无线蓝牙耳机，日常通勤必备', price:650, category:'实物精品', emoji:'🎧' },
+      { id:2, name:'精品酒店度假套餐', desc:'本地或周边精品酒店/度假村的一晚住宿含早套餐', price:688, category:'体验类', emoji:'🏖️' },
+      { id:3, name:'品牌香水正装', desc:'50ml 品牌香水正装（Jo Malone/Diptyque/Marc Jacobs 等）', price:580, category:'实物精品', emoji:'🌸' },
+      { id:4, name:'双人短途旅行套餐', desc:'周边城市两日游含住宿和门票的打包套餐', price:888, category:'体验类', emoji:'✈️' },
+    ],
+  },
+  lover: {
+    // Will be filled after MVP approval
+  },
+  elder: {
+    // Will be filled after MVP approval
+  },
+};
+
+// For MVP: only friend 100-200 is active
+// Mark other combos as coming soon
+function isCombinationAvailable(budget, relationship) {
+  if (relationship !== 'friend') return false;
+  const availableBudgets = ['50以下','50-100','100-150','150-200','200-300','300-400','400-500','500以上'];
+  // MVP has all friend budgets ready
+  return relationship === 'friend' && availableBudgets.includes(budget);
+}
+
+// ============================================================
+//  STATE
+// ============================================================
+const state = {
+  mode: null,           // 'giver' | 'receiver'
+  budget: null,
+  relationship: null,
+  code: null,
+  roomData: null,
+  selectedGifts: [],    // indices
+  pollingTimer: null,
+  currentRoomCode: null, // for receiver
+};
+
+// ============================================================
+//  DOM HELPERS
+// ============================================================
+function $(id) { return document.getElementById(id); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showToast(msg, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+}
+
+function showNotification(icon, title, msg, btnText = '知道了') {
+  $('overlay-icon').textContent = icon || '📮';
+  $('overlay-title').textContent = title || '出了一点小问题';
+  $('overlay-message').textContent = msg || '请检查网络连接后重试';
+  $('overlay-btn').textContent = btnText;
+  $('overlay-notification').classList.add('active');
+}
+
+function hideNotification() {
+  $('overlay-notification').classList.remove('active');
+}
+
+$('overlay-btn').addEventListener('click', hideNotification);
+
+// ============================================================
+//  THEME MANAGEMENT
+// ============================================================
+function applyTheme(relationship) {
+  document.body.className = `theme-${relationship}`;
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  const colors = {
+    friend: '#FF7E7E',
+    lover: '#FF8FAB',
+    elder: '#D4A574',
+  };
+  if (metaTheme) metaTheme.content = colors[relationship] || '#FF7E7E';
+}
+
+// ============================================================
+//  API CALLS
+// ============================================================
+async function apiPost(path, body) {
+  for (let attempt = 0; attempt < CONFIG.MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(CONFIG.API_BASE + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '请求失败');
+      return data;
+    } catch (e) {
+      if (attempt === CONFIG.MAX_RETRIES - 1) throw e;
+      await new Promise(r => setTimeout(r, CONFIG.RETRY_DELAY * (attempt + 1)));
+    }
+  }
+}
+
+async function apiGet(path) {
+  for (let attempt = 0; attempt < CONFIG.MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(CONFIG.API_BASE + path);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '请求失败');
+      return data;
+    } catch (e) {
+      if (attempt === CONFIG.MAX_RETRIES - 1) throw e;
+      await new Promise(r => setTimeout(r, CONFIG.RETRY_DELAY * (attempt + 1)));
+    }
+  }
+}
+
+// ============================================================
+//  SOUND EFFECTS (Web Audio API)
+// ============================================================
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playNote(freq, duration = 0.15, type = 'sine', volume = 0.3) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) { /* silent fallback */ }
+}
+
+function playSelect() { playNote(800, 0.1, 'sine', 0.2); }
+
+function playConfirm() {
+  playNote(523, 0.15, 'sine', 0.3);
+  setTimeout(() => playNote(659, 0.15, 'sine', 0.3), 100);
+  setTimeout(() => playNote(784, 0.2, 'sine', 0.3), 200);
+}
+
+function playCelebration() {
+  const notes = [523, 587, 659, 784, 880, 1047];
+  notes.forEach((f, i) => {
+    setTimeout(() => playNote(f, 0.2, 'sine', 0.25), i * 100);
+  });
+}
+
+function playError() {
+  playNote(400, 0.15, 'sawtooth', 0.15);
+  setTimeout(() => playNote(300, 0.2, 'sawtooth', 0.15), 150);
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+let confettiRunning = false;
+let confettiAnimId = null;
+const confettiPieces = [];
+
+function startConfetti(duration = 4000) {
+  const canvas = $('confetti-canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+
+  const colors = ['#FF7E7E','#FFD93D','#6EC6FF','#FF8FAB','#C9A7EB','#8FBC8F','#FFD700','#FFB06A'];
+
+  for (let i = 0; i < 120; i++) {
+    confettiPieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * -1,
+      w: 5 + Math.random() * 8,
+      h: 3 + Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      speed: 2 + Math.random() * 3,
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 6,
+      swing: Math.random() * 2 - 1,
+    });
+  }
+
+  confettiRunning = true;
+  let startTime = Date.now();
+
+  function draw() {
+    if (!confettiRunning) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    for (const p of confettiPieces) {
+      p.y += p.speed;
+      p.x += Math.sin(p.y * 0.02) * p.swing;
+      p.rotation += p.rotSpeed;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    }
+
+    // Reset pieces that fell off
+    for (const p of confettiPieces) {
+      if (p.y > canvas.height + 20) {
+        p.y = -20;
+        p.x = Math.random() * canvas.width;
+      }
+    }
+
+    confettiAnimId = requestAnimationFrame(draw);
+
+    if (Date.now() - startTime > duration) {
+      stopConfetti();
+    }
+  }
+
+  draw();
+}
+
+function stopConfetti() {
+  confettiRunning = false;
+  if (confettiAnimId) {
+    cancelAnimationFrame(confettiAnimId);
+    confettiAnimId = null;
+  }
+  const ctx = $('confetti-canvas').getContext('2d');
+  ctx.clearRect(0,0,$('confetti-canvas').width,$('confetti-canvas').height);
+  confettiPieces.length = 0;
+}
+
+window.addEventListener('resize', () => {
+  if (confettiRunning) {
+    $('confetti-canvas').width = window.innerWidth;
+    $('confetti-canvas').height = window.innerHeight;
+  }
+});
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function enterGiverFlow() {
+  playSelect();
+  state.mode = 'giver';
+  state.budget = null;
+  state.relationship = null;
+  // Reset selections
+  document.querySelectorAll('.option-btn.selected').forEach(b => b.classList.remove('selected'));
+  $('btn-generate').disabled = true;
+  showScreen('screen-giver-form');
+}
+
+function enterReceiverFlow() {
+  playSelect();
+  state.mode = 'receiver';
+  state.currentRoomCode = null;
+  state.selectedGifts = [];
+  // Check URL for code
+  const urlParams = new URLSearchParams(window.location.search);
+  const codeFromUrl = urlParams.get('code');
+  resetCodeInput();
+  showScreen('screen-receiver-input');
+  if (codeFromUrl && codeFromUrl.length === CONFIG.CODE_LENGTH) {
+    fillCodeFromUrl(codeFromUrl.toUpperCase());
+  }
+}
+
+function showCheckResults() {
+  playSelect();
+  state.mode = 'giver';
+  state.currentRoomCode = null;
+  resetCodeInput();
+  showScreen('screen-receiver-input');
+  $('screen-receiver-input').querySelector('h2').textContent = '查询结果';
+  $('screen-receiver-input').querySelector('.receiver-header p').textContent =
+    '输入之前生成的密令，查看收礼方的选择～';
+  $('btn-verify-code').textContent = '🔍 查看结果';
+}
+
+// Override the receiver-input back button behavior
+document.querySelector('#screen-receiver-input .btn-secondary').addEventListener('click', () => {
+  showScreen('screen-landing');
+  // Restore receiver input text
+  $('screen-receiver-input').querySelector('h2').textContent = '输入密令';
+  $('screen-receiver-input').querySelector('.receiver-header p').textContent =
+    '把送礼方给你的 5 位密令输进去～';
+  $('btn-verify-code').textContent = '🔍 查看礼物';
+});
+
+// ============================================================
+//  GIVER: Budget & Relation Selection
+// ============================================================
+function selectBudget(btn) {
+  playSelect();
+  document.querySelectorAll('#budget-grid .option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.budget = btn.dataset.value;
+  updateGenerateBtn();
+}
+
+function selectRelation(btn) {
+  playSelect();
+  document.querySelectorAll('#relation-grid .option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.relationship = btn.dataset.value;
+  updateGenerateBtn();
+}
+
+function updateGenerateBtn() {
+  $('btn-generate').disabled = !(state.budget && state.relationship);
+}
+
+// ============================================================
+//  GIVER: Generate Room
+// ============================================================
+async function generateRoom() {
+  if (!state.budget || !state.relationship) return;
+
+  // Check if combination is available
+  if (!isCombinationAvailable(state.budget, state.relationship)) {
+    showNotification('🧸', '即将上线',
+      `「${getRelationLabel(state.relationship)} · ${state.budget}元」的礼物清单正在准备中～\n小邮差还在路上，请先试试「朋友 · 100-200元」的组合吧！`);
+    return;
+  }
+
+  showScreen('screen-generating');
+  playSelect();
+
+  // Animate progress bar
+  const bar = $('gen-progress-bar');
+  bar.style.width = '0%';
+  setTimeout(() => bar.style.width = '30%', 200);
+  setTimeout(() => bar.style.width = '60%', 400);
+  setTimeout(() => bar.style.width = '85%', 600);
+
+  try {
+    const result = await apiPost('/api/create-room', {
+      budget: state.budget,
+      relationship: state.relationship,
+    });
+
+    bar.style.width = '100%';
+    state.code = result.code;
+
+    setTimeout(() => {
+      showCodeScreen();
+    }, 500);
+
+  } catch (e) {
+    console.error('Create room failed:', e);
+    bar.style.width = '0%';
+    showNotification('📮', '创建失败',
+      '小邮差在路上遇到了点麻烦...\n请检查网络连接后重试。\n\n如果持续失败，可能是服务暂不可用，请联系开发者。');
+  }
+}
+
+// ============================================================
+//  GIVER: Code Display
+// ============================================================
+function showCodeScreen() {
+  showScreen('screen-code');
+  playConfirm();
+
+  // Render code chars
+  const display = $('code-display');
+  display.innerHTML = '';
+  for (const ch of state.code) {
+    const div = document.createElement('div');
+    div.className = 'code-char';
+    div.textContent = ch;
+    display.appendChild(div);
+  }
+
+  // Generate QR code
+  const qrContainer = $('qr-container');
+  qrContainer.innerHTML = '';
+  const appUrl = window.location.href.split('?')[0].split('#')[0];
+  const qrData = `${appUrl}?code=${state.code}`;
+
+  try {
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(qrContainer, {
+        text: qrData,
+        width: 160,
+        height: 160,
+        colorDark: getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#FF7E7E',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+    } else {
+      throw new Error('QRCode library not loaded');
+    }
+  } catch (e) {
+    // Fallback: show link and QR via external API
+    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrData)}" alt="QR Code" style="border-radius:8px">`;
+  }
+
+  // Start polling
+  startPolling();
+}
+
+function copyShareLink() {
+  const appUrl = window.location.href.split('?')[0].split('#')[0];
+  const link = `${appUrl}?code=${state.code}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(() => {
+      showToast('链接已复制！快去分享给 TA 吧 ✨', 'success');
+    }).catch(() => fallbackCopy(link));
+  } else {
+    fallbackCopy(link);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast('链接已复制！快去分享给 TA 吧 ✨', 'success');
+}
+
+// ============================================================
+//  GIVER: Polling for Results
+// ============================================================
+function startPolling() {
+  stopPolling();
+  state.pollingTimer = setInterval(async () => {
+    try {
+      const data = await apiGet(`/api/room/${state.code}`);
+      if (data.status === 'completed') {
+        stopPolling();
+        state.roomData = data;
+        showGiverResults();
+      }
+    } catch (e) {
+      console.error('Poll failed:', e);
+      // Don't stop polling on error, keep trying
+    }
+  }, CONFIG.POLL_INTERVAL);
+}
+
+function stopPolling() {
+  if (state.pollingTimer) {
+    clearInterval(state.pollingTimer);
+    state.pollingTimer = null;
+  }
+}
+
+// ============================================================
+//  GIVER: Results
+// ============================================================
+async function showGiverResults() {
+  const container = $('results-container');
+  container.innerHTML = '';
+  playCelebration();
+  startConfetti(3000);
+
+  const gifts = getGiftsForCombo(state.roomData.budget, state.roomData.relationship);
+  const selected = state.roomData.receiverSelections;
+  const selectedGifts = selected.map(i => gifts.find(g => g.id === i)).filter(Boolean);
+
+  let totalPrice = 0;
+
+  for (const gift of selectedGifts) {
+    totalPrice += gift.price;
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="gift-emoji">${gift.emoji}</div>
+      <div class="gift-name">${gift.name}</div>
+      <div class="gift-desc">${gift.desc}</div>
+      <div class="gift-price">¥${gift.price}</div>
+      <span class="gift-tag">${gift.category}</span>
+    `;
+    container.appendChild(card);
+  }
+
+  // Budget comparison
+  const budgetRange = state.roomData.budget;
+  const summary = document.createElement('div');
+  summary.className = 'budget-summary';
+  summary.innerHTML = `
+    <div class="label">预算范围：${budgetRange}元</div>
+    <div class="total">合计：¥${totalPrice}</div>
+  `;
+  container.appendChild(summary);
+
+  // Check if over budget
+  if (isOverBudget(totalPrice, budgetRange)) {
+    const overNote = document.createElement('div');
+    overNote.className = 'budget-over';
+    const overAmount = totalPrice - getBudgetMax(budgetRange);
+    overNote.innerHTML = `
+      <p>⚠️ 这个组合超出预算 <strong>¥${overAmount}</strong></p>
+      <p style="font-size:var(--font-sm);margin-top:8px;color:var(--text-light)">
+        建议保留其中一份礼物，由你来决定最终送哪个哦～
+      </p>
+    `;
+    container.appendChild(overNote);
+  }
+
+  applyTheme(state.roomData.relationship);
+  showScreen('screen-results');
+}
+
+function getBudgetMax(budget) {
+  const map = {
+    '50以下': 50,'50-100': 100,'100-150': 150,'150-200': 200,
+    '200-300': 300,'300-400': 400,'400-500': 500,'500以上': Infinity,
+  };
+  return map[budget] || Infinity;
+}
+
+function isOverBudget(total, budget) {
+  const max = getBudgetMax(budget);
+  return total > max;
+}
+
+// ============================================================
+//  RECEIVER: Code Input
+// ============================================================
+function resetCodeInput() {
+  document.querySelectorAll('.code-input-box').forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('filled');
+  });
+  $('code-error').textContent = '';
+  $('btn-verify-code').disabled = true;
+}
+
+function handleCodeInput(input, index) {
+  let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  input.value = val;
+  if (val) input.classList.add('filled');
+  else input.classList.remove('filled');
+
+  if (val && index < CONFIG.CODE_LENGTH - 1) {
+    const next = document.querySelector(`.code-input-box[data-index="${index + 1}"]`);
+    if (next) next.focus();
+  }
+
+  updateCodeVerifyBtn();
+}
+
+function handleCodeKeydown(e, input, index) {
+  if (e.key === 'Backspace' && !input.value && index > 0) {
+    const prev = document.querySelector(`.code-input-box[data-index="${index - 1}"]`);
+    if (prev) { prev.focus(); prev.value = ''; prev.classList.remove('filled'); }
+  }
+  if (e.key === 'Enter') {
+    verifyCode();
+  }
+}
+
+function updateCodeVerifyBtn() {
+  const allFilled = Array.from(document.querySelectorAll('.code-input-box'))
+    .every(inp => inp.value.length === 1);
+  $('btn-verify-code').disabled = !allFilled;
+}
+
+function fillCodeFromUrl(code) {
+  if (code.length !== CONFIG.CODE_LENGTH) return;
+  const inputs = document.querySelectorAll('.code-input-box');
+  for (let i = 0; i < code.length && i < inputs.length; i++) {
+    inputs[i].value = code[i];
+    inputs[i].classList.add('filled');
+  }
+  updateCodeVerifyBtn();
+  // Auto-verify after short delay
+  setTimeout(() => verifyCode(), 300);
+}
+
+// ============================================================
+//  RECEIVER: Verify Code
+// ============================================================
+function resetVerifyBtn() {
+  const isCheckResults = state.mode === 'giver';
+  $('btn-verify-code').textContent = isCheckResults ? '🔍 查看结果' : '🔍 查看礼物';
+  $('btn-verify-code').disabled = false;
+}
+
+async function verifyCode() {
+  const inputs = document.querySelectorAll('.code-input-box');
+  let code = '';
+  inputs.forEach(inp => code += inp.value.toUpperCase());
+
+  if (code.length !== CONFIG.CODE_LENGTH) return;
+
+  $('btn-verify-code').disabled = true;
+  $('btn-verify-code').textContent = '⏳ 验证中...';
+
+  try {
+    const data = await apiGet(`/api/room/${code}`);
+
+    // --- Mode: Giver checking results ---
+    if (state.mode === 'giver') {
+      if (!data) {
+        showNotification('📮', '密令无效', '这个密令不存在或已过期。');
+        resetVerifyBtn();
+        playError();
+        return;
+      }
+      if (data.status === 'waiting') {
+        showNotification('📮', '还没选好',
+          '收礼方还没有完成选择哦～\n请稍后再来查看。');
+        resetVerifyBtn();
+        return;
+      }
+      // status === 'completed'
+      state.code = code;
+      state.roomData = data;
+      state.relationship = data.relationship;
+      state.budget = data.budget;
+      showGiverResults();
+      return;
+    }
+
+    // --- Mode: Receiver ---
+    if (!data) {
+      showNotification('📮', '密令无效', '这个密令不存在或已过期，\n请检查后重新输入～');
+      resetVerifyBtn();
+      playError();
+      return;
+    }
+    if (data.status === 'completed') {
+      showNotification('📮', '已经选过啦',
+        '这个密令对应的礼物已经被挑选过了～\n如果是送礼方，可以点击查询结果。');
+      resetVerifyBtn();
+      return;
+    }
+
+    // Valid room (waiting) → show gifts
+    state.currentRoomCode = code;
+    state.roomData = data;
+    state.budget = data.budget;
+    state.relationship = data.relationship;
+    playConfirm();
+    showReceiverGifts(data.relationship, data.budget);
+
+  } catch (e) {
+    console.error('Verify code failed:', e);
+    if (e.message && e.message.includes('ROOM_NOT_FOUND')) {
+      showNotification('📮', '密令无效',
+        '这个密令不存在或已过期，\n请检查后重新输入～');
+    } else {
+      showNotification('📮', '网络异常',
+        '小邮差联系不上总部...\n请检查网络后重试。');
+    }
+    playError();
+    resetVerifyBtn();
+  }
+}
+
+// ============================================================
+//  RECEIVER: Show Gifts
+// ============================================================
+function showReceiverGifts(relationship, budget) {
+  applyTheme(relationship);
+
+  // Update banner
+  const banners = {
+    friend: { emoji: '🎈', title: '朋友 · 礼物清单', subtitle: '挑一份让好朋友开心的礼物吧～' },
+    lover: { emoji: '💕', title: '恋人 · 礼物清单', subtitle: '选一份让 TA 感受到心意的礼物吧 💝' },
+    elder: { emoji: '🌸', title: '长辈 · 礼物清单', subtitle: '选一份温暖贴心的礼物表达心意～' },
+  };
+  const b = banners[relationship] || banners.friend;
+  $('banner-emoji').textContent = b.emoji;
+  $('banner-title').textContent = b.title;
+  $('banner-subtitle').textContent = b.subtitle;
+
+  // Update message
+  const messages = {
+    friend: '💌 礼物信使小邮差说：「好朋友之间不用太客气～挑你第一眼心动的就好！可以选 1~2 个哦！」',
+    lover: '💌 礼物信使小邮差说：「爱一个人就是想让 TA 开心～选你直觉觉得 TA 会喜欢的！可以选 1~2 个哦 💕」',
+    elder: '💌 礼物信使小邮差说：「心意最重要～挑一份你觉得最温暖贴心的就好！可以选 1~2 个哦 🌸」',
+  };
+  $('theme-message').textContent = messages[relationship] || messages.friend;
+
+  // Render gifts
+  const grid = $('gift-grid');
+  grid.innerHTML = '';
+  state.selectedGifts = [];
+
+  const gifts = getGiftsForCombo(budget, relationship);
+  if (!gifts || gifts.length === 0) {
+    showNotification('🧸', '暂无推荐',
+      '这个组合的礼物清单正在准备中～\n小邮差还在路上呢！');
+    showScreen('screen-receiver-input');
+    return;
+  }
+
+  gifts.forEach(gift => {
+    const card = document.createElement('div');
+    card.className = 'gift-card';
+    card.dataset.id = gift.id;
+    card.innerHTML = `
+      <span class="gift-emoji">${gift.emoji}</span>
+      <div class="gift-name">${gift.name}</div>
+      <div class="gift-desc">${gift.desc}</div>
+      <span class="gift-tag">${gift.category}</span>
+      <div class="check-mark">✓</div>
+    `;
+    card.addEventListener('click', () => toggleGiftSelection(gift.id, card));
+    grid.appendChild(card);
+  });
+
+  updateSelectionCounter();
+  showScreen('screen-receiver-gifts');
+}
+
+function getGiftsForCombo(budget, relationship) {
+  const relationData = GIFT_DATA[relationship];
+  if (!relationData) return [];
+  // Normalize budget keys
+  const budgetKey = Object.keys(relationData).find(k => {
+    // Normalize comparison
+    const cleanK = k.replace(/\s/g, '');
+    const cleanB = budget.replace(/\s/g, '');
+    return cleanK === cleanB;
+  });
+  return budgetKey ? relationData[budgetKey] : [];
+}
+
+// ============================================================
+//  RECEIVER: Gift Selection
+// ============================================================
+function toggleGiftSelection(id, card) {
+  const idx = state.selectedGifts.indexOf(id);
+  if (idx >= 0) {
+    state.selectedGifts.splice(idx, 1);
+    card.classList.remove('selected');
+    playSelect();
+  } else if (state.selectedGifts.length < CONFIG.MAX_SELECTIONS) {
+    state.selectedGifts.push(id);
+    card.classList.add('selected');
+    playSelect();
+  } else {
+    showToast(`最多选 ${CONFIG.MAX_SELECTIONS} 个就好～`, 'error');
+  }
+  updateSelectionCounter();
+}
+
+function updateSelectionCounter() {
+  $('select-count').textContent = state.selectedGifts.length;
+  $('btn-submit-gifts').disabled = state.selectedGifts.length === 0;
+}
+
+// ============================================================
+//  RECEIVER: Submit Selections
+// ============================================================
+async function submitGifts() {
+  if (state.selectedGifts.length === 0) return;
+
+  $('btn-submit-gifts').disabled = true;
+  $('btn-submit-gifts').textContent = '⏳ 正在提交...';
+
+  try {
+    await apiPost(`/api/room/${state.currentRoomCode}/select`, {
+      selections: state.selectedGifts,
+    });
+
+    playCelebration();
+    startConfetti(5000);
+    showScreen('screen-celebration');
+
+  } catch (e) {
+    console.error('Submit failed:', e);
+    if (e.message && e.message.includes('ALREADY_COMPLETED')) {
+      showNotification('📮', '已经选过啦',
+        '这个密令对应的礼物已经被挑选过了～');
+    } else {
+      showNotification('📮', '提交失败',
+        '小邮差在路上出了点岔子...\n请检查网络后重试。');
+    }
+    playError();
+    $('btn-submit-gifts').disabled = false;
+    $('btn-submit-gifts').textContent = '✅ 确定选择';
+  }
+}
+
+// ============================================================
+//  RESET
+// ============================================================
+function resetAll() {
+  stopPolling();
+  stopConfetti();
+  state.mode = null;
+  state.budget = null;
+  state.relationship = null;
+  state.code = null;
+  state.roomData = null;
+  state.selectedGifts = [];
+  state.currentRoomCode = null;
+  document.body.className = '';
+  resetCodeInput();
+  showScreen('screen-landing');
+}
+
+// ============================================================
+//  URL PARAMETER HANDLING
+// ============================================================
+function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+
+  if (code && code.length === CONFIG.CODE_LENGTH) {
+    // Direct link for receiver
+    enterReceiverFlow();
+  }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', () => {
+  handleUrlParams();
+
+  // Apply friend theme as default on landing
+  applyTheme('friend');
+});
+
+// ============================================================
+//  UTILITY
+// ============================================================
+function getRelationLabel(r) {
+  return { friend: '朋友', lover: '恋人', elder: '长辈' }[r] || r;
+}
+
+// Make functions globally accessible for inline onclick
+window.enterGiverFlow = enterGiverFlow;
+window.enterReceiverFlow = enterReceiverFlow;
+window.showCheckResults = showCheckResults;
+window.selectBudget = selectBudget;
+window.selectRelation = selectRelation;
+window.generateRoom = generateRoom;
+window.copyShareLink = copyShareLink;
+window.showScreen = showScreen;
+window.handleCodeInput = handleCodeInput;
+window.handleCodeKeydown = handleCodeKeydown;
+window.verifyCode = verifyCode;
+window.submitGifts = submitGifts;
+window.resetAll = resetAll;
+
+console.log('🧸 礼物信使已加载 ✨');
+console.log(`📮 API 地址: ${CONFIG.API_BASE}`);
+console.log('💡 部署前请将 API_BASE 替换为你的 Cloudflare Worker 地址');
+</script>
+</body>
+</html>

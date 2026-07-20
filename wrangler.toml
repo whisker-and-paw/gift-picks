@@ -1,0 +1,7 @@
+name = "gift-picks"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+[[kv_namespaces]]
+binding = "GIFT_ROOMS"
+id = "c385f6ebd1094ed685cb75587e3686f1"
