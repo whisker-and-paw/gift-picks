@@ -419,19 +419,14 @@ button{cursor:pointer;background:none;padding:0}
   <div class="content">
     <span class="cel-em">🎉</span>
     <div class="cel-t">评价已提交！</div>
-    <div class="cel-d" id="cel-d">你的人格观察已发送回去～<br>把下面的链接发给 TA 就能看到对比 ✨</div>
-    <div style="background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);text-align:center;box-shadow:var(--shadow-sm);width:100%;max-width:360px;display:none" id="cel-share-area">
-      <div style="font-size:var(--font-sm);color:var(--text-light);margin-bottom:8px">📋 复制这个链接发给 TA</div>
-      <div style="font-size:12px;font-weight:700;color:var(--primary);word-break:break-all;background:var(--bg);padding:12px;border-radius:var(--radius-sm);font-family:monospace;line-height:1.5" id="cel-share-link">-</div>
-      <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="copyShareLink()">📋 复制链接</button>
-    </div>
+    <div class="cel-d" id="cel-d">你的评价已发送～<br>TA 那边会自动收到结果 ✨</div>
     <div class="cel-acts"><button class="btn btn-secondary" onclick="resetAll()">🏠 回到首页</button></div>
   </div>
 </div>
 
 <script>
 // ============================================================
-const CFG = { CODE_LEN:5, POLL_MS:2000 };
+const CFG = { API_BASE:window.location.origin.includes('github.io')?'https://gift-picks.zeabur.app':'http://localhost:3000', CODE_LEN:5, POLL_MS:2000 };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -493,28 +488,66 @@ function cfeti(d=4000){
 }
 
 // ============================================================
-// API — 纯 localStorage，零网络
+// API — 远程 API 优先，失败降级到 localStorage
 // ============================================================
 function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<CFG.CODE_LEN;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
 
+async function apiPost(path, body) {
+  const res = await fetch(CFG.API_BASE + path, {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+}
+
+async function apiGet(path) {
+  const res = await fetch(CFG.API_BASE + path);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+}
+
 const API = {
   async create(t,a){
-    const c=glc();
-    localStorage.setItem(`rm_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
-    return {code:c};
+    try {
+      const d = await apiPost('/api/create-room', {selfType:t, selfAnswers:a});
+      // 同步保存到本地，便于同设备直接读取
+      localStorage.setItem(`rm_${d.code}`, JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
+      return d;
+    } catch(e) {
+      // 降级
+      const c = glc();
+      localStorage.setItem(`rm_${c}`, JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
+      return {code:c};
+    }
   },
   async get(c){
-    const r=localStorage.getItem(`rm_${c}`);
-    return r?JSON.parse(r):null;
+    const raw = localStorage.getItem(`rm_${c}`);
+    if (raw) return JSON.parse(raw); // 同设备直接返回
+    try {
+      return await apiGet(`/api/room/${c}`);
+    } catch(e) {
+      return null;
+    }
   },
   async submit(c,a){
-    const r=localStorage.getItem(`rm_${c}`);
-    if(!r)throw Error('ROOM_NOT_FOUND');
-    const rm=JSON.parse(r);
-    if(rm.status!=='created')throw Error('ALREADY_DONE');
-    rm.otherAnswers=a;rm.status='completed';
-    localStorage.setItem(`rm_${c}`,JSON.stringify(rm));
-    return {success:true};
+    const raw = localStorage.getItem(`rm_${c}`);
+    if (raw) {
+      // 同设备：本地保存并同步到远程（后台静默）
+      const rm = JSON.parse(raw);
+      if(rm.status!=='created')throw Error('ALREADY_DONE');
+      rm.otherAnswers=a; rm.status='completed';
+      localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
+      apiPost(`/api/room/${c}/submit-other`, {answers:a}).catch(()=>{});
+      return {success:true};
+    }
+    try {
+      return await apiPost(`/api/room/${c}/submit-other`, {answers:a});
+    } catch(e) {
+      // 远程失败，本地也没数据
+      throw Error('SUBMIT_FAILED');
+    }
   }
 };
 
@@ -739,20 +772,8 @@ async function oSubmit(){
   if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
   $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
   try{await API.submit(S.code,S.ans)}catch(e){}
-  // 生成分享链接，数据编码在 URL 中，无需后端
-  const room = S.roomData || (localStorage.getItem('rm_'+S.code) ? JSON.parse(localStorage.getItem('rm_'+S.code)) : null);
-  const selfType = room?.selfType || '';
-  const baseUrl = window.location.href.split('?')[0].split('#')[0];
-  const shareUrl = `${baseUrl}?result=1&code=${S.code}&type=${selfType}&a=${S.ans.join(',')}`;
-  $('cel-share-link').textContent = shareUrl;
-  $('cel-share-area').style.display = 'block';
-  $('cel-d').innerHTML = '🎉 评价完成！<br>把下面的链接发给 TA，点开就能看到对比报告';
+  $('cel-d').innerHTML = '🎉 评价完成！<br>TA 那边会自动收到结果 ✨';
   cl();cfeti(5000);ss('screen-cel');
-}
-function copyShareLink(){
-  const t=$('cel-share-link').textContent;
-  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>to('链接已复制 ✅ 发给 TA 吧！'));
-  else{const e=document.createElement('textarea');e.value=t;e.style.position='fixed';e.style.opacity='0';document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);to('链接已复制 ✅')}
 }
 
 function resetAll(){
@@ -772,33 +793,15 @@ function resetAll(){
 document.addEventListener('DOMContentLoaded',()=>{
   const u=new URLSearchParams(window.location.search);
   const code=u.get('code');
-  const hasResult=u.get('result');
-  const answersRaw=u.get('a');
   const type=u.get('type');
-
-  // 有 result 参数 → 直接显示对比报告
-  if(hasResult && code && answersRaw && type){
-    const answers=answersRaw.split(',').map(Number);
-    if(answers.length===16 && answers.every(n=>n>=1&&n<=5)){
-      // 把答案存本地并显示报告
-      const room = {selfType:type,selfAnswers:null,otherAnswers:answers,status:'completed'};
-      localStorage.setItem(`rm_${code}`, JSON.stringify(room));
-      S.code=code; S.roomData=room; S.relationship=type;
-      setTimeout(()=>{showRes()},300);
-      return;
-    }
-  }
-
-  // code + type → 直接进入答题（跳过验证）
+  // 扫码/链接直达：code+type → 跳过验证直接答题
   if(code && type && /^[EISNTFJP]{4}$/.test(type)){
     S.code=code.toUpperCase();S.roomData={selfType:type,selfAnswers:null,otherAnswers:null,status:'created'};
     setTimeout(()=>{ck();startOQ(type)},300);
     return;
   }
-
-  // 只有 code → 可能是查询结果或手动输入
+  // 手动输入密令
   if(code&&code.length===CFG.CODE_LEN)goOther();
-
   console.log('🪞 人格镜像已加载');
 });
 </script>
