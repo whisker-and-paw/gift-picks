@@ -263,7 +263,7 @@ button{cursor:pointer;background:none;padding:0}
         <span class="arrow">→</span>
       </button>
     </div>
-    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a>　<a onclick="showImport()">📋 有结果码？导入对比</a></div>
+    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a></div>
   </div>
 </div>
 
@@ -414,30 +414,16 @@ button{cursor:pointer;background:none;padding:0}
   </div>
 </div>
 
-<!-- IMPORT RESULT -->
-<div class="screen" id="screen-import">
-  <div class="content" style="flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center">
-    <span style="font-size:3rem">📋</span>
-    <h2 style="font-size:var(--font-lg);font-weight:800;color:var(--text)">导入结果码</h2>
-    <p style="font-size:var(--font-sm);color:var(--text-light);line-height:1.6">把 TA 发给你的结果码粘贴进来<br>就能看到人格对比报告啦～</p>
-    <textarea id="import-input" style="width:100%;max-width:360px;height:80px;padding:14px;border:2px solid var(--primary-light);border-radius:var(--radius-md);font-family:monospace;font-size:1rem;resize:none;text-align:center;background:var(--bg-card);color:var(--text);outline:none" placeholder="在此粘贴结果码..."></textarea>
-    <div class="ci-acts">
-      <button class="btn btn-primary btn-lg" id="btn-import" onclick="importResult()" disabled>🔍 查看对比报告</button>
-      <button class="btn btn-secondary" onclick="ss('screen-landing')">← 返回</button>
-    </div>
-  </div>
-</div>
-
 <!-- CELEBRATION -->
 <div class="screen" id="screen-cel">
   <div class="content">
     <span class="cel-em">🎉</span>
     <div class="cel-t">评价已提交！</div>
-    <div class="cel-d" id="cel-d">你的人格观察已发送回去～<br>把下面的结果码发给 TA，TA 就能看到对比了 ✨</div>
-    <div style="background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);text-align:center;box-shadow:var(--shadow-sm);width:100%;max-width:320px;display:none" id="cel-result-area">
-      <div style="font-size:var(--font-sm);color:var(--text-light);margin-bottom:8px">📋 把结果码发给 TA</div>
-      <div style="font-size:1.1rem;font-weight:900;color:var(--primary);word-break:break-all;background:var(--bg);padding:12px;border-radius:var(--radius-sm);font-family:monospace;letter-spacing:1px" id="cel-result-code">-</div>
-      <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="copyResultCode()">📋 复制结果码</button>
+    <div class="cel-d" id="cel-d">你的人格观察已发送回去～<br>把下面的链接发给 TA 就能看到对比 ✨</div>
+    <div style="background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);text-align:center;box-shadow:var(--shadow-sm);width:100%;max-width:360px;display:none" id="cel-share-area">
+      <div style="font-size:var(--font-sm);color:var(--text-light);margin-bottom:8px">📋 复制这个链接发给 TA</div>
+      <div style="font-size:12px;font-weight:700;color:var(--primary);word-break:break-all;background:var(--bg);padding:12px;border-radius:var(--radius-sm);font-family:monospace;line-height:1.5" id="cel-share-link">-</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="copyShareLink()">📋 复制链接</button>
     </div>
     <div class="cel-acts"><button class="btn btn-secondary" onclick="resetAll()">🏠 回到首页</button></div>
   </div>
@@ -672,7 +658,7 @@ function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
 // RESULTS
 // ============================================================
 function showRes(){
-  const rm=S.room;if(!rm||!rm.selfType)return;
+  const rm=S.roomData||S.room;if(!rm||!rm.selfType)return;
   const st=rm.selfType,oa=rm.otherAnswers,ot=oa?calcMBTI(oa):'????';
   cl();cfeti(4000);
   const dims=['EI','SN','TF','JP'];let sc=[],mt=0;
@@ -752,51 +738,23 @@ function encodeResult(ans){
 async function oSubmit(){
   if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
   $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
-  try{
-    await API.submit(S.code,S.ans);
-  }catch(e){
-    // Cross-device: API failed, but we still have the result code
-    console.error('API submit failed:', e);
-  }
-  const rc=encodeResult(S.ans);
-  $('cel-result-code').textContent=rc;
-  $('cel-result-area').style.display='block';
-  $('cel-d').innerHTML='把下面的 <strong>结果码</strong> 发给 TA<br>TA 点首页「有结果码？导入对比」就能看到报告 📋';
+  try{await API.submit(S.code,S.ans)}catch(e){}
+  // 生成分享链接，数据编码在 URL 中，无需后端
+  const room = S.roomData || (localStorage.getItem('rm_'+S.code) ? JSON.parse(localStorage.getItem('rm_'+S.code)) : null);
+  const selfType = room?.selfType || '';
+  const baseUrl = window.location.href.split('?')[0].split('#')[0];
+  const shareUrl = `${baseUrl}?result=1&code=${S.code}&type=${selfType}&a=${S.ans.join(',')}`;
+  $('cel-share-link').textContent = shareUrl;
+  $('cel-share-area').style.display = 'block';
+  $('cel-d').innerHTML = '🎉 评价完成！<br>把下面的链接发给 TA，点开就能看到对比报告';
   cl();cfeti(5000);ss('screen-cel');
 }
-function copyResultCode(){
-  const t=$('cel-result-code').textContent;
-  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>to('结果码已复制 ✅'));
-  else{const e=document.createElement('textarea');e.value=t;e.style.position='fixed';e.style.opacity='0';document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);to('结果码已复制 ✅')}
+function copyShareLink(){
+  const t=$('cel-share-link').textContent;
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>to('链接已复制 ✅ 发给 TA 吧！'));
+  else{const e=document.createElement('textarea');e.value=t;e.style.position='fixed';e.style.opacity='0';document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);to('链接已复制 ✅')}
 }
 
-// ============================================================
-// RESET
-// ============================================================
-function showImport(){
-  sk();$('import-input').value='';$('btn-import').disabled=true;ss('screen-import');
-}
-$('import-input')?.addEventListener('input',function(){
-  $('btn-import').disabled=!this.value.trim().startsWith('R:');
-});
-function importResult(){
-  const raw=$('import-input').value.trim();
-  if(!raw.startsWith('R:')){to('格式不对～请粘贴完整的结果码');return}
-  const nums=raw.slice(2).split('-').map(Number);
-  if(nums.length!==16||nums.some(n=>isNaN(n)||n<1||n>5)){to('结果码数据异常，请检查');return}
-  // Get the initiator's room using the saved key
-  const roomCode=localStorage.getItem('_my_room');
-  let found=null;
-  if(roomCode){
-    try{found=JSON.parse(localStorage.getItem('rm_'+roomCode))}catch(e){}
-  }
-  if(found&&found.selfType){
-    found.otherAnswers=nums;found.status='completed';
-    S.room=found;showRes();
-  }else{
-    ni('📮','没找到本地数据','请先在浏览器中创建密令（选/测 MBTI 生成密令）<br>再粘贴 TA 发回的结果码～');
-  }
-}
 function resetAll(){
   pollStop();
   Object.assign(S,{mode:null,selfType:null,selfAns:null,code:null,room:null,qi:0,ans:[],timer:null});
@@ -813,11 +771,35 @@ function resetAll(){
 // ============================================================
 document.addEventListener('DOMContentLoaded',()=>{
   const u=new URLSearchParams(window.location.search);
-  if(u.get('code')&&u.get('code').length===CFG.CODE_LEN){
-    // Check if it has a result code (R: prefix in a different param or in hash)
-    goOther();
+  const code=u.get('code');
+  const hasResult=u.get('result');
+  const answersRaw=u.get('a');
+  const type=u.get('type');
+
+  // 有 result 参数 → 直接显示对比报告
+  if(hasResult && code && answersRaw && type){
+    const answers=answersRaw.split(',').map(Number);
+    if(answers.length===16 && answers.every(n=>n>=1&&n<=5)){
+      // 把答案存本地并显示报告
+      const room = {selfType:type,selfAnswers:null,otherAnswers:answers,status:'completed'};
+      localStorage.setItem(`rm_${code}`, JSON.stringify(room));
+      S.code=code; S.roomData=room; S.relationship=type;
+      setTimeout(()=>{showRes()},300);
+      return;
+    }
   }
-  console.log('🪞 人格镜像已加载 · 纯本地模式');
+
+  // code + type → 直接进入答题（跳过验证）
+  if(code && type && /^[EISNTFJP]{4}$/.test(type)){
+    S.code=code.toUpperCase();S.roomData={selfType:type,selfAnswers:null,otherAnswers:null,status:'created'};
+    setTimeout(()=>{ck();startOQ(type)},300);
+    return;
+  }
+
+  // 只有 code → 可能是查询结果或手动输入
+  if(code&&code.length===CFG.CODE_LEN)goOther();
+
+  console.log('🪞 人格镜像已加载');
 });
 </script>
 </body>
