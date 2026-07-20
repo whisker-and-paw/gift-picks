@@ -3,103 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#FF7E7E">
-<title>礼物信使 · 生日礼物挑选助手</title>
+<meta name="theme-color" content="#7C5CBF">
+<title>人格镜像 · 双人 MBTI 对比</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-/* ===== Reset & Base ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-body{
-  font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;
-  background:var(--bg);color:var(--text);min-height:100dvh;
-  overflow-x:hidden;transition:background .6s,color .6s;
-  -webkit-font-smoothing:antialiased;
-}
-img{max-width:100%;display:block}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#F5F0FF 0%,#FFF5F5 100%);color:#3A2A4A;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 button,input{font-family:inherit;font-size:inherit;border:none;outline:none}
 button{cursor:pointer;background:none;padding:0}
-a{color:inherit;text-decoration:none}
-:root{
-  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;--radius-xl:32px;
-  --shadow-sm:0 2px 8px rgba(0,0,0,.06);--shadow-md:0 4px 20px rgba(0,0,0,.08);
-  --shadow-lg:0 8px 40px rgba(0,0,0,.1);--shadow-glow:0 0 30px var(--shadow);
-  --font-xl:1.75rem;--font-lg:1.25rem;--font-md:1rem;--font-sm:.875rem;
-  --space-xs:6px;--space-sm:12px;--space-md:20px;--space-lg:32px;--space-xl:48px;
-}
-
-/* ===== Theme: Friend (活泼) ===== */
-body.theme-friend{--primary:#FF7E7E;--primary-light:#FFB5B5;--primary-dark:#E05959;
-  --secondary:#6EC6FF;--secondary-light:#B0DEFF;--accent:#FFD93D;--accent-light:#FFE680;
-  --bg:#FFFAF5;--bg-card:#FFFFFF;--text:#4A3728;--text-light:#9B8A7B;--text-muted:#C0B0A0;
-  --shadow:rgba(255,126,126,.2);--gradient:linear-gradient(135deg,#FF7E7E,#FFB06A);
-  --glow:0 0 20px rgba(255,126,126,.15);
-}
-/* ===== Theme: Lover (浪漫) ===== */
-body.theme-lover{--primary:#FF8FAB;--primary-light:#FFC8D8;--primary-dark:#E56A8A;
-  --secondary:#C9A7EB;--secondary-light:#E0D0F5;--accent:#FFD700;--accent-light:#FFE44D;
-  --bg:#FFF5F8;--bg-card:#FFFFFF;--text:#4A3040;--text-light:#9B7A8A;--text-muted:#C0A0B0;
-  --shadow:rgba(255,143,171,.2);--gradient:linear-gradient(135deg,#FF8FAB,#C9A7EB);
-  --glow:0 0 20px rgba(255,143,171,.15);
-}
-/* ===== Theme: Elder (温馨) ===== */
-body.theme-elder{--primary:#D4A574;--primary-light:#E8CDA6;--primary-dark:#B8895A;
-  --secondary:#8FBC8F;--secondary-light:#BFDDBF;--accent:#C41E3A;--accent-light:#D46070;
-  --bg:#F8F3EA;--bg-card:#FFFFFF;--text:#3C3228;--text-light:#8B7A6B;--text-muted:#B0A090;
-  --shadow:rgba(212,165,116,.2);--gradient:linear-gradient(135deg,#D4A574,#8FBC8F);
-  --glow:0 0 20px rgba(212,165,116,.15);
-}
-
-/* ===== Common Styles ===== */
-.screen{display:none;flex-direction:column;min-height:100dvh;padding:var(--space-md);
-  animation:fadeIn .4s ease;position:relative}
+:root{--primary:#7C5CBF;--primary-light:#C8B5E8;--primary-dark:#5A3D9A;--secondary:#FF8FAB;--secondary-light:#FFC8D8;--accent:#FFD93D;--bg:#F8F4FF;--bg-card:#FFF;--text:#3A2A4A;--text-light:#8A7A9A;--text-muted:#B0A0C0;--shadow:rgba(124,92,191,.15);--gradient:linear-gradient(135deg,#7C5CBF,#FF8FAB);--radius-sm:12px;--radius-md:18px;--radius-lg:24px;--shadow-sm:0 2px 8px rgba(0,0,0,.06);--shadow-md:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 40px rgba(0,0,0,.1);--match:#4CAF50;--mismatch:#E05959;--font-xl:1.75rem;--font-lg:1.25rem;--font-md:1rem;--font-sm:.875rem;--space-xs:6px;--space-sm:12px;--space-md:20px;--space-lg:32px}
+.screen{display:none;flex-direction:column;min-height:100dvh;padding:var(--space-md);animation:fadeIn .4s ease;position:relative}
 .screen.active{display:flex}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-8px) rotate(3deg)}75%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}25%{transform:translateY(-8px)}33%{transform:translateY(-4px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes confettiFall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
 
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:14px 32px;border-radius:50px;font-weight:700;font-size:var(--font-md);
-  transition:all .3s ease;position:relative;overflow:hidden;
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 32px;border-radius:50px;font-weight:700;font-size:var(--font-md);transition:all .3s ease}
 .btn-primary{background:var(--gradient);color:#fff;box-shadow:0 4px 15px var(--shadow)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px var(--shadow)}
-.btn-primary:active{transform:translateY(0)}
 .btn-secondary{background:var(--bg-card);color:var(--text);border:2px solid var(--primary-light)}
-.btn-secondary:hover{background:var(--primary-light);border-color:var(--primary)}
-.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
-.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-secondary:hover{background:var(--primary-light)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
 .btn-sm{padding:10px 20px;font-size:var(--font-sm)}
 .btn-lg{padding:18px 40px;font-size:var(--font-lg)}
+.btn-full{width:100%}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:var(--space-md);animation:fadeIn .2s ease}
+.overlay.active{display:flex}
+.overlay-box{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-lg);max-width:360px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:pop .3s ease}
+.overlay-box .icon{font-size:3rem;display:block;margin-bottom:12px}
+.overlay-box h3{font-size:var(--font-lg);font-weight:800;margin-bottom:8px;color:var(--text)}
+.overlay-box p{font-size:var(--font-sm);color:var(--text-light);line-height:1.7;margin-bottom:var(--space-md)}
+.overlay-box .btn{width:100%}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;background:var(--text);color:#fff;border-radius:50px;font-size:var(--font-sm);font-weight:600;box-shadow:var(--shadow-lg);z-index:300;animation:slideUp .3s ease;max-width:90%}
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:100}
 
-/* ===== Header ===== */
-.app-header{text-align:center;padding:var(--space-lg) 0 var(--space-md)}
-.app-logo{font-size:2.5rem;margin-bottom:4px;display:block;line-height:1}
-.app-title{font-size:var(--font-xl);font-weight:900;background:var(--gradient);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.app-subtitle{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
-
-/* ===== Landing Screen ===== */
+/* ===== LANDING ===== */
 #screen-landing .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
 .landing-hero{text-align:center;animation:fadeUp .8s ease}
 .landing-hero .emoji-big{font-size:4rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
-.landing-hero h1{font-size:2rem;font-weight:900;color:var(--text);margin-bottom:8px}
-.landing-hero p{color:var(--text-light);line-height:1.7;max-width:300px;margin:0 auto}
+.landing-hero h1{font-size:2rem;font-weight:900;color:var(--text);margin-bottom:4px}
+.landing-hero .sub{color:var(--text-light);line-height:1.7;max-width:320px;margin:0 auto;font-size:var(--font-sm)}
 .role-buttons{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;animation:fadeUp 1s ease}
-.role-btn{display:flex;align-items:center;gap:14px;padding:18px 24px;background:var(--bg-card);
-  border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;
-  transition:all .3s ease;width:100%;text-align:left}
+.role-btn{display:flex;align-items:center;gap:14px;padding:18px 24px;background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;width:100%;text-align:left}
 .role-btn:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .role-btn .icon{font-size:2rem;width:48px;text-align:center}
 .role-btn .info{flex:1}
@@ -111,194 +64,153 @@ body.theme-elder{--primary:#D4A574;--primary-light:#E8CDA6;--primary-dark:#B8895
 .landing-footer a{color:var(--text-light);font-size:var(--font-sm);text-decoration:underline;cursor:pointer}
 .landing-footer a:hover{color:var(--primary)}
 
-/* ===== Form Screen (Giver) ===== */
-#screen-giver-form .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
-.form-step{font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-md);text-align:center}
-.form-step span{display:inline-block;padding:4px 14px;background:var(--primary-light);border-radius:20px;color:var(--primary-dark);font-weight:700}
-.section-label{font-size:var(--font-lg);font-weight:800;margin-bottom:var(--space-sm);color:var(--text)}
-.section-hint{font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-md)}
-.option-grid{display:grid;gap:var(--space-sm);margin-bottom:var(--space-lg)}
-.option-grid-2{grid-template-columns:1fr 1fr}
-.option-grid-3{grid-template-columns:1fr 1fr 1fr}
-.option-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  padding:16px 12px;background:var(--bg-card);border:2px solid transparent;
-  border-radius:var(--radius-md);box-shadow:var(--shadow-sm);transition:all .3s ease;
-  text-align:center;min-height:80px;font-weight:700;font-size:var(--font-md);color:var(--text)}
-.option-btn .opt-emoji{font-size:1.8rem;display:block}
-.option-btn .opt-price{font-size:var(--font-sm);color:var(--text-light);font-weight:400}
-.option-btn:hover{border-color:var(--primary-light);transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.option-btn.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 4px var(--shadow)}
-.option-btn .coming-soon-badge{font-size:10px;background:var(--text-muted);color:#fff;padding:2px 8px;border-radius:10px;margin-top:2px}
-.option-btn.coming-soon{opacity:.6;position:relative}
-.option-btn.coming-soon::after{content:'即将上线';position:absolute;top:-6px;right:-6px;font-size:10px;
-  background:var(--text-muted);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600}
-.form-nav{display:flex;gap:var(--space-sm);margin-top:var(--space-md)}
-.form-nav .btn{flex:1}
+/* ===== CHOOSE METHOD ===== */
+#screen-choose .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.ch-hdr{text-align:center;padding:var(--space-lg) 0}
+.ch-hdr .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
+.ch-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
+.ch-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
+.ch-cards{display:flex;flex-direction:column;gap:var(--space-sm)}
+.ch-card{display:flex;align-items:center;gap:14px;padding:20px 24px;background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;cursor:pointer}
+.ch-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ch-card .icon{font-size:2rem;width:48px;text-align:center}
+.ch-card .info{flex:1}
+.ch-card .info strong{display:block;font-size:var(--font-md);font-weight:800;color:var(--text)}
+.ch-card .info span{font-size:var(--font-sm);color:var(--text-light)}
+.ch-card .arrow{font-size:1.2rem;color:var(--text-muted)}
 
-/* ===== Generating Screen ===== */
-#screen-generating .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center}
-.generating-animation{position:relative;width:120px;height:120px}
-.generating-animation .mail-icon{font-size:3.5rem;animation:bounce 1.2s ease-in-out infinite;position:relative;z-index:2}
-.generating-animation .ring{position:absolute;inset:-10px;border:3px solid var(--primary-light);border-top-color:var(--primary);
-  border-radius:50%;animation:spin 1s linear infinite}
-.generating-ring-2{position:absolute;inset:-20px;border:2px dashed var(--secondary);border-radius:50%;animation:spin 1.5s linear infinite reverse}
-.generating-text{font-size:var(--font-lg);font-weight:700;color:var(--text)}
-.generating-hint{font-size:var(--font-sm);color:var(--text-light);max-width:280px;line-height:1.6}
-.generating-progress{width:200px;height:4px;background:var(--primary-light);border-radius:4px;overflow:hidden}
-.generating-progress .bar{height:100%;background:var(--gradient);width:0%;border-radius:4px;transition:width .3s ease}
+/* ===== TYPE PICKER ===== */
+#screen-type .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.tp-hdr{text-align:center;padding:var(--space-md) 0}
+.tp-hdr .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
+.tp-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
+.tp-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
+.dim-box{border-radius:var(--radius-md);margin-bottom:var(--space-sm);padding:var(--space-md);background:var(--bg-card);box-shadow:var(--shadow-sm)}
+.dim-lbl{font-weight:700;font-size:var(--font-sm);color:var(--text);margin-bottom:10px;text-align:center}
+.dim-tog{display:flex;gap:8px;justify-content:center}
+.dim-opt{flex:1;padding:14px 8px;border-radius:var(--radius-md);border:2px solid var(--primary-light);text-align:center;font-weight:700;font-size:var(--font-md);color:var(--text-light);transition:all .2s ease;cursor:pointer;background:var(--bg)}
+.dim-opt:hover{border-color:var(--primary)}
+.dim-opt.sel{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow)}
+.tp-res{text-align:center;padding:var(--space-md);margin-top:var(--space-md);background:var(--gradient);border-radius:var(--radius-lg);color:#fff}
+.tp-res .code{font-size:2.5rem;font-weight:900;letter-spacing:6px}
+.tp-res .lbl{font-size:var(--font-sm);opacity:.9;margin-top:4px}
 
-/* ===== Code Screen ===== */
+/* ===== QUIZ (shared) ===== */
+.screen-quiz .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.qz-hdr{text-align:center;padding:var(--space-md) 0}
+.qz-hdr .emoji{font-size:2rem;display:block;margin-bottom:4px}
+.qz-hdr h2{font-size:var(--font-lg);font-weight:800;color:var(--text)}
+.qz-hdr p{font-size:var(--font-sm);color:var(--text-light);margin-top:2px}
+.qz-bar{height:4px;background:var(--primary-light);border-radius:4px;margin-bottom:var(--space-md);overflow:hidden}
+.qz-bar .fill{height:100%;background:var(--gradient);border-radius:4px;transition:width .3s ease}
+.qz-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-lg);box-shadow:var(--shadow-md);margin-bottom:var(--space-md);animation:fadeUp .3s ease}
+.qz-card .q-dim{display:inline-block;padding:2px 12px;border-radius:20px;background:var(--primary-light);color:var(--primary-dark);font-size:12px;font-weight:700;margin-bottom:8px}
+.qz-card .q-em{font-size:2rem;display:block;margin-bottom:8px}
+.qz-card .q-t{font-size:var(--font-lg);font-weight:800;color:var(--text);margin-bottom:var(--space-lg);line-height:1.5}
+.qz-opts{display:flex;flex-direction:column;gap:var(--space-sm)}
+.qz-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border-radius:var(--radius-md);border:2px solid transparent;transition:all .2s ease;cursor:pointer;font-weight:600;font-size:var(--font-md);color:var(--text)}
+.qz-opt .lt{width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:var(--font-sm);flex-shrink:0}
+.qz-opt:hover{border-color:var(--primary-light);background:var(--bg-card)}
+.qz-opt.sel{border-color:var(--primary);background:var(--primary-light)}
+.qz-opt.sel .lt{background:var(--primary);color:#fff}
+.qz-nav{display:flex;gap:var(--space-sm);justify-content:space-between;align-items:center;margin-bottom:var(--space-md)}
+.qz-nav .count{font-size:var(--font-sm);color:var(--text-light);font-weight:600}
+.qz-sub{text-align:center}
+
+/* ===== OTHER INPUT ===== */
+#screen-other-input .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
+.ot-hdr{text-align:center}
+.ot-hdr .emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
+.ot-hdr h2{font-size:var(--font-xl);font-weight:900;margin-top:8px;color:var(--text)}
+.ot-hdr p{color:var(--text-light);font-size:var(--font-sm);margin-top:4px}
+.ci-grid{display:flex;gap:8px;justify-content:center;margin:var(--space-md) 0}
+.ci-box{width:48px;height:56px;border:2px solid var(--primary-light);border-radius:var(--radius-sm);text-align:center;font-size:1.6rem;font-weight:800;color:var(--primary);background:var(--bg-card);transition:all .3s ease;caret-color:var(--primary);text-transform:uppercase}
+.ci-box:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow);outline:none}
+.ci-box.filled{border-color:var(--primary);background:var(--primary-light)}
+.ce{font-size:var(--font-sm);color:#E05959;min-height:20px;text-align:center}
+.ci-acts{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;align-items:center}
+.ci-acts .btn{min-width:180px}
+.scan-h{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:4px}
+
+/* ===== OTHER QUIZ ===== */
+#screen-other-quiz .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.ot-qz-banner{text-align:center;padding:var(--space-lg);border-radius:var(--radius-lg);background:var(--gradient);color:#fff;margin-bottom:var(--space-lg)}
+.ot-qz-banner .emoji{font-size:2.5rem;display:block;margin-bottom:8px}
+.ot-qz-banner h2{font-size:var(--font-lg);font-weight:800}
+.ot-qz-banner p{font-size:var(--font-sm);opacity:.9;margin-top:4px;line-height:1.6}
+
+/* ===== GENERATING ===== */
+#screen-gen .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center}
+.gen-anim{position:relative;width:120px;height:120px}
+.gen-anim .icon{font-size:3.5rem;animation:bounce 1.2s ease-in-out infinite;position:relative;z-index:2}
+.gen-anim .ring{position:absolute;inset:-10px;border:3px solid var(--primary-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+.gen-r2{position:absolute;inset:-20px;border:2px dashed var(--secondary-light);border-radius:50%;animation:spin 1.5s linear infinite reverse}
+.gen-t{font-size:var(--font-lg);font-weight:700;color:var(--text)}
+.gen-h{font-size:var(--font-sm);color:var(--text-light);max-width:280px;line-height:1.6}
+.gen-b{width:200px;height:4px;background:var(--primary-light);border-radius:4px;overflow:hidden}
+.gen-b .fill{height:100%;background:var(--gradient);width:0%;border-radius:4px;transition:width .3s ease}
+
+/* ===== CODE ===== */
 #screen-code .content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
-.code-emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
-.code-title{font-size:var(--font-lg);font-weight:800;text-align:center}
-.code-title small{display:block;font-weight:400;font-size:var(--font-sm);color:var(--text-light);margin-top:4px}
-.code-display{display:flex;gap:10px;justify-content:center;padding:var(--space-md) var(--space-lg);
-  background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);
-  border:2px solid var(--primary-light);animation:pulse 2s ease-in-out infinite}
-.code-char{width:52px;height:64px;display:flex;align-items:center;justify-content:center;
-  font-size:2rem;font-weight:900;color:var(--primary);background:var(--bg);
-  border-radius:var(--radius-sm);letter-spacing:2px}
-.qr-container{width:180px;height:180px;background:var(--bg-card);border-radius:var(--radius-md);
-  padding:12px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center}
-.qr-container img,.qr-container canvas{width:100%!important;height:100%!important}
-.qr-label{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:-8px}
-.code-actions{display:flex;flex-wrap:wrap;gap:var(--space-sm);justify-content:center;width:100%}
-.waiting-status{display:flex;align-items:center;gap:8px;font-size:var(--font-sm);color:var(--text-light);
-  padding:10px 20px;background:var(--bg-card);border-radius:50px;box-shadow:var(--shadow-sm)}
-.waiting-status .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.5s ease-in-out infinite}
-.code-back-btn{position:absolute;top:var(--space-md);left:var(--space-md);font-size:var(--font-sm);
-  color:var(--text-light);display:flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;border-radius:20px;transition:all .3s}
-.code-back-btn:hover{background:var(--primary-light);color:var(--primary)}
+.cd-em{font-size:3rem;animation:float 3s ease-in-out infinite}
+.cd-t{font-size:var(--font-lg);font-weight:800;text-align:center}
+.cd-t small{display:block;font-weight:400;font-size:var(--font-sm);color:var(--text-light);margin-top:4px;line-height:1.5}
+.cd-type-badge{display:inline-block;padding:4px 20px;border-radius:20px;background:var(--gradient);color:#fff;font-size:1.2rem;font-weight:900;letter-spacing:3px;margin-bottom:4px}
+.cd-display{display:flex;gap:10px;justify-content:center;padding:var(--space-md) var(--space-lg);background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);border:2px solid var(--primary-light);animation:pulse 2s ease-in-out infinite}
+.cd-char{width:52px;height:64px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--primary);background:var(--bg);border-radius:var(--radius-sm);letter-spacing:2px}
+.qr-c{width:180px;height:180px;background:var(--bg-card);border-radius:var(--radius-md);padding:12px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center}
+.qr-c img,.qr-c canvas{width:100%!important;height:100%!important}
+.qr-lbl{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:-8px}
+.cd-acts{display:flex;flex-wrap:wrap;gap:var(--space-sm);justify-content:center;width:100%}
+.wait-st{display:flex;align-items:center;gap:8px;font-size:var(--font-sm);color:var(--text-light);padding:10px 20px;background:var(--bg-card);border-radius:50px;box-shadow:var(--shadow-sm)}
+.wait-st .dot{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:pulse 1.5s ease-in-out infinite}
+.cd-back{position:absolute;top:var(--space-md);left:var(--space-md);font-size:var(--font-sm);color:var(--text-light);display:flex;align-items:center;gap:4px;cursor:pointer;padding:8px 12px;border-radius:20px;transition:all .3s}
+.cd-back:hover{background:var(--primary-light);color:var(--primary)}
 
-/* ===== Results Screen ===== */
-#screen-results .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
-.results-header{text-align:center;margin-bottom:var(--space-lg);animation:fadeUp .6s ease}
-.results-header .big-emoji{font-size:3.5rem;display:block;margin-bottom:8px}
-.results-header h2{font-size:var(--font-xl);font-weight:900;color:var(--text)}
-.results-header p{color:var(--text-light);margin-top:4px}
-.result-card{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
-  box-shadow:var(--shadow-sm);margin-bottom:var(--space-sm);border-left:4px solid var(--primary);
-  animation:fadeUp .4s ease;transition:all .3s}
-.result-card:nth-child(2){animation-delay:.1s}
-.result-card .gift-emoji{font-size:2rem;margin-bottom:4px}
-.result-card .gift-name{font-weight:800;font-size:var(--font-md);color:var(--text)}
-.result-card .gift-desc{font-size:var(--font-sm);color:var(--text-light);margin:4px 0;line-height:1.5}
-.result-card .gift-price{font-weight:800;color:var(--primary);font-size:var(--font-lg);margin-top:4px}
-.result-card .gift-tag{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;
-  background:var(--primary-light);color:var(--primary-dark);font-weight:600;margin-top:6px}
-.budget-summary{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
-  box-shadow:var(--shadow-sm);margin:var(--space-md) 0;text-align:center}
-.budget-summary .total{font-size:var(--font-xl);font-weight:900;color:var(--text)}
-.budget-summary .total .over{color:var(--accent)}
-.budget-summary .label{font-size:var(--font-sm);color:var(--text-light);margin-bottom:4px}
-.budget-over{background:#FFF0F0;border-radius:var(--radius-md);padding:var(--space-md);
-  margin:var(--space-sm) 0;text-align:center;border:1px solid #FFD0D0}
-.budget-over p{font-size:var(--font-sm);color:#C04040;line-height:1.6}
-.results-footer{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md);align-items:center}
-.results-footer .btn{min-width:200px}
+/* ===== RESULTS ===== */
+#screen-results .content{flex:1;max-width:520px;margin:0 auto;width:100%;padding:var(--space-md) 0}
+.rs-hero{text-align:center;padding:var(--space-lg);border-radius:var(--radius-lg);background:var(--gradient);color:#fff;margin-bottom:var(--space-lg);position:relative;overflow:hidden}
+.rs-hero .emoji{font-size:3.5rem;display:block;margin-bottom:8px}
+.rs-hero h2{font-size:var(--font-xl);font-weight:900}
+.rs-hero .tc{display:flex;justify-content:center;gap:var(--space-md);margin:var(--space-md) 0}
+.rs-hero .tb{background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:var(--radius-md);padding:12px 20px;min-width:100px}
+.rs-hero .tb .lbl{font-size:11px;opacity:.8;margin-bottom:2px}
+.rs-hero .tb .code{font-size:1.5rem;font-weight:900;letter-spacing:3px}
+.rs-hero .vs{font-size:1.2rem;font-weight:900;display:flex;align-items:center;opacity:.6}
+.sec-t{font-size:var(--font-lg);font-weight:800;margin:var(--space-lg) 0 var(--space-sm);color:var(--text)}
+.dc{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);margin-bottom:var(--space-sm);box-shadow:var(--shadow-sm)}
+.dc .dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dc .dh .dn{font-weight:700;font-size:var(--font-md);color:var(--text)}
+.dc .dh .dr{font-size:var(--font-sm);font-weight:700;padding:2px 12px;border-radius:20px}
+.dc .dh .dr.match{background:var(--primary-light);color:var(--primary-dark)}
+.dc .dh .dr.mis{background:#FFF0F0;color:var(--mismatch)}
+.dc .db{display:flex;justify-content:space-between;margin-bottom:4px}
+.dc .db span{font-size:var(--font-sm);font-weight:700}
+.dc .db .sp{color:var(--primary)}
+.dc .db .so{color:var(--secondary)}
+.an-box{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-lg);box-shadow:var(--shadow-sm);margin:var(--space-md) 0;line-height:1.8;font-size:var(--font-sm);color:var(--text)}
+.an-box .icon{font-size:1.5rem;display:block;margin-bottom:8px}
+.rs-ft{text-align:center;margin-top:var(--space-lg)}
 
-/* ===== Receiver Code Input ===== */
-#screen-receiver-input .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);max-width:400px;margin:0 auto;width:100%}
-.receiver-header{text-align:center}
-.receiver-header .emoji{font-size:3rem;animation:float 3s ease-in-out infinite}
-.receiver-header h2{font-size:var(--font-xl);font-weight:900;margin-top:8px;color:var(--text)}
-.receiver-header p{color:var(--text-light);font-size:var(--font-sm);margin-top:4px}
-.code-input-grid{display:flex;gap:8px;justify-content:center;margin:var(--space-md) 0}
-.code-input-box{width:48px;height:56px;border:2px solid var(--primary-light);border-radius:var(--radius-sm);
-  text-align:center;font-size:1.6rem;font-weight:800;color:var(--primary);background:var(--bg-card);
-  transition:all .3s ease;caret-color:var(--primary);text-transform:uppercase}
-.code-input-box:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--shadow);outline:none}
-.code-input-box.filled{border-color:var(--primary);background:var(--primary-light)}
-.code-error{font-size:var(--font-sm);color:#E05959;min-height:20px;text-align:center}
-.code-input-actions{display:flex;flex-direction:column;gap:var(--space-sm);width:100%;align-items:center}
-.code-input-actions .btn{min-width:180px}
-.scan-hint{font-size:var(--font-sm);color:var(--text-light);text-align:center;margin-top:4px}
+/* ===== CELEBRATION ===== */
+#screen-cel .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center;position:relative;z-index:2}
+.cel-em{font-size:4rem;animation:bounce 1.5s ease-in-out infinite;display:block}
+.cel-t{font-size:var(--font-xl);font-weight:900;color:var(--text)}
+.cel-d{font-size:var(--font-md);color:var(--text-light);max-width:300px;line-height:1.7}
+.cel-acts{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)}
 
-/* ===== Receiver Gifts Screen ===== */
-#screen-receiver-gifts .content{flex:1;max-width:480px;margin:0 auto;width:100%;padding:var(--space-md) 0}
-.theme-banner{text-align:center;padding:var(--space-lg) var(--space-md);border-radius:var(--radius-lg);
-  background:var(--gradient);color:#fff;margin-bottom:var(--space-lg);position:relative;overflow:hidden}
-.theme-banner::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='.08'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
-.theme-banner .banner-emoji{font-size:2.5rem;display:block;position:relative}
-.theme-banner h2{font-size:var(--font-lg);font-weight:800;margin:8px 0 4px;position:relative}
-.theme-banner p{font-size:var(--font-sm);opacity:.9;position:relative;line-height:1.6}
-.theme-message{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
-  margin-bottom:var(--space-md);box-shadow:var(--shadow-sm);text-align:center;
-  border:1px dashed var(--primary-light);line-height:1.6;font-size:var(--font-sm);color:var(--text-light)}
-.gift-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);margin-bottom:var(--space-lg)}
-.gift-card{background:var(--bg-card);border-radius:var(--radius-md);padding:var(--space-md);
-  box-shadow:var(--shadow-sm);border:2px solid transparent;transition:all .3s ease;
-  cursor:pointer;text-align:center;position:relative}
-.gift-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--primary-light)}
-.gift-card .gift-emoji{font-size:2.2rem;display:block;margin-bottom:8px}
-.gift-card .gift-name{font-weight:800;font-size:var(--font-md);color:var(--text);margin-bottom:4px}
-.gift-card .gift-desc{font-size:var(--font-sm);color:var(--text-light);line-height:1.5;margin-bottom:4px}
-.gift-card .gift-tag{display:inline-block;font-size:10px;padding:2px 10px;border-radius:10px;
-  background:var(--bg);color:var(--text-light);font-weight:600;margin-top:2px}
-.gift-card.selected{border-color:var(--primary);background:var(--primary-light);box-shadow:0 0 0 4px var(--shadow)}
-.gift-card .check-mark{position:absolute;top:-6px;right:-6px;width:24px;height:24px;
-  border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;
-  justify-content:center;font-size:14px;font-weight:900;opacity:0;transform:scale(0);transition:all .3s ease}
-.gift-card.selected .check-mark{opacity:1;transform:scale(1)}
-.selection-counter{text-align:center;font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-sm)}
-.selection-counter strong{color:var(--primary);font-size:var(--font-md)}
-.gift-submit-area{text-align:center;position:sticky;bottom:0;padding:var(--space-md) 0;
-  background:linear-gradient(transparent,var(--bg) 30%);z-index:10}
-.gift-submit-area .btn{min-width:200px;animation:fadeUp .3s ease}
-
-/* ===== Celebration Screen ===== */
-#screen-celebration .content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--space-lg);text-align:center;position:relative;z-index:2}
-#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:100}
-.celebration-emoji{font-size:4rem;animation:bounce 1.5s ease-in-out infinite;display:block}
-.celebration-title{font-size:var(--font-xl);font-weight:900;color:var(--text)}
-.celebration-desc{font-size:var(--font-md);color:var(--text-light);max-width:300px;line-height:1.7}
-.celebration-actions{display:flex;flex-direction:column;gap:var(--space-sm);margin-top:var(--space-md)}
-.celebration-actions .btn{min-width:200px}
-
-/* ===== Error / Notification Overlay ===== */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);
-  z-index:200;align-items:center;justify-content:center;padding:var(--space-md);animation:fadeIn .2s ease}
-.overlay.active{display:flex}
-.overlay-box{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-lg);
-  max-width:360px;width:100%;box-shadow:var(--shadow-lg);text-align:center;animation:pop .3s ease}
-.overlay-box .icon{font-size:3rem;display:block;margin-bottom:12px}
-.overlay-box h3{font-size:var(--font-lg);font-weight:800;margin-bottom:8px;color:var(--text)}
-.overlay-box p{font-size:var(--font-sm);color:var(--text-light);line-height:1.7;margin-bottom:var(--space-md)}
-.overlay-box .btn{width:100%}
-
-/* ===== Toast ===== */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:12px 24px;
-  background:var(--text);color:#fff;border-radius:50px;font-size:var(--font-sm);font-weight:600;
-  box-shadow:var(--shadow-lg);z-index:300;animation:slideUp .3s ease;max-width:90%;text-align:center}
-.toast.success{background:var(--primary);color:#fff}
-.toast.error{background:#E05959;color:#fff}
-
-/* ===== Loading Spinner ===== */
-.spinner{width:24px;height:24px;border:3px solid var(--primary-light);border-top-color:var(--primary);
-  border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
-
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:4px}
-
-/* ===== Responsive ===== */
 @media(max-width:400px){
   html{font-size:14px}
-  .code-input-box{width:42px;height:48px;font-size:1.4rem}
-  .option-btn{padding:12px 8px;min-height:68px}
-  .gift-card{padding:var(--space-sm)}
-  .theme-banner{padding:var(--space-md)}
+  .ci-box{width:42px;height:48px;font-size:1.4rem}
+  .cd-char{width:42px;height:54px;font-size:1.5rem}
+  .qz-card{padding:var(--space-md)}
+  .rs-hero .tb{padding:8px 14px;min-width:80px}
+  .rs-hero .tb .code{font-size:1.2rem}
 }
 @media(min-width:600px){
-  .gift-grid{grid-template-columns:1fr 1fr 1fr}
   .landing-hero .emoji-big{font-size:5rem}
-  .code-display{gap:14px}
-  .code-char{width:60px;height:72px;font-size:2.2rem}
-}
-@media(min-width:768px){
-  .screen{padding:var(--space-lg)}
-  #screen-landing .content{max-width:480px}
+  .cd-display{gap:14px}
+  .cd-char{width:60px;height:72px;font-size:2.2rem}
   .role-buttons{flex-direction:row;gap:var(--space-md)}
   .role-btn{flex-direction:column;text-align:center;padding:24px}
   .role-btn .icon{font-size:2.5rem}
@@ -306,1164 +218,491 @@ body.theme-elder{--primary:#D4A574;--primary-light:#E8CDA6;--primary-dark:#B8895
 </style>
 </head>
 <body>
-<!-- ===== OVERLAY: Error / Notification ===== -->
-<div class="overlay" id="overlay-notification">
+
+<div class="overlay" id="overlay">
   <div class="overlay-box">
-    <span class="icon" id="overlay-icon">📮</span>
-    <h3 id="overlay-title">出了一点小问题</h3>
-    <p id="overlay-message">请检查网络连接后重试</p>
-    <button class="btn btn-primary" id="overlay-btn">知道了</button>
+    <span class="icon" id="oi">📮</span>
+    <h3 id="ot">出问题了</h3>
+    <p id="om">请检查网络后重试</p>
+    <button class="btn btn-primary" id="ob">知道了</button>
   </div>
 </div>
-
-<!-- ===== TOAST CONTAINER ===== -->
-<div id="toast-container"></div>
-
-<!-- ===== CONFETTI CANVAS ===== -->
+<div id="tc"></div>
 <canvas id="confetti-canvas"></canvas>
 
-<!-- ======================== -->
-<!--        SCREEN: LANDING    -->
-<!-- ======================== -->
+<!-- LANDING -->
 <div class="screen active" id="screen-landing">
   <div class="content">
     <div class="landing-hero">
-      <span class="emoji-big">🧸</span>
-      <h1>礼物信使</h1>
-      <p>小邮差带着满满的生日祝福出发啦～<br>帮你在星星中找到最特别的那份礼物 ✨</p>
+      <span class="emoji-big">🪞</span>
+      <h1>人格镜像</h1>
+      <div class="sub">你眼中的自己，和别人眼中的你，<br>是不是同一个人？✨</div>
     </div>
     <div class="role-buttons">
-      <button class="role-btn" onclick="enterGiverFlow()">
-        <span class="icon">🎁</span>
-        <span class="info">
-          <strong>我要送礼</strong>
-          <span>挑选预算，生成专属密令</span>
-        </span>
+      <button class="role-btn" onclick="goInitiator()">
+        <span class="icon">🧑</span>
+        <span class="info"><strong>我是当事人</strong><span>先确定自己的 MBTI，再邀请 TA 来评价</span></span>
         <span class="arrow">→</span>
       </button>
-      <button class="role-btn" onclick="enterReceiverFlow()">
-        <span class="icon">💌</span>
-        <span class="info">
-          <strong>我来收礼</strong>
-          <span>输入密令，挑选心仪礼物</span>
-        </span>
+      <button class="role-btn" onclick="goOther()">
+        <span class="icon">👀</span>
+        <span class="info"><strong>我来评价 TA</strong><span>输入密令，替 TA 做一份人格画像</span></span>
         <span class="arrow">→</span>
       </button>
     </div>
-    <div class="landing-footer">
-      <a onclick="showCheckResults()">🔍 已有密令？查询结果</a>
-    </div>
+    <div class="landing-footer"><a onclick="goCheck()">🔍 已有密令？查看对比报告</a></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--    SCREEN: GIVER FORM     -->
-<!-- ======================== -->
-<div class="screen" id="screen-giver-form">
+<!-- CHOOSE METHOD -->
+<div class="screen" id="screen-choose">
   <div class="content">
-    <div class="form-step"><span>第 1 步 · 选择预算</span></div>
-    <div class="section-label">💰 这次生日预算大概是？</div>
-    <div class="section-hint">选个范围，礼物信使会按预算帮你筛选合适又用心的礼物～</div>
-    <div class="option-grid option-grid-2" id="budget-grid">
-      <button class="option-btn" data-value="50以下" onclick="selectBudget(this)"><span class="opt-emoji">🪙</span>50以下</button>
-      <button class="option-btn" data-value="50-100" onclick="selectBudget(this)"><span class="opt-emoji">🍬</span>50-100</button>
-      <button class="option-btn" data-value="100-150" onclick="selectBudget(this)"><span class="opt-emoji">🎨</span>100-150</button>
-      <button class="option-btn" data-value="150-200" onclick="selectBudget(this)"><span class="opt-emoji">🎁</span>150-200</button>
-      <button class="option-btn" data-value="200-300" onclick="selectBudget(this)"><span class="opt-emoji">🌟</span>200-300</button>
-      <button class="option-btn" data-value="300-400" onclick="selectBudget(this)"><span class="opt-emoji">✨</span>300-400</button>
-      <button class="option-btn" data-value="400-500" onclick="selectBudget(this)"><span class="opt-emoji">💎</span>400-500</button>
-      <button class="option-btn" data-value="500以上" onclick="selectBudget(this)"><span class="opt-emoji">👑</span>500以上</button>
+    <div class="ch-hdr">
+      <div class="emoji">🧑</div>
+      <h2>你了解自己的 MBTI 吗？</h2>
+      <p>两种方式，选一个你喜欢的～</p>
     </div>
-
-    <div class="section-label">💝 你和收礼人的关系是？</div>
-    <div class="section-hint">不同关系会有不同的推荐风格哦～</div>
-    <div class="option-grid option-grid-3" id="relation-grid">
-      <button class="option-btn" data-value="friend" onclick="selectRelation(this)">
-        <span class="opt-emoji">🤝</span>朋友
-      </button>
-      <button class="option-btn" data-value="lover" onclick="selectRelation(this)">
-        <span class="opt-emoji">💕</span>恋人
-      </button>
-      <button class="option-btn" data-value="elder" onclick="selectRelation(this)">
-        <span class="opt-emoji">🧓</span>长辈
-      </button>
+    <div class="ch-cards">
+      <div class="ch-card" onclick="goKnownType()">
+        <div class="icon">🎯</div>
+        <div class="info"><strong>我知道自己的 MBTI</strong><span>四个维度点选，10 秒搞定</span></div>
+        <div class="arrow">→</div>
+      </div>
+      <div class="ch-card" onclick="goQuiz()">
+        <div class="icon">📝</div>
+        <div class="info"><strong>我不确定，来测一下</strong><span>16 道生活化题目，帮你定位人格</span></div>
+        <div class="arrow">→</div>
+      </div>
     </div>
-
-    <div class="form-nav">
-      <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
-      <button class="btn btn-primary" id="btn-generate" onclick="generateRoom()" disabled>
-        🪄 生成密令
-      </button>
-    </div>
+    <div style="text-align:center;padding:var(--space-md) 0 0"><button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--   SCREEN: GENERATING      -->
-<!-- ======================== -->
-<div class="screen" id="screen-generating">
+<!-- TYPE PICKER -->
+<div class="screen" id="screen-type">
   <div class="content">
-    <div class="generating-animation">
-      <div class="ring"></div>
-      <div class="generating-ring-2"></div>
-      <span class="mail-icon">🧸</span>
+    <div class="tp-hdr">
+      <div class="emoji">🎯</div>
+      <h2>选填你的 MBTI</h2>
+      <p>四个维度各选一边，组合成你的类型</p>
     </div>
-    <div class="generating-text">小邮差正在准备密令...</div>
-    <div class="generating-hint">背着装满祝福的邮包，跨越彩虹桥，<br>为你的心意找到最美的表达方式 ✨</div>
-    <div class="generating-progress"><div class="bar" id="gen-progress-bar"></div></div>
+    <div class="dim-box"><div class="dim-lbl">⚡ 能量来源</div>
+      <div class="dim-tog"><div class="dim-opt" data-d="EI" data-v="E" onclick="pickD(this,'EI','E')">E 外向</div><div class="dim-opt" data-d="EI" data-v="I" onclick="pickD(this,'EI','I')">I 内向</div></div></div>
+    <div class="dim-box"><div class="dim-lbl">🔍 认知方式</div>
+      <div class="dim-tog"><div class="dim-opt" data-d="SN" data-v="S" onclick="pickD(this,'SN','S')">S 感觉</div><div class="dim-opt" data-d="SN" data-v="N" onclick="pickD(this,'SN','N')">N 直觉</div></div></div>
+    <div class="dim-box"><div class="dim-lbl">⚖️ 决策依据</div>
+      <div class="dim-tog"><div class="dim-opt" data-d="TF" data-v="T" onclick="pickD(this,'TF','T')">T 理性</div><div class="dim-opt" data-d="TF" data-v="F" onclick="pickD(this,'TF','F')">F 感性</div></div></div>
+    <div class="dim-box"><div class="dim-lbl">📋 生活态度</div>
+      <div class="dim-tog"><div class="dim-opt" data-d="JP" data-v="J" onclick="pickD(this,'JP','J')">J 计划</div><div class="dim-opt" data-d="JP" data-v="P" onclick="pickD(this,'JP','P')">P 随性</div></div></div>
+    <div class="tp-res" id="tp-res" style="display:none">
+      <div class="code" id="tp-code">ENFP</div>
+      <div class="lbl" id="tp-lbl">点击上方各维度选择你的类型</div>
+    </div>
+    <div style="margin-top:var(--space-md)"><button class="btn btn-primary btn-lg btn-full" id="btn-confirm-type" onclick="confirmType()" disabled>✅ 确认，生成密令</button></div>
+    <div style="margin-top:var(--space-sm);text-align:center"><button class="btn btn-secondary" onclick="showScreen('screen-choose')">← 返回</button></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--    SCREEN: CODE DISPLAY   -->
-<!-- ======================== -->
+<!-- SELF QUIZ -->
+<div class="screen screen-quiz" id="screen-quiz">
+  <div class="content">
+    <div class="qz-hdr"><div class="emoji">📝</div><h2>测测你的人格画像</h2><p>16 道题，从四个维度了解自己</p></div>
+    <div class="qz-bar"><div class="fill" id="qzf" style="width:0%"></div></div>
+    <div id="qzc"></div>
+    <div class="qz-nav">
+      <button class="btn btn-secondary btn-sm" id="btn-qp" onclick="qPrev()">← 上一题</button>
+      <span class="count" id="qcount">1/16</span>
+      <button class="btn btn-primary btn-sm" id="btn-qn" onclick="qNext()">下一题 →</button>
+    </div>
+    <div class="qz-sub"><button class="btn btn-primary btn-lg" id="btn-qs" onclick="qSubmit()" style="display:none">🧩 生成我的人格画像</button></div>
+  </div>
+</div>
+
+<!-- GENERATING -->
+<div class="screen" id="screen-gen">
+  <div class="content">
+    <div class="gen-anim"><div class="ring"></div><div class="gen-r2"></div><span class="icon">🪞</span></div>
+    <div class="gen-t">正在生成人格镜像...</div>
+    <div class="gen-h">把你的自我画像装进漂流瓶，邀请 TA 来看看✨</div>
+    <div class="gen-b"><div class="fill" id="genf"></div></div>
+  </div>
+</div>
+
+<!-- CODE -->
 <div class="screen" id="screen-code">
-  <button class="code-back-btn" onclick="showScreen('screen-giver-form')">← 重新选择</button>
+  <button class="cd-back" onclick="resetAll()">← 返回首页</button>
   <div class="content">
-    <span class="code-emoji">🧸</span>
-    <div class="code-title">
-      分享这个密令给 TA 🎀
-      <small>收礼方扫码或输入密令即可查看礼物清单</small>
+    <span class="cd-em">🪞</span>
+    <div class="cd-t">
+      <div class="cd-type-badge" id="cd-type">ENFP</div>
+      你的人格画像已生成 🎀
+      <small>分享这个密令给身边的人<br>让 TA 也来描绘你的人格吧</small>
     </div>
-    <div class="code-display" id="code-display"></div>
-    <div class="qr-container" id="qr-container"></div>
-    <div class="qr-label">📱 扫一扫，直达礼物清单</div>
-    <div class="code-actions">
-      <button class="btn btn-primary btn-sm" onclick="copyShareLink()">📋 复制分享链接</button>
-    </div>
-    <div class="waiting-status" id="waiting-status">
-      <span class="dot"></span>
-      <span>等待收礼方选择...</span>
-    </div>
+    <div class="cd-display" id="cd-disp"></div>
+    <div class="qr-c" id="qr-c"></div>
+    <div class="qr-lbl">📱 扫码替 TA 答题</div>
+    <div class="cd-acts"><button class="btn btn-primary btn-sm" onclick="copyLink()">📋 复制分享链接</button></div>
+    <div class="wait-st"><span class="dot"></span><span>等待 TA 提交评价...</span></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--   SCREEN: RESULTS (GIVER) -->
-<!-- ======================== -->
+<!-- RESULTS -->
 <div class="screen" id="screen-results">
   <div class="content">
-    <div class="results-header">
-      <span class="big-emoji">🎉</span>
-      <h2>收礼方已做出选择！</h2>
-      <p>来看看 TA 最心动的是哪些礼物吧 ✨</p>
-    </div>
-    <div id="results-container"></div>
-    <div class="results-footer">
-      <button class="btn btn-secondary btn-sm" onclick="showScreen('screen-landing')">🏠 返回首页</button>
-    </div>
+    <div id="rs-c"></div>
+    <div class="rs-ft"><button class="btn btn-secondary" onclick="resetAll()">🏠 返回首页</button></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--  SCREEN: RECEIVER INPUT   -->
-<!-- ======================== -->
-<div class="screen" id="screen-receiver-input">
+<!-- OTHER INPUT -->
+<div class="screen" id="screen-other-input">
   <div class="content">
-    <div class="receiver-header">
-      <span class="emoji">💌</span>
+    <div class="ot-hdr">
+      <span class="emoji">👀</span>
       <h2>输入密令</h2>
-      <p>把送礼方给你的 5 位密令输进去～</p>
+      <p>把 TA 给你的 5 位密令输进去～</p>
     </div>
-    <div class="code-input-grid" id="code-input-grid">
-      <input class="code-input-box" maxlength="1" data-index="0" oninput="handleCodeInput(this,0)" onkeydown="handleCodeKeydown(event,this,0)">
-      <input class="code-input-box" maxlength="1" data-index="1" oninput="handleCodeInput(this,1)" onkeydown="handleCodeKeydown(event,this,1)">
-      <input class="code-input-box" maxlength="1" data-index="2" oninput="handleCodeInput(this,2)" onkeydown="handleCodeKeydown(event,this,2)">
-      <input class="code-input-box" maxlength="1" data-index="3" oninput="handleCodeInput(this,3)" onkeydown="handleCodeKeydown(event,this,3)">
-      <input class="code-input-box" maxlength="1" data-index="4" oninput="handleCodeInput(this,4)" onkeydown="handleCodeKeydown(event,this,4)">
+    <div class="ci-grid" id="ci-grid">
+      <input class="ci-box" maxlength="1" data-idx="0" oninput="ciIn(this,0)" onkeydown="ciKey(event,this,0)">
+      <input class="ci-box" maxlength="1" data-idx="1" oninput="ciIn(this,1)" onkeydown="ciKey(event,this,1)">
+      <input class="ci-box" maxlength="1" data-idx="2" oninput="ciIn(this,2)" onkeydown="ciKey(event,this,2)">
+      <input class="ci-box" maxlength="1" data-idx="3" oninput="ciIn(this,3)" onkeydown="ciKey(event,this,3)">
+      <input class="ci-box" maxlength="1" data-idx="4" oninput="ciIn(this,4)" onkeydown="ciKey(event,this,4)">
     </div>
-    <div class="code-error" id="code-error"></div>
-    <div class="code-input-actions">
-      <button class="btn btn-primary btn-lg" id="btn-verify-code" onclick="verifyCode()" disabled>🔍 查看礼物</button>
+    <div class="ce" id="ce"></div>
+    <div class="ci-acts">
+      <button class="btn btn-primary btn-lg" id="btn-cv" onclick="verifyCode()" disabled>🔍 开始答题</button>
       <button class="btn btn-secondary" onclick="showScreen('screen-landing')">← 返回</button>
     </div>
-    <div class="scan-hint">✨ 用手机扫送礼方分享的二维码可以自动填入哦</div>
+    <div class="scan-h">✨ 扫码自动填入</div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!--  SCREEN: RECEIVER GIFTS   -->
-<!-- ======================== -->
-<div class="screen" id="screen-receiver-gifts">
+<!-- OTHER QUIZ -->
+<div class="screen screen-quiz" id="screen-other-quiz">
   <div class="content">
-    <div class="theme-banner" id="theme-banner">
-      <span class="banner-emoji" id="banner-emoji">🧸</span>
-      <h2 id="banner-title">礼物信使来啦！</h2>
-      <p id="banner-subtitle">带着满满的祝福，为你推荐这些心意满满的礼物～</p>
+    <div class="ot-qz-banner" id="oq-banner">
+      <div class="emoji">👀</div>
+      <h2>替 TA 描绘人格画像</h2>
+      <p>以下问题请根据你对 TA 的观察来回答～</p>
     </div>
-    <div class="theme-message" id="theme-message">
-      💌 礼物信使小邮差说：<br>
-      「不用纠结～挑你第一眼就喜欢的就好！可以选 1~2 个哦！」
+    <div class="qz-bar"><div class="fill" id="oqzf" style="width:0%"></div></div>
+    <div id="oqc"></div>
+    <div class="qz-nav">
+      <button class="btn btn-secondary btn-sm" id="btn-op" onclick="oPrev()">← 上一题</button>
+      <span class="count" id="ocount">1/16</span>
+      <button class="btn btn-primary btn-sm" id="btn-on" onclick="oNext()">下一题 →</button>
     </div>
-    <div class="gift-grid" id="gift-grid"></div>
-    <div class="selection-counter">已选 <strong id="select-count">0</strong> / 2</div>
-    <div class="gift-submit-area">
-      <button class="btn btn-primary btn-lg" id="btn-submit-gifts" onclick="submitGifts()" disabled>
-        ✅ 确定选择
-      </button>
-    </div>
+    <div class="qz-sub"><button class="btn btn-primary btn-lg" id="btn-os" onclick="oSubmit()" style="display:none">✅ 提交评价</button></div>
   </div>
 </div>
 
-<!-- ======================== -->
-<!-- SCREEN: CELEBRATION       -->
-<!-- ======================== -->
-<div class="screen" id="screen-celebration">
+<!-- CELEBRATION -->
+<div class="screen" id="screen-cel">
   <div class="content">
-    <span class="celebration-emoji">🎉</span>
-    <div class="celebration-title">心意已送达！</div>
-    <div class="celebration-desc">
-      小邮差已经背着你的选择飞奔回去啦～<br>
-      送礼方很快就会看到结果 ✨
-    </div>
-    <div class="celebration-actions">
-      <button class="btn btn-primary" onclick="resetAll()">🏠 回到首页</button>
-    </div>
+    <span class="cel-em">🎉</span>
+    <div class="cel-t">评价已提交！</div>
+    <div class="cel-d">你的人格观察已发送回去～<br>TA 很快就能看到对比结果 ✨</div>
+    <div class="cel-acts"><button class="btn btn-primary" onclick="resetAll()">🏠 回到首页</button></div>
   </div>
 </div>
 
-<!-- ===== SCRIPTS ===== -->
 <script>
 // ============================================================
-//  CONFIGURATION
+const CFG = { API_BASE:'https://gift-picks.2656153330-35a.workers.dev', CODE_LEN:5, POLL_MS:5000, DEMO:true };
 // ============================================================
-const CONFIG = {
-  // ★★★ 使用已部署的 Cloudflare Worker ★★★
-  API_BASE: 'https://gift-picks.2656153330-35a.workers.dev',
-  CODE_LENGTH: 5,
-  POLL_INTERVAL: 5000, // ms
-  MAX_SELECTIONS: 2,
-  RETRY_DELAY: 1000,
-  MAX_RETRIES: 3,
+// QUESTIONS: 4 per dim, 16 total
+// ============================================================
+const QS = [
+  {dim:'EI',q:'周末休息时，你更倾向于？',A:'约朋友出去聚会 🎉',B:'一个人在家充电 🏠',sc:'E',em:'⚡'},
+  {dim:'EI',q:'在社交场合你通常是？',A:'主动认识新朋友 🗣️',B:'和熟悉的人待一起 🤝',sc:'E',em:'🎭'},
+  {dim:'EI',q:'遇到烦心事你更倾向？',A:'找人说一说 💬',B:'自己消化 🧘',sc:'E',em:'😔'},
+  {dim:'EI',q:'工作中你更喜欢？',A:'团队讨论头脑风暴 👥',B:'一个人专注做事 💻',sc:'E',em:'💼'},
+  {dim:'SN',q:'描述一件事时你更注重？',A:'具体的事实和细节 🔍',B:'整体的感受和可能性 🌈',sc:'S',em:'🔎'},
+  {dim:'SN',q:'你更擅长做哪类事情？',A:'实际操作（做菜/手工）🔧',B:'脑洞大开想创意 💡',sc:'S',em:'🛠️'},
+  {dim:'SN',q:'学新东西时你更喜欢？',A:'按步骤跟着做 📋',B:'先搞懂原理再发挥 🤔',sc:'S',em:'📚'},
+  {dim:'SN',q:'和朋友聊天你更常聊？',A:'今天发生的具体事儿 🗓️',B:'未来的想法和计划 🚀',sc:'S',em:'💬'},
+  {dim:'TF',q:'朋友找你吐槽时你更常？',A:'帮 TA 分析出主意 🧠',B:'先安抚 TA 的情绪 🤗',sc:'T',em:'🤝'},
+  {dim:'TF',q:'做重要决定时你更看重？',A:'逻辑对不对道理通不通 ⚖️',B:'大家的感受开不开心 💖',sc:'T',em:'⚖️'},
+  {dim:'TF',q:'你觉得自己更偏向？',A:'理性冷静 🧊',B:'感性细腻 🌊',sc:'T',em:'🧊'},
+  {dim:'TF',q:'看感人电影时你？',A:'不太容易被感动 😶',B:'很容易共情落泪 😭',sc:'T',em:'🎬'},
+  {dim:'JP',q:'周末出去玩你更喜欢？',A:'提前做好全部计划 📅',B:'随性走到哪算哪 🍃',sc:'J',em:'🗺️'},
+  {dim:'JP',q:'你的桌面/房间通常是？',A:'整洁有序 🧹',B:'乱中有序 📚',sc:'J',em:'🏠'},
+  {dim:'JP',q:'你做事情的习惯是？',A:'列清单按计划来 ✅',B:'想到什么做什么 🎯',sc:'J',em:'📋'},
+  {dim:'JP',q:'面对 deadline 你通常是？',A:'提前完成早安心 ⏰',B:'最后冲刺效率高 🌙',sc:'J',em:'⏳'},
+];
+const DN = {EI:'⚡ 精力来源',SN:'🔍 认知方式',TF:'⚖️ 决策依据',JP:'📋 生活态度'};
+const TN = {'ENFJ':'主人公型','ENFP':'竞选者型','ENTJ':'指挥官型','ENTP':'辩论家型','ESFJ':'执政官型','ESFP':'表演者型','ESTJ':'总经理型','ESTP':'企业家型','INFJ':'提倡者型','INFP':'调停者型','INTJ':'建筑师型','INTP':'逻辑学家型','ISFJ':'守卫者型','ISFP':'探险家型','ISTJ':'物流师型','ISTP':'鉴赏家型'};
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  mode:null,selfType:null,selfAns:null,code:null,room:null,
+  qi:0,ans:[],timer:null,
 };
+const P = {EI:null,SN:null,TF:null,JP:null};
+// ============================================================
+function $(id){return document.getElementById(id)}
+function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo(0,0)}
+function to(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.getElementById('tc').appendChild(t);setTimeout(()=>t.remove(),2500)}
+function ni(i,t,m){$('oi').textContent=i||'📮';$('ot').textContent=t;$('om').textContent=m;$('overlay').classList.add('active')}
+$('ob').onclick=()=>$('overlay').classList.remove('active');
+
+let ax=null;
+function ac(){if(!ax)ax=new(window.AudioContext||window.webkitAudioContext)();return ax}
+function pf(f,d=.15,t='sine',v=.3){try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+const sk=()=>pf(800,.1,'sine',.2);const ck=()=>{pf(523,.15);setTimeout(()=>pf(659,.15),100);setTimeout(()=>pf(784,.2),200)};
+const cl=()=>[523,587,659,784,880,1047].forEach((f,i)=>setTimeout(()=>pf(f,.2,'sine',.25),i*100));
+const er=()=>{pf(400,.15,'sawtooth',.15);setTimeout(()=>pf(300,.2,'sawtooth',.15),150)};
+
+let cf=false,cp=[];
+function cfeti(d=4000){
+  const c=$('confetti-canvas');c.width=innerWidth;c.height=innerHeight;const ctx=c.getContext('2d');
+  const cs=['#7C5CBF','#FF8FAB','#FFD93D','#C8B5E8','#8FBC8F','#FFD700','#5A3D9A','#FFB06A'];
+  cp=Array.from({length:100},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,w:5+Math.random()*8,h:3+Math.random()*5,color:cs[~~(Math.random()*cs.length)],s:2+Math.random()*3,r:Math.random()*360,rs:(Math.random()-.5)*6,sw:Math.random()*2-1}));
+  cf=true;const st=Date.now();
+  function dr(){if(!cf){ctx.clearRect(0,0,c.width,c.height);cp=[];return}ctx.clearRect(0,0,c.width,c.height);cp.forEach(p=>{p.y+=p.s;p.x+=Math.sin(p.y*.02)*p.sw;p.r+=p.rs;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});cp.forEach(p=>{if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}});if(Date.now()-st>d)cf=false;if(cf)requestAnimationFrame(dr);else ctx.clearRect(0,0,c.width,c.height)}
+  dr();
+}
 
 // ============================================================
-//  GIFT DATA
+// API
 // ============================================================
-const GIFT_DATA = {
-  friend: {
-    '50以下': [
-      { id:0, name:'可爱搞怪生日贺卡', desc:'手绘风格、可以录一段语音祝福的智能贺卡，扫描二维码就能听到你的声音', price:39, category:'实物精品', emoji:'💌' },
-      { id:1, name:'定制钥匙扣/冰箱贴', desc:'可以定制名字或日期的亚克力小挂件，精致又有纪念意义', price:29, category:'实物精品', emoji:'🔑' },
-      { id:2, name:'手机支架+数据线收纳', desc:'可爱动物造型的桌面套装，让朋友的桌面告别凌乱', price:45, category:'实物精品', emoji:'📱' },
-      { id:3, name:'蒸汽眼罩 5 片装', desc:'真丝材质、薰衣草香型，适合经常熬夜的上班族朋友', price:35, category:'实物精品', emoji:'😴' },
-      { id:4, name:'QQ 音乐/网易云月卡', desc:'一个人的时候有好音乐陪伴，是最温暖的礼物', price:15, category:'虚拟礼物', emoji:'🎵' },
-      { id:5, name:'微信读书月卡', desc:'送给爱看书的朋友，整个月畅读无限', price:19, category:'虚拟礼物', emoji:'📚' },
-    ],
-    '50-100': [
-      { id:0, name:'手账本+和纸胶带套装', desc:'一本精致的空白手账本配 3 卷和纸胶带，适合爱写写画画的文艺朋友', price:68, category:'实物精品', emoji:'📔' },
-      { id:1, name:'原创IP卡通公仔盲盒', desc:'POPMART或其他热门系列的随机公仔，拆盒的惊喜感本身就是礼物', price:69, category:'实物精品', emoji:'🎁' },
-      { id:2, name:'ins风桌面加湿器', desc:'迷你静音加湿器带小夜灯，北方暖气房/空调房必备', price:79, category:'实物精品', emoji:'💨' },
-      { id:3, name:'电影票两张', desc:'本地影城的通兑券，约朋友一起看场电影吧', price:80, category:'体验类', emoji:'🎬' },
-      { id:4, name:'王者荣耀/原神 月卡+', desc:'游戏内月卡或小面值皮肤礼包，让朋友的游戏体验更快乐', price:68, category:'虚拟礼物', emoji:'🎮' },
-      { id:5, name:'手工香薰蜡烛杯', desc:'大豆蜡+精油手工制作，三款香型可选，点燃时整个房间都温馨起来', price:88, category:'实物精品', emoji:'🕯️' },
-      { id:6, name:'随身咖啡手冲套装', desc:'便携式手冲咖啡套装含滤杯和滤纸，送喜欢咖啡的朋友', price:95, category:'实物精品', emoji:'☕' },
-    ],
-    '100-150': [
-      { id:0, name:'DIY 数字油画套装', desc:'40×50cm 画板+全套丙烯颜料，画完可以裱起来挂在家里，超有成就感', price:128, category:'实物精品', emoji:'🎨' },
-      { id:1, name:'香薰蜡烛+扩香石礼盒', desc:'含大豆蜡蜡烛、精油扩香石和火柴，三款香型可选，温暖治愈', price:138, category:'实物精品', emoji:'🕯️' },
-      { id:2, name:'双人电影票+爆米花套餐', desc:'IMAX 通兑券两张 + 爆米花兑换券，和朋友一起看电影最开心了', price:128, category:'体验类', emoji:'🎬' },
-      { id:3, name:'网易云音乐/QQ音乐年卡', desc:'一整年的会员，想听什么听什么，是陪伴感最强的礼物', price:128, category:'虚拟礼物', emoji:'🎵' },
-      { id:4, name:'网红甜品店双人下午茶', desc:'市区高评分甜品店的精选双人下午茶套餐，含蛋糕+饮品+小食', price:148, category:'体验类', emoji:'🍰' },
-      { id:5, name:'精品咖啡豆礼盒', desc:'4 种产地精品咖啡豆各 100g，附手冲指南，适合咖啡深度爱好者', price:138, category:'实物精品', emoji:'☕' },
-      { id:6, name:'主题乐园/展览双人票', desc:'本地当月热门的艺术展/博物馆/主题乐园双人门票', price:120, category:'体验类', emoji:'🎫' },
-    ],
-    '150-200': [
-      { id:0, name:'复古手账本礼盒', desc:'皮质封面手账本 + 彩色钢笔 + 和纸胶带 + 火漆印章，全套文艺装备', price:168, category:'实物精品', emoji:'📔' },
-      { id:1, name:'某游戏传说皮肤/大礼包', desc:'王者荣耀传说皮肤 / 原神创世结晶 / LOL 皮肤任选其一', price:168, category:'虚拟礼物', emoji:'🎮' },
-      { id:2, name:'双人自助餐券', desc:'本地五星级酒店/知名自助餐厅的双人午餐券，约出来大吃一顿', price:198, category:'体验类', emoji:'🍣' },
-      { id:3, name:'手工皮具 DIY 材料包', desc:'卡包或钥匙扣的完整皮料和工具套件，可以一起做手工，做完很有成就感', price:158, category:'实物精品', emoji:'👜' },
-      { id:4, name:'美术馆/博物馆年卡', desc:'本地美术馆或博物馆的全年通卡，适合喜欢艺术文化的朋友', price:180, category:'体验类', emoji:'🖼️' },
-      { id:5, name:'云鲸/泡泡玛特限定盲盒整套', desc:'热门系列的整盒盲盒（不重复），拆盒的快乐加满', price:188, category:'实物精品', emoji:'🧸' },
-      { id:6, name:'品牌香薰机+精油套装', desc:'超声波冷雾香薰机配 2 瓶精油，提升居家幸福感的神器', price:178, category:'实物精品', emoji:'💨' },
-    ],
-    '200-300': [
-      { id:0, name:'星巴克/瑞幸储蓄卡', desc:'储值卡里面充好余额，让朋友请同事喝咖啡，倍有面子', price:200, category:'虚拟礼物', emoji:'☕' },
-      { id:1, name:'凌美/百乐钢笔礼盒', desc:'入门级精品钢笔 + 墨水礼盒，送给写字好看的文艺朋友', price:258, category:'实物精品', emoji:'🖊️' },
-      { id:2, name:'自助烤肉/火锅双人餐', desc:'高分自助餐厅双人晚餐券，和好朋友一起吃到撑', price:268, category:'体验类', emoji:'🥩' },
-      { id:3, name:'游戏主机游戏光盘', desc:'Switch/PS5 热门游戏实体版，适合有主机的朋友', price:268, category:'实物精品', emoji:'🎮' },
-      { id:4, name:'品牌护手霜/护唇膏套装', desc:'欧舒丹/祖玛珑等品牌的护手霜护唇膏礼盒，精致实用', price:248, category:'实物精品', emoji:'🧴' },
-      { id:5, name:'精品民宿/酒店体验券', desc:'本地或周边特色民宿/精品酒店的周末住宿体验', price:268, category:'体验类', emoji:'🏡' },
-    ],
-    '300-400': [
-      { id:0, name:'小众香水/淡香水', desc:'30ml 左右的精品小众香水，祖玛珑/蒂普提克等入门款', price:380, category:'实物精品', emoji:'🌸' },
-      { id:1, name:'精品西餐/日料双人套餐', desc:'本地高评分西餐厅或日料店的精选双人套餐', price:368, category:'体验类', emoji:'🍣' },
-      { id:2, name:'主动降噪耳机', desc:'入门级主动降噪 TWS 耳机，通勤听歌的好伙伴', price:350, category:'实物精品', emoji:'🎧' },
-      { id:3, name:'写真/证件照拍摄套餐', desc:'专业摄影工作室的个人写真或最美证件照套餐', price:380, category:'体验类', emoji:'📸' },
-      { id:4, name:'品牌保温杯+茶礼盒', desc:'知名品牌的保温杯配精选茶叶礼盒，实用又体面', price:328, category:'实物精品', emoji:'🍵' },
-    ],
-    '400-500': [
-      { id:0, name:'品牌口红/彩妆礼盒', desc:'2-3 支热门色号品牌口红或眼影盘礼盒，包装精美上档次', price:450, category:'实物精品', emoji:'💄' },
-      { id:1, name:'Livehouse/演唱会门票', desc:'当月本地热门乐队或歌手的 livehouse 演出门票两张', price:400, category:'体验类', emoji:'🎤' },
-      { id:2, name:'Kindle 青春版', desc:'全新 kindle 青春版或同价位电子书阅读器，送给爱读书的朋友', price:468, category:'实物精品', emoji:'📖' },
-      { id:3, name:'品牌运动手环', desc:'某品牌入门款运动手环，记录健康数据，实用又时尚', price:400, category:'实物精品', emoji:'⌚' },
-      { id:4, name:'SPA/按摩体验券', desc:'本地高评分 SPA 会所或按摩馆的单人/双人体验券', price:460, category:'体验类', emoji:'💆' },
-    ],
-    '500以上': [
-      { id:0, name:'品牌手表/时装表', desc:'DW/CK 等品牌的入门款时装表，经典耐看', price:680, category:'实物精品', emoji:'⌚' },
-      { id:1, name:'AirPods/同档次蓝牙耳机', desc:'主动降噪真无线蓝牙耳机，日常通勤必备', price:650, category:'实物精品', emoji:'🎧' },
-      { id:2, name:'精品酒店度假套餐', desc:'本地或周边精品酒店/度假村的一晚住宿含早套餐', price:688, category:'体验类', emoji:'🏖️' },
-      { id:3, name:'品牌香水正装', desc:'50ml 品牌香水正装（Jo Malone/Diptyque/Marc Jacobs 等）', price:580, category:'实物精品', emoji:'🌸' },
-      { id:4, name:'双人短途旅行套餐', desc:'周边城市两日游含住宿和门票的打包套餐', price:888, category:'体验类', emoji:'✈️' },
-    ],
+const API = {
+  async create(t,a){
+    if(CFG.DEMO){const c=glc();localStorage.setItem(`room_${c}`,JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));return{code:c}}
+    return rpc('/api/create-room',{selfType:t,selfAnswers:a})
   },
-  lover: {
-    // Will be filled after MVP approval
+  async get(c){
+    if(CFG.DEMO){const r=localStorage.getItem(`room_${c}`);return r?JSON.parse(r):null}
+    return rpcG(`/api/room/${c}`)
   },
-  elder: {
-    // Will be filled after MVP approval
-  },
+  async submit(c,a){
+    if(CFG.DEMO){const r=localStorage.getItem(`room_${c}`);if(!r)throw Error('ROOM_NOT_FOUND');const rm=JSON.parse(r);if(rm.status!=='created')throw Error('ALREADY_DONE');rm.otherAnswers=a;rm.status='completed';localStorage.setItem(`room_${c}`,JSON.stringify(rm));return{success:true}}
+    return rpc(`/api/room/${c}/submit-other`,{answers:a})
+  }
 };
+function glc(){const ccs='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let cd;do{cd='';for(let i=0;i<CFG.CODE_LEN;i++)cd+=ccs[~~(Math.random()*ccs.length)]}while(localStorage.getItem(`room_${cd}`));return cd}
+async function rpc(p,b){for(let a=0;a<2;a++){try{const r=await fetch(CFG.API_BASE+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const d=await r.json();if(!r.ok)throw Error(d.error);return d}catch(e){if(a===1)throw e;await new Promise(r=>setTimeout(r,1000*(a+1)))}}}
+async function rpcG(p){for(let a=0;a<2;a++){try{const r=await fetch(CFG.API_BASE+p);const d=await r.json();if(!r.ok)throw Error(d.error);return d}catch(e){if(a===1)throw e;await new Promise(r=>setTimeout(r,1000*(a+1)))}}}
 
-// For MVP: only friend 100-200 is active
-// Mark other combos as coming soon
-function isCombinationAvailable(budget, relationship) {
-  if (relationship !== 'friend') return false;
-  const availableBudgets = ['50以下','50-100','100-150','150-200','200-300','300-400','400-500','500以上'];
-  // MVP has all friend budgets ready
-  return relationship === 'friend' && availableBudgets.includes(budget);
+function calcMBTI(a){
+  const dims=['EI','SN','TF','JP'],p1={'EI':'E','SN':'S','TF':'T','JP':'J'};let t='';
+  for(const d of dims){
+    const ii=QS.map((q,i)=>q.dim===d?i:-1).filter(i=>i>=0);let c=0,v=0;
+    ii.forEach(i=>{if(a[i]!==null&&a[i]!==undefined){c+=a[i]===0?1:0;v++}});
+    t+=v===0?p1[d]:c>=v/2?p1[d]:{'EI':'I','SN':'N','TF':'F','JP':'P'}[d];
+  }
+  return t;
 }
 
 // ============================================================
-//  STATE
+// NAV
 // ============================================================
-const state = {
-  mode: null,           // 'giver' | 'receiver'
-  budget: null,
-  relationship: null,
-  code: null,
-  roomData: null,
-  selectedGifts: [],    // indices
-  pollingTimer: null,
-  currentRoomCode: null, // for receiver
-};
-
-// ============================================================
-//  DOM HELPERS
-// ============================================================
-function $(id) { return document.getElementById(id); }
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-  window.scrollTo(0,0);
+function goInitiator(){sk();S.mode='initiator';ss('screen-choose')}
+function goOther(){
+  sk();S.mode='other';S.code=null;
+  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
+  $('ce').textContent='';$('btn-cv').disabled=true;
+  $('screen-other-input').querySelector('h2').textContent='输入密令';
+  $('screen-other-input').querySelector('.ot-hdr p').textContent='把 TA 给你的 5 位密令输进去～';
+  $('btn-cv').textContent='🔍 开始答题';
+  ss('screen-other-input');
+  const u=new URLSearchParams(window.location.search);
+  if(u.get('code'))fillCode(u.get('code').toUpperCase());
 }
-
-function showToast(msg, type = 'success') {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.textContent = msg;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 2500);
+function goCheck(){
+  sk();S.mode='checker';
+  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
+  $('ce').textContent='';$('btn-cv').disabled=true;
+  $('screen-other-input').querySelector('h2').textContent='查询结果';
+  $('screen-other-input').querySelector('.ot-hdr p').textContent='输入之前生成的密令，查看对比报告～';
+  $('btn-cv').textContent='🔍 查看报告';
+  ss('screen-other-input');
 }
-
-function showNotification(icon, title, msg, btnText = '知道了') {
-  $('overlay-icon').textContent = icon || '📮';
-  $('overlay-title').textContent = title || '出了一点小问题';
-  $('overlay-message').textContent = msg || '请检查网络连接后重试';
-  $('overlay-btn').textContent = btnText;
-  $('overlay-notification').classList.add('active');
-}
-
-function hideNotification() {
-  $('overlay-notification').classList.remove('active');
-}
-
-$('overlay-btn').addEventListener('click', hideNotification);
+function goKnownType(){sk();ss('screen-type')}
+function goQuiz(){sk();startSQ()}
 
 // ============================================================
-//  THEME MANAGEMENT
+// TYPE PICKER
 // ============================================================
-function applyTheme(relationship) {
-  document.body.className = `theme-${relationship}`;
-  const metaTheme = document.querySelector('meta[name="theme-color"]');
-  const colors = {
-    friend: '#FF7E7E',
-    lover: '#FF8FAB',
-    elder: '#D4A574',
-  };
-  if (metaTheme) metaTheme.content = colors[relationship] || '#FF7E7E';
+function pickD(el,d,v){
+  sk();
+  document.querySelectorAll(`.dim-opt[data-d="${d}"]`).forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');P[d]=v;updT();
+}
+function updT(){
+  if(Object.values(P).every(v=>v!==null)){
+    const t=P.EI+P.SN+P.TF+P.JP;
+    $('tp-code').textContent=t;$('tp-lbl').textContent=TN[t]||'';
+    $('tp-res').style.display='block';$('btn-confirm-type').disabled=false;S.selfType=t;
+  }
+}
+async function confirmType(){
+  if(!S.selfType)return;ck();
+  $('screen-gen').querySelector('.gen-t').textContent='正在生成人格镜像...';
+  $('screen-gen').querySelector('.gen-h').textContent='把你的自我画像装进漂流瓶✨';
+  $('genf').style.width='0%';setTimeout(()=>$('genf').style.width='50%',200);setTimeout(()=>$('genf').style.width='80%',400);
+  ss('screen-gen');
+  try{
+    const r=await API.create(S.selfType,null);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;
+    setTimeout(()=>showCode(),500);
+  }catch(e){console.error(e);$('genf').style.width='0%';ni('📮','创建失败','镜像暂时无法生成...请检查网络后重试。')}
 }
 
 // ============================================================
-//  API CALLS
+// SELF QUIZ
 // ============================================================
-async function apiPost(path, body) {
-  for (let attempt = 0; attempt < CONFIG.MAX_RETRIES; attempt++) {
-    try {
-      const res = await fetch(CONFIG.API_BASE + path, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || '请求失败');
-      return data;
-    } catch (e) {
-      if (attempt === CONFIG.MAX_RETRIES - 1) throw e;
-      await new Promise(r => setTimeout(r, CONFIG.RETRY_DELAY * (attempt + 1)));
+function startSQ(){
+  S.qi=0;S.ans=Array.from({length:QS.length},()=>null);
+  renderQ('qzc','qzf','qcount',S.ans,'self');
+  ss('screen-quiz');
+}
+function renderQ(cid,pid,cid2,ans,mode){
+  const qi=S.qi,q=QS[qi],t=QS.length;
+  $(pid).style.width=`${(qi+1)/t*100}%`;$(cid2).textContent=`${qi+1}/${t}`;
+  const qt=mode==='other'?q.q.replace(/你/g,'TA'):q.q;
+  $(cid).innerHTML=`<div class="qz-card"><span class="q-dim">${DN[q.dim]}</span><div class="q-em">${q.em}</div><div class="q-t">${qt}</div><div class="qz-opts"><div class="qz-opt${ans[qi]===0?' sel':''}" data-o="0" onclick="${mode==='self'?'sA':'oA'}(0)"><span class="lt">A</span><span>${q.A}</span></div><div class="qz-opt${ans[qi]===1?' sel':''}" data-o="1" onclick="${mode==='self'?'sA':'oA'}(1)"><span class="lt">B</span><span>${q.B}</span></div></div></div>`;
+  const pn=mode==='self'?$('btn-qp'):$('btn-op'),nn=mode==='self'?$('btn-qn'):$('btn-on'),sb=mode==='self'?$('btn-qs'):$('btn-os');
+  if(pn)pn.style.visibility=qi===0?'hidden':'visible';
+  if(nn){nn.style.display=qi===t-1?'none':'inline-flex';sb.style.display=qi===t-1?'inline-flex':'none'}
+}
+function sA(o){S.ans[S.qi]=o;sk();document.querySelectorAll('#qzc .qz-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#qzc .qz-opt[data-o="${o}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)qNext()},200)}
+function qNext(){if(S.ans[S.qi]===null){to('请先完成当前题目～');return}if(S.qi<QS.length-1){S.qi++;renderQ('qzc','qzf','qcount',S.ans,'self')}}
+function qPrev(){if(S.qi>0){S.qi--;renderQ('qzc','qzf','qcount',S.ans,'self')}}
+async function qSubmit(){
+  if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}ck();
+  S.selfType=calcMBTI(S.ans);$('screen-gen').querySelector('.gen-t').textContent=`你的类型是 ${S.selfType}！`;
+  $('screen-gen').querySelector('.gen-h').textContent=`${TN[S.selfType]||''} · 正在生成镜像邀请...`;
+  $('genf').style.width='0%';setTimeout(()=>$('genf').style.width='50%',200);setTimeout(()=>$('genf').style.width='80%',400);ss('screen-gen');
+  try{
+    const r=await API.create(S.selfType,S.ans);$('genf').style.width='100%';S.code=r.code;$('cd-type').textContent=S.selfType;
+    setTimeout(()=>showCode(),500);
+  }catch(e){console.error(e);$('genf').style.width='0%';ni('📮','创建失败','镜像暂时无法生成...请检查网络后重试。')}
+}
+
+// ============================================================
+// CODE SCREEN
+// ============================================================
+function showCode(){
+  ss('screen-code');ck();
+  const d=$('cd-disp');d.innerHTML='';
+  for(const c of S.code){const e=document.createElement('div');e.className='cd-char';e.textContent=c;d.appendChild(e)}
+  const qr=$('qr-c');qr.innerHTML='';
+  const u=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}`;
+  try{if(typeof QRCode!=='undefined')new QRCode(qr,{text:u,width:160,height:160,colorDark:'#7C5CBF',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});else throw Error('')}catch(e){qr.innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(u)}" alt="QR" style="border-radius:8px">`}
+  pollStart();
+}
+function copyLink(){
+  const l=`${window.location.href.split('?')[0].split('#')[0]}?code=${S.code}`;
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(l).then(()=>to('链接已复制！✨'));
+  else{const t=document.createElement('textarea');t.value=l;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);to('链接已复制！✨')}
+}
+function pollStart(){
+  pollStop();S.timer=setInterval(async()=>{try{const d=await API.get(S.code);if(d&&d.status==='completed'){pollStop();S.room=d;showRes()}}catch(e){}},CFG.POLL_MS);
+}
+function pollStop(){if(S.timer){clearInterval(S.timer);S.timer=null}}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function showRes(){
+  const rm=S.room;if(!rm||!rm.selfType)return;
+  const st=rm.selfType,oa=rm.otherAnswers,ot=oa?calcMBTI(oa):'????';
+  cl();cfeti(4000);
+  const dims=['EI','SN','TF','JP'];let sc=[],mt=0,ma=0;
+  for(let i=0;i<4;i++){
+    const d=dims[i],sp=st[i],op=ot[i],is=sp===op;
+    if(is)mt++;ma++;
+    sc.push({d,sp,op,is});
+    if(i===3)ma++;
+  }
+  const pct=Math.round(mt/4*100);
+  const pl=(t,d)=>{const i=dims.indexOf(d);const l=t[i];return{'E':'外向','I':'内向','S':'感觉','N':'直觉','T':'理性','F':'感性','J':'计划','P':'随性'}[l]||l};
+  const an=sc.filter(s=>!s.is).length?`${sc.filter(s=>!s.is).map(s=>`<strong>${DN[s.d]}</strong>维度有差异：你 ${pl(st,s.d)}，TA 看你 ${pl(ot,s.d)}`).join('<br>')}<br><br>每个人都是一面多棱镜，在不同角度下折射出不同的光。这些差异不是对错，而是你丰富人格的体现 ✨`:'🎯 四个维度全部一致！你在他人眼中展现出的样子，就是你内心真实的自己 ✨';
+  $('rs-c').innerHTML=`
+    <div class="rs-hero"><div class="emoji">🪞</div><h2>人格镜像对比</h2><div class="tc"><div class="tb"><div class="lbl">自我认知</div><div class="code">${st}</div></div><div class="vs">VS</div><div class="tb"><div class="lbl">他人眼中</div><div class="code">${ot}</div></div></div><div style="font-size:var(--font-lg);opacity:.9">维度吻合度 ${pct}% (${mt}/4)</div></div>
+    <div class="sec-t">逐维对比</div>
+    ${sc.map(s=>`<div class="dc"><div class="dh"><span class="dn">${DN[s.d]}</span><span class="dr ${s.is?'match':'mis'}">${s.is?'✅ 一致':'❌ 有差异'}</span></div><div class="db"><span class="sp">我：${pl(st,s.d)}</span><span class="so">TA看：${pl(ot,s.d)}</span></div></div>`).join('')}
+    <div class="an-box"><div class="icon">💡</div>${an}</div>`;
+  ss('screen-results');
+}
+
+// ============================================================
+// OTHER: CODE INPUT
+// ============================================================
+function ciIn(inp,idx){
+  let v=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'');inp.value=v;
+  if(v)inp.classList.add('filled');else inp.classList.remove('filled');
+  if(v&&idx<CFG.CODE_LEN-1){const n=document.querySelector(`.ci-box[data-idx="${idx+1}"]`);if(n)n.focus()}
+  $('btn-cv').disabled=!Array.from(document.querySelectorAll('.ci-box')).every(i=>i.value.length===1);
+}
+function ciKey(e,inp,idx){if(e.key==='Backspace'&&!inp.value&&idx>0){const p=document.querySelector(`.ci-box[data-idx="${idx-1}"]`);if(p){p.focus();p.value='';p.classList.remove('filled')}}if(e.key==='Enter')verifyCode()}
+function fillCode(cd){
+  if(cd.length!==CFG.CODE_LEN)return;
+  const ins=document.querySelectorAll('.ci-box');
+  for(let i=0;i<cd.length&&i<ins.length;i++){ins[i].value=cd[i];ins[i].classList.add('filled')}
+  $('btn-cv').disabled=false;setTimeout(()=>verifyCode(),300);
+}
+async function verifyCode(){
+  const ins=document.querySelectorAll('.ci-box');let cd='';ins.forEach(i=>cd+=i.value.toUpperCase());
+  if(cd.length!==CFG.CODE_LEN)return;
+  const isCh=S.mode==='checker';$('btn-cv').disabled=true;$('btn-cv').textContent='⏳ 验证中...';
+  try{
+    const d=await API.get(cd);
+    if(isCh){
+      if(!d){ni('📮','密令无效','不存在或已过期');rv();er();return}
+      if(d.status!=='completed'){ni('📮','还没完成','对方还没提交评价～');rv();return}
+      S.code=cd;S.room=d;showRes();return;
     }
-  }
+    if(!d){ni('📮','密令无效','不存在或已过期');rv();er();return}
+    if(d.status==='completed'){ni('📮','已经评价过','已经有人评价过啦～');rv();return}
+    if(d.status!=='created'){ni('📮','还没就绪','对方还没准备好～');rv();return}
+    S.code=cd;S.room=d;ck();startOQ(d.selfType);
+  }catch(e){console.error(e);ni('📮','网络异常','联系不上服务器...');er();rv()}
 }
+function rv(){$('btn-cv').textContent=S.mode==='checker'?'🔍 查看报告':'🔍 开始答题';$('btn-cv').disabled=false}
 
-async function apiGet(path) {
-  for (let attempt = 0; attempt < CONFIG.MAX_RETRIES; attempt++) {
-    try {
-      const res = await fetch(CONFIG.API_BASE + path);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || '请求失败');
-      return data;
-    } catch (e) {
-      if (attempt === CONFIG.MAX_RETRIES - 1) throw e;
-      await new Promise(r => setTimeout(r, CONFIG.RETRY_DELAY * (attempt + 1)));
-    }
-  }
+// ============================================================
+// OTHER QUIZ
+// ============================================================
+function startOQ(st){
+  S.qi=0;S.ans=Array.from({length:QS.length},()=>null);
+  $('oq-banner').innerHTML=`<div class="emoji">👀</div><h2>替 TA 描绘人格画像</h2><p>TA 的类型是 <strong>${st}</strong>（${TN[st]||''}）<br>以下题请根据你对 TA 的观察回答～</p>`;
+  renderQ('oqc','oqzf','ocount',S.ans,'other');ss('screen-other-quiz');
+}
+function oA(o){S.ans[S.qi]=o;sk();document.querySelectorAll('#oqc .qz-opt').forEach(c=>c.classList.remove('sel'));document.querySelectorAll(`#oqc .qz-opt[data-o="${o}"]`).forEach(c=>c.classList.add('sel'));setTimeout(()=>{if(S.qi<QS.length-1)oNext()},200)}
+function oNext(){if(S.ans[S.qi]===null){to('请先完成当前题目～');return}if(S.qi<QS.length-1){S.qi++;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
+function oPrev(){if(S.qi>0){S.qi--;renderQ('oqc','oqzf','ocount',S.ans,'other')}}
+async function oSubmit(){
+  if(S.ans.some(a=>a===null)){to('请完成所有题目～');return}
+  $('btn-os').disabled=true;$('btn-os').textContent='⏳ 提交中...';
+  try{await API.submit(S.code,S.ans);cl();cfeti(5000);ss('screen-cel')}
+  catch(e){console.error(e);ni('📮','提交失败','提交出问题了，请重试。');er();$('btn-os').disabled=false;$('btn-os').textContent='✅ 提交评价'}
 }
 
 // ============================================================
-//  SOUND EFFECTS (Web Audio API)
+// RESET
 // ============================================================
-let audioCtx = null;
-
-function getAudioCtx() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  return audioCtx;
-}
-
-function playNote(freq, duration = 0.15, type = 'sine', volume = 0.3) {
-  try {
-    const ctx = getAudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch (e) { /* silent fallback */ }
-}
-
-function playSelect() { playNote(800, 0.1, 'sine', 0.2); }
-
-function playConfirm() {
-  playNote(523, 0.15, 'sine', 0.3);
-  setTimeout(() => playNote(659, 0.15, 'sine', 0.3), 100);
-  setTimeout(() => playNote(784, 0.2, 'sine', 0.3), 200);
-}
-
-function playCelebration() {
-  const notes = [523, 587, 659, 784, 880, 1047];
-  notes.forEach((f, i) => {
-    setTimeout(() => playNote(f, 0.2, 'sine', 0.25), i * 100);
-  });
-}
-
-function playError() {
-  playNote(400, 0.15, 'sawtooth', 0.15);
-  setTimeout(() => playNote(300, 0.2, 'sawtooth', 0.15), 150);
+function resetAll(){
+  pollStop();
+  Object.assign(S,{mode:null,selfType:null,selfAns:null,code:null,room:null,qi:0,ans:[],timer:null});
+  for(const k of Object.keys(P))P[k]=null;
+  document.querySelectorAll('.dim-opt').forEach(e=>e.classList.remove('sel'));
+  $('tp-res').style.display='none';$('btn-confirm-type').disabled=true;
+  $('btn-os').disabled=false;$('btn-os').textContent='✅ 提交评价';
+  document.querySelectorAll('.ci-box').forEach(i=>{i.value='';i.classList.remove('filled')});
+  ss('screen-landing');
 }
 
 // ============================================================
-//  CONFETTI
+// INIT
 // ============================================================
-let confettiRunning = false;
-let confettiAnimId = null;
-const confettiPieces = [];
-
-function startConfetti(duration = 4000) {
-  const canvas = $('confetti-canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const ctx = canvas.getContext('2d');
-
-  const colors = ['#FF7E7E','#FFD93D','#6EC6FF','#FF8FAB','#C9A7EB','#8FBC8F','#FFD700','#FFB06A'];
-
-  for (let i = 0; i < 120; i++) {
-    confettiPieces.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height * -1,
-      w: 5 + Math.random() * 8,
-      h: 3 + Math.random() * 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      speed: 2 + Math.random() * 3,
-      rotation: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 6,
-      swing: Math.random() * 2 - 1,
-    });
-  }
-
-  confettiRunning = true;
-  let startTime = Date.now();
-
-  function draw() {
-    if (!confettiRunning) { ctx.clearRect(0,0,canvas.width,canvas.height); return; }
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    for (const p of confettiPieces) {
-      p.y += p.speed;
-      p.x += Math.sin(p.y * 0.02) * p.swing;
-      p.rotation += p.rotSpeed;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation * Math.PI / 180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      ctx.restore();
-    }
-
-    // Reset pieces that fell off
-    for (const p of confettiPieces) {
-      if (p.y > canvas.height + 20) {
-        p.y = -20;
-        p.x = Math.random() * canvas.width;
-      }
-    }
-
-    confettiAnimId = requestAnimationFrame(draw);
-
-    if (Date.now() - startTime > duration) {
-      stopConfetti();
-    }
-  }
-
-  draw();
-}
-
-function stopConfetti() {
-  confettiRunning = false;
-  if (confettiAnimId) {
-    cancelAnimationFrame(confettiAnimId);
-    confettiAnimId = null;
-  }
-  const ctx = $('confetti-canvas').getContext('2d');
-  ctx.clearRect(0,0,$('confetti-canvas').width,$('confetti-canvas').height);
-  confettiPieces.length = 0;
-}
-
-window.addEventListener('resize', () => {
-  if (confettiRunning) {
-    $('confetti-canvas').width = window.innerWidth;
-    $('confetti-canvas').height = window.innerHeight;
-  }
+document.addEventListener('DOMContentLoaded',()=>{
+  const u=new URLSearchParams(window.location.search);
+  if(u.get('code')&&u.get('code').length===CFG.CODE_LEN)goOther();
+  console.log('🪞 人格镜像已加载');
 });
-
-// ============================================================
-//  NAVIGATION
-// ============================================================
-function enterGiverFlow() {
-  playSelect();
-  state.mode = 'giver';
-  state.budget = null;
-  state.relationship = null;
-  // Reset selections
-  document.querySelectorAll('.option-btn.selected').forEach(b => b.classList.remove('selected'));
-  $('btn-generate').disabled = true;
-  showScreen('screen-giver-form');
-}
-
-function enterReceiverFlow() {
-  playSelect();
-  state.mode = 'receiver';
-  state.currentRoomCode = null;
-  state.selectedGifts = [];
-  // Check URL for code
-  const urlParams = new URLSearchParams(window.location.search);
-  const codeFromUrl = urlParams.get('code');
-  resetCodeInput();
-  showScreen('screen-receiver-input');
-  if (codeFromUrl && codeFromUrl.length === CONFIG.CODE_LENGTH) {
-    fillCodeFromUrl(codeFromUrl.toUpperCase());
-  }
-}
-
-function showCheckResults() {
-  playSelect();
-  state.mode = 'giver';
-  state.currentRoomCode = null;
-  resetCodeInput();
-  showScreen('screen-receiver-input');
-  $('screen-receiver-input').querySelector('h2').textContent = '查询结果';
-  $('screen-receiver-input').querySelector('.receiver-header p').textContent =
-    '输入之前生成的密令，查看收礼方的选择～';
-  $('btn-verify-code').textContent = '🔍 查看结果';
-}
-
-// Override the receiver-input back button behavior
-document.querySelector('#screen-receiver-input .btn-secondary').addEventListener('click', () => {
-  showScreen('screen-landing');
-  // Restore receiver input text
-  $('screen-receiver-input').querySelector('h2').textContent = '输入密令';
-  $('screen-receiver-input').querySelector('.receiver-header p').textContent =
-    '把送礼方给你的 5 位密令输进去～';
-  $('btn-verify-code').textContent = '🔍 查看礼物';
-});
-
-// ============================================================
-//  GIVER: Budget & Relation Selection
-// ============================================================
-function selectBudget(btn) {
-  playSelect();
-  document.querySelectorAll('#budget-grid .option-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  state.budget = btn.dataset.value;
-  updateGenerateBtn();
-}
-
-function selectRelation(btn) {
-  playSelect();
-  document.querySelectorAll('#relation-grid .option-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  state.relationship = btn.dataset.value;
-  updateGenerateBtn();
-}
-
-function updateGenerateBtn() {
-  $('btn-generate').disabled = !(state.budget && state.relationship);
-}
-
-// ============================================================
-//  GIVER: Generate Room
-// ============================================================
-async function generateRoom() {
-  if (!state.budget || !state.relationship) return;
-
-  // Check if combination is available
-  if (!isCombinationAvailable(state.budget, state.relationship)) {
-    showNotification('🧸', '即将上线',
-      `「${getRelationLabel(state.relationship)} · ${state.budget}元」的礼物清单正在准备中～\n小邮差还在路上，请先试试「朋友 · 100-200元」的组合吧！`);
-    return;
-  }
-
-  showScreen('screen-generating');
-  playSelect();
-
-  // Animate progress bar
-  const bar = $('gen-progress-bar');
-  bar.style.width = '0%';
-  setTimeout(() => bar.style.width = '30%', 200);
-  setTimeout(() => bar.style.width = '60%', 400);
-  setTimeout(() => bar.style.width = '85%', 600);
-
-  try {
-    const result = await apiPost('/api/create-room', {
-      budget: state.budget,
-      relationship: state.relationship,
-    });
-
-    bar.style.width = '100%';
-    state.code = result.code;
-
-    setTimeout(() => {
-      showCodeScreen();
-    }, 500);
-
-  } catch (e) {
-    console.error('Create room failed:', e);
-    bar.style.width = '0%';
-    showNotification('📮', '创建失败',
-      '小邮差在路上遇到了点麻烦...\n请检查网络连接后重试。\n\n如果持续失败，可能是服务暂不可用，请联系开发者。');
-  }
-}
-
-// ============================================================
-//  GIVER: Code Display
-// ============================================================
-function showCodeScreen() {
-  showScreen('screen-code');
-  playConfirm();
-
-  // Render code chars
-  const display = $('code-display');
-  display.innerHTML = '';
-  for (const ch of state.code) {
-    const div = document.createElement('div');
-    div.className = 'code-char';
-    div.textContent = ch;
-    display.appendChild(div);
-  }
-
-  // Generate QR code
-  const qrContainer = $('qr-container');
-  qrContainer.innerHTML = '';
-  const appUrl = window.location.href.split('?')[0].split('#')[0];
-  const qrData = `${appUrl}?code=${state.code}`;
-
-  try {
-    if (typeof QRCode !== 'undefined') {
-      new QRCode(qrContainer, {
-        text: qrData,
-        width: 160,
-        height: 160,
-        colorDark: getComputedStyle(document.body).getPropertyValue('--primary').trim() || '#FF7E7E',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H,
-      });
-    } else {
-      throw new Error('QRCode library not loaded');
-    }
-  } catch (e) {
-    // Fallback: show link and QR via external API
-    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrData)}" alt="QR Code" style="border-radius:8px">`;
-  }
-
-  // Start polling
-  startPolling();
-}
-
-function copyShareLink() {
-  const appUrl = window.location.href.split('?')[0].split('#')[0];
-  const link = `${appUrl}?code=${state.code}`;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(link).then(() => {
-      showToast('链接已复制！快去分享给 TA 吧 ✨', 'success');
-    }).catch(() => fallbackCopy(link));
-  } else {
-    fallbackCopy(link);
-  }
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand('copy');
-  document.body.removeChild(ta);
-  showToast('链接已复制！快去分享给 TA 吧 ✨', 'success');
-}
-
-// ============================================================
-//  GIVER: Polling for Results
-// ============================================================
-function startPolling() {
-  stopPolling();
-  state.pollingTimer = setInterval(async () => {
-    try {
-      const data = await apiGet(`/api/room/${state.code}`);
-      if (data.status === 'completed') {
-        stopPolling();
-        state.roomData = data;
-        showGiverResults();
-      }
-    } catch (e) {
-      console.error('Poll failed:', e);
-      // Don't stop polling on error, keep trying
-    }
-  }, CONFIG.POLL_INTERVAL);
-}
-
-function stopPolling() {
-  if (state.pollingTimer) {
-    clearInterval(state.pollingTimer);
-    state.pollingTimer = null;
-  }
-}
-
-// ============================================================
-//  GIVER: Results
-// ============================================================
-async function showGiverResults() {
-  const container = $('results-container');
-  container.innerHTML = '';
-  playCelebration();
-  startConfetti(3000);
-
-  const gifts = getGiftsForCombo(state.roomData.budget, state.roomData.relationship);
-  const selected = state.roomData.receiverSelections;
-  const selectedGifts = selected.map(i => gifts.find(g => g.id === i)).filter(Boolean);
-
-  let totalPrice = 0;
-
-  for (const gift of selectedGifts) {
-    totalPrice += gift.price;
-    const card = document.createElement('div');
-    card.className = 'result-card';
-    card.innerHTML = `
-      <div class="gift-emoji">${gift.emoji}</div>
-      <div class="gift-name">${gift.name}</div>
-      <div class="gift-desc">${gift.desc}</div>
-      <div class="gift-price">¥${gift.price}</div>
-      <span class="gift-tag">${gift.category}</span>
-    `;
-    container.appendChild(card);
-  }
-
-  // Budget comparison
-  const budgetRange = state.roomData.budget;
-  const summary = document.createElement('div');
-  summary.className = 'budget-summary';
-  summary.innerHTML = `
-    <div class="label">预算范围：${budgetRange}元</div>
-    <div class="total">合计：¥${totalPrice}</div>
-  `;
-  container.appendChild(summary);
-
-  // Check if over budget
-  if (isOverBudget(totalPrice, budgetRange)) {
-    const overNote = document.createElement('div');
-    overNote.className = 'budget-over';
-    const overAmount = totalPrice - getBudgetMax(budgetRange);
-    overNote.innerHTML = `
-      <p>⚠️ 这个组合超出预算 <strong>¥${overAmount}</strong></p>
-      <p style="font-size:var(--font-sm);margin-top:8px;color:var(--text-light)">
-        建议保留其中一份礼物，由你来决定最终送哪个哦～
-      </p>
-    `;
-    container.appendChild(overNote);
-  }
-
-  applyTheme(state.roomData.relationship);
-  showScreen('screen-results');
-}
-
-function getBudgetMax(budget) {
-  const map = {
-    '50以下': 50,'50-100': 100,'100-150': 150,'150-200': 200,
-    '200-300': 300,'300-400': 400,'400-500': 500,'500以上': Infinity,
-  };
-  return map[budget] || Infinity;
-}
-
-function isOverBudget(total, budget) {
-  const max = getBudgetMax(budget);
-  return total > max;
-}
-
-// ============================================================
-//  RECEIVER: Code Input
-// ============================================================
-function resetCodeInput() {
-  document.querySelectorAll('.code-input-box').forEach(inp => {
-    inp.value = '';
-    inp.classList.remove('filled');
-  });
-  $('code-error').textContent = '';
-  $('btn-verify-code').disabled = true;
-}
-
-function handleCodeInput(input, index) {
-  let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  input.value = val;
-  if (val) input.classList.add('filled');
-  else input.classList.remove('filled');
-
-  if (val && index < CONFIG.CODE_LENGTH - 1) {
-    const next = document.querySelector(`.code-input-box[data-index="${index + 1}"]`);
-    if (next) next.focus();
-  }
-
-  updateCodeVerifyBtn();
-}
-
-function handleCodeKeydown(e, input, index) {
-  if (e.key === 'Backspace' && !input.value && index > 0) {
-    const prev = document.querySelector(`.code-input-box[data-index="${index - 1}"]`);
-    if (prev) { prev.focus(); prev.value = ''; prev.classList.remove('filled'); }
-  }
-  if (e.key === 'Enter') {
-    verifyCode();
-  }
-}
-
-function updateCodeVerifyBtn() {
-  const allFilled = Array.from(document.querySelectorAll('.code-input-box'))
-    .every(inp => inp.value.length === 1);
-  $('btn-verify-code').disabled = !allFilled;
-}
-
-function fillCodeFromUrl(code) {
-  if (code.length !== CONFIG.CODE_LENGTH) return;
-  const inputs = document.querySelectorAll('.code-input-box');
-  for (let i = 0; i < code.length && i < inputs.length; i++) {
-    inputs[i].value = code[i];
-    inputs[i].classList.add('filled');
-  }
-  updateCodeVerifyBtn();
-  // Auto-verify after short delay
-  setTimeout(() => verifyCode(), 300);
-}
-
-// ============================================================
-//  RECEIVER: Verify Code
-// ============================================================
-function resetVerifyBtn() {
-  const isCheckResults = state.mode === 'giver';
-  $('btn-verify-code').textContent = isCheckResults ? '🔍 查看结果' : '🔍 查看礼物';
-  $('btn-verify-code').disabled = false;
-}
-
-async function verifyCode() {
-  const inputs = document.querySelectorAll('.code-input-box');
-  let code = '';
-  inputs.forEach(inp => code += inp.value.toUpperCase());
-
-  if (code.length !== CONFIG.CODE_LENGTH) return;
-
-  $('btn-verify-code').disabled = true;
-  $('btn-verify-code').textContent = '⏳ 验证中...';
-
-  try {
-    const data = await apiGet(`/api/room/${code}`);
-
-    // --- Mode: Giver checking results ---
-    if (state.mode === 'giver') {
-      if (!data) {
-        showNotification('📮', '密令无效', '这个密令不存在或已过期。');
-        resetVerifyBtn();
-        playError();
-        return;
-      }
-      if (data.status === 'waiting') {
-        showNotification('📮', '还没选好',
-          '收礼方还没有完成选择哦～\n请稍后再来查看。');
-        resetVerifyBtn();
-        return;
-      }
-      // status === 'completed'
-      state.code = code;
-      state.roomData = data;
-      state.relationship = data.relationship;
-      state.budget = data.budget;
-      showGiverResults();
-      return;
-    }
-
-    // --- Mode: Receiver ---
-    if (!data) {
-      showNotification('📮', '密令无效', '这个密令不存在或已过期，\n请检查后重新输入～');
-      resetVerifyBtn();
-      playError();
-      return;
-    }
-    if (data.status === 'completed') {
-      showNotification('📮', '已经选过啦',
-        '这个密令对应的礼物已经被挑选过了～\n如果是送礼方，可以点击查询结果。');
-      resetVerifyBtn();
-      return;
-    }
-
-    // Valid room (waiting) → show gifts
-    state.currentRoomCode = code;
-    state.roomData = data;
-    state.budget = data.budget;
-    state.relationship = data.relationship;
-    playConfirm();
-    showReceiverGifts(data.relationship, data.budget);
-
-  } catch (e) {
-    console.error('Verify code failed:', e);
-    if (e.message && e.message.includes('ROOM_NOT_FOUND')) {
-      showNotification('📮', '密令无效',
-        '这个密令不存在或已过期，\n请检查后重新输入～');
-    } else {
-      showNotification('📮', '网络异常',
-        '小邮差联系不上总部...\n请检查网络后重试。');
-    }
-    playError();
-    resetVerifyBtn();
-  }
-}
-
-// ============================================================
-//  RECEIVER: Show Gifts
-// ============================================================
-function showReceiverGifts(relationship, budget) {
-  applyTheme(relationship);
-
-  // Update banner
-  const banners = {
-    friend: { emoji: '🎈', title: '朋友 · 礼物清单', subtitle: '挑一份让好朋友开心的礼物吧～' },
-    lover: { emoji: '💕', title: '恋人 · 礼物清单', subtitle: '选一份让 TA 感受到心意的礼物吧 💝' },
-    elder: { emoji: '🌸', title: '长辈 · 礼物清单', subtitle: '选一份温暖贴心的礼物表达心意～' },
-  };
-  const b = banners[relationship] || banners.friend;
-  $('banner-emoji').textContent = b.emoji;
-  $('banner-title').textContent = b.title;
-  $('banner-subtitle').textContent = b.subtitle;
-
-  // Update message
-  const messages = {
-    friend: '💌 礼物信使小邮差说：「好朋友之间不用太客气～挑你第一眼心动的就好！可以选 1~2 个哦！」',
-    lover: '💌 礼物信使小邮差说：「爱一个人就是想让 TA 开心～选你直觉觉得 TA 会喜欢的！可以选 1~2 个哦 💕」',
-    elder: '💌 礼物信使小邮差说：「心意最重要～挑一份你觉得最温暖贴心的就好！可以选 1~2 个哦 🌸」',
-  };
-  $('theme-message').textContent = messages[relationship] || messages.friend;
-
-  // Render gifts
-  const grid = $('gift-grid');
-  grid.innerHTML = '';
-  state.selectedGifts = [];
-
-  const gifts = getGiftsForCombo(budget, relationship);
-  if (!gifts || gifts.length === 0) {
-    showNotification('🧸', '暂无推荐',
-      '这个组合的礼物清单正在准备中～\n小邮差还在路上呢！');
-    showScreen('screen-receiver-input');
-    return;
-  }
-
-  gifts.forEach(gift => {
-    const card = document.createElement('div');
-    card.className = 'gift-card';
-    card.dataset.id = gift.id;
-    card.innerHTML = `
-      <span class="gift-emoji">${gift.emoji}</span>
-      <div class="gift-name">${gift.name}</div>
-      <div class="gift-desc">${gift.desc}</div>
-      <span class="gift-tag">${gift.category}</span>
-      <div class="check-mark">✓</div>
-    `;
-    card.addEventListener('click', () => toggleGiftSelection(gift.id, card));
-    grid.appendChild(card);
-  });
-
-  updateSelectionCounter();
-  showScreen('screen-receiver-gifts');
-}
-
-function getGiftsForCombo(budget, relationship) {
-  const relationData = GIFT_DATA[relationship];
-  if (!relationData) return [];
-  // Normalize budget keys
-  const budgetKey = Object.keys(relationData).find(k => {
-    // Normalize comparison
-    const cleanK = k.replace(/\s/g, '');
-    const cleanB = budget.replace(/\s/g, '');
-    return cleanK === cleanB;
-  });
-  return budgetKey ? relationData[budgetKey] : [];
-}
-
-// ============================================================
-//  RECEIVER: Gift Selection
-// ============================================================
-function toggleGiftSelection(id, card) {
-  const idx = state.selectedGifts.indexOf(id);
-  if (idx >= 0) {
-    state.selectedGifts.splice(idx, 1);
-    card.classList.remove('selected');
-    playSelect();
-  } else if (state.selectedGifts.length < CONFIG.MAX_SELECTIONS) {
-    state.selectedGifts.push(id);
-    card.classList.add('selected');
-    playSelect();
-  } else {
-    showToast(`最多选 ${CONFIG.MAX_SELECTIONS} 个就好～`, 'error');
-  }
-  updateSelectionCounter();
-}
-
-function updateSelectionCounter() {
-  $('select-count').textContent = state.selectedGifts.length;
-  $('btn-submit-gifts').disabled = state.selectedGifts.length === 0;
-}
-
-// ============================================================
-//  RECEIVER: Submit Selections
-// ============================================================
-async function submitGifts() {
-  if (state.selectedGifts.length === 0) return;
-
-  $('btn-submit-gifts').disabled = true;
-  $('btn-submit-gifts').textContent = '⏳ 正在提交...';
-
-  try {
-    await apiPost(`/api/room/${state.currentRoomCode}/select`, {
-      selections: state.selectedGifts,
-    });
-
-    playCelebration();
-    startConfetti(5000);
-    showScreen('screen-celebration');
-
-  } catch (e) {
-    console.error('Submit failed:', e);
-    if (e.message && e.message.includes('ALREADY_COMPLETED')) {
-      showNotification('📮', '已经选过啦',
-        '这个密令对应的礼物已经被挑选过了～');
-    } else {
-      showNotification('📮', '提交失败',
-        '小邮差在路上出了点岔子...\n请检查网络后重试。');
-    }
-    playError();
-    $('btn-submit-gifts').disabled = false;
-    $('btn-submit-gifts').textContent = '✅ 确定选择';
-  }
-}
-
-// ============================================================
-//  RESET
-// ============================================================
-function resetAll() {
-  stopPolling();
-  stopConfetti();
-  state.mode = null;
-  state.budget = null;
-  state.relationship = null;
-  state.code = null;
-  state.roomData = null;
-  state.selectedGifts = [];
-  state.currentRoomCode = null;
-  document.body.className = '';
-  resetCodeInput();
-  showScreen('screen-landing');
-}
-
-// ============================================================
-//  URL PARAMETER HANDLING
-// ============================================================
-function handleUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-
-  if (code && code.length === CONFIG.CODE_LENGTH) {
-    // Direct link for receiver
-    enterReceiverFlow();
-  }
-}
-
-// Run on load
-document.addEventListener('DOMContentLoaded', () => {
-  handleUrlParams();
-
-  // Apply friend theme as default on landing
-  applyTheme('friend');
-});
-
-// ============================================================
-//  UTILITY
-// ============================================================
-function getRelationLabel(r) {
-  return { friend: '朋友', lover: '恋人', elder: '长辈' }[r] || r;
-}
-
-// Make functions globally accessible for inline onclick
-window.enterGiverFlow = enterGiverFlow;
-window.enterReceiverFlow = enterReceiverFlow;
-window.showCheckResults = showCheckResults;
-window.selectBudget = selectBudget;
-window.selectRelation = selectRelation;
-window.generateRoom = generateRoom;
-window.copyShareLink = copyShareLink;
-window.showScreen = showScreen;
-window.handleCodeInput = handleCodeInput;
-window.handleCodeKeydown = handleCodeKeydown;
-window.verifyCode = verifyCode;
-window.submitGifts = submitGifts;
-window.resetAll = resetAll;
-
-console.log('🧸 礼物信使已加载 ✨');
-console.log(`📮 API 地址: ${CONFIG.API_BASE}`);
-console.log('💡 部署前请将 API_BASE 替换为你的 Cloudflare Worker 地址');
 </script>
 </body>
 </html>
