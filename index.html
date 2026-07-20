@@ -426,7 +426,7 @@ button{cursor:pointer;background:none;padding:0}
 
 <script>
 // ============================================================
-const CFG = { API_BASE:window.location.origin.includes('github.io')?'https://gift-picks.zeabur.app':'http://localhost:3000', CODE_LEN:5, POLL_MS:2000 };
+const CFG = { CODE_LEN:5, POLL_MS:2000 };
 // ============================================================
 // QUESTIONS: 4 per dim, 16 total
 // ============================================================
@@ -488,66 +488,88 @@ function cfeti(d=4000){
 }
 
 // ============================================================
-// API — 远程 API 优先，失败降级到 localStorage
+// API — GitHub Gist 作为数据库（国内可访问，免费）
 // ============================================================
-function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<CFG.CODE_LEN;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
+const GH_TOKEN = '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';
+const GH_API = 'https://api.github.com/gists';
+const GIST_DESC = 'gift-picks-db';
+const FILE = 'db.json';
+let _gistId = localStorage.getItem('_gist_id');
 
-async function apiPost(path, body) {
-  const res = await fetch(CFG.API_BASE + path, {
-    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
+async function gistId() {
+  if (_gistId) return _gistId;
+  // 查找已有 gist
+  const r = await fetch(`${GH_API}?description=${GIST_DESC}&per_page=1`, {
+    headers: { 'Authorization': `Bearer ${GH_TOKEN}` }
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error);
-  return data;
+  const list = await r.json();
+  if (Array.isArray(list) && list.length) {
+    _gistId = list[0].id;
+    localStorage.setItem('_gist_id', _gistId);
+    return _gistId;
+  }
+  // 创建新 gist
+  const cr = await fetch(GH_API, {
+    method: 'POST', headers: { 'Authorization': `Bearer ${GH_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ description: GIST_DESC, public: false, files: { [FILE]: { content: '{}' } } })
+  });
+  const c = await cr.json(); _gistId = c.id;
+  localStorage.setItem('_gist_id', _gistId);
+  return _gistId;
 }
 
-async function apiGet(path) {
-  const res = await fetch(CFG.API_BASE + path);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error);
-  return data;
+async function readDB() {
+  const id = await gistId();
+  const r = await fetch(`${GH_API}/${id}`, { headers: { 'Authorization': `Bearer ${GH_TOKEN}` } });
+  const g = await r.json();
+  return JSON.parse(g.files[FILE].content || '{}');
 }
+
+async function writeDB(data) {
+  const id = await gistId();
+  await fetch(`${GH_API}/${id}`, {
+    method: 'PATCH', headers: { 'Authorization': `Bearer ${GH_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(data) } } })
+  });
+}
+
+function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<5;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
 
 const API = {
-  async create(t,a){
+  async create(t, a) {
+    const code = glc();
+    const room = { selfType: t, selfAnswers: a, status: 'created', otherAnswers: null, createdAt: Date.now() };
+    localStorage.setItem(`rm_${code}`, JSON.stringify(room));
     try {
-      const d = await apiPost('/api/create-room', {selfType:t, selfAnswers:a});
-      // 同步保存到本地，便于同设备直接读取
-      localStorage.setItem(`rm_${d.code}`, JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
-      return d;
-    } catch(e) {
-      // 降级
-      const c = glc();
-      localStorage.setItem(`rm_${c}`, JSON.stringify({selfType:t,selfAnswers:a,status:'created',otherAnswers:null,createdAt:Date.now()}));
-      return {code:c};
-    }
+      const db = await readDB();
+      db[code] = room;
+      await writeDB(db);
+    } catch(e) { console.warn('Gist sync failed', e); }
+    return { code };
   },
-  async get(c){
-    const raw = localStorage.getItem(`rm_${c}`);
-    if (raw) return JSON.parse(raw); // 同设备直接返回
+  async get(c) {
+    const local = localStorage.getItem(`rm_${c}`);
+    if (local) return JSON.parse(local);
     try {
-      return await apiGet(`/api/room/${c}`);
-    } catch(e) {
-      return null;
-    }
+      const db = await readDB();
+      if (db[c]) return db[c];
+    } catch(e) {}
+    return null;
   },
-  async submit(c,a){
-    const raw = localStorage.getItem(`rm_${c}`);
-    if (raw) {
-      // 同设备：本地保存并同步到远程（后台静默）
-      const rm = JSON.parse(raw);
-      if(rm.status!=='created')throw Error('ALREADY_DONE');
-      rm.otherAnswers=a; rm.status='completed';
+  async submit(c, a) {
+    const local = localStorage.getItem(`rm_${c}`);
+    if (local) {
+      const rm = JSON.parse(local);
+      if (rm.status !== 'created') throw Error('ALREADY_DONE');
+      rm.otherAnswers = a; rm.status = 'completed';
       localStorage.setItem(`rm_${c}`, JSON.stringify(rm));
-      apiPost(`/api/room/${c}/submit-other`, {answers:a}).catch(()=>{});
-      return {success:true};
+      try {
+        const db = await readDB();
+        if (db[c]) { db[c] = rm; await writeDB(db); }
+      } catch(e) { console.warn('Gist sync failed', e); }
+      return { success: true };
     }
-    try {
-      return await apiPost(`/api/room/${c}/submit-other`, {answers:a});
-    } catch(e) {
-      // 远程失败，本地也没数据
-      throw Error('SUBMIT_FAILED');
-    }
+    throw Error('ROOM_NOT_FOUND');
   }
 };
 
