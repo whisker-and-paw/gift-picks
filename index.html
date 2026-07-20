@@ -495,7 +495,7 @@ const GH_API = 'https://api.github.com/gists';
 const GIST_DESC = 'gift-picks-db';
 const FILE = 'db.json';
 let _gistId = localStorage.getItem('_gist_id');
-let _ghToken = localStorage.getItem('_gh_token') || atob('Z2hwX2tUV2p6aHNmWkhrY1BXM21hYzhIWERUZW9zdm4wdzJyYzdVTg==');
+let _ghToken = localStorage.getItem('_gh_token') || atob('Z2hwXzAwRWlzdm5oOXV2ZlJicWY5Y3hmM3BXSkMxSk15aDRiM0p1bA==');
 if (!localStorage.getItem('_gh_token')) localStorage.setItem('_gh_token', _ghToken);
 
 async function gistId() {
@@ -515,17 +515,21 @@ async function gistId() {
 }
 
 async function readDB() {
-  const id = await gistId(); if (!id) return {};
+  const id = await gistId(); if (!id) { console.warn('no gist id'); return {}; }
   const r = await fetch(`${GH_API}/${id}`, { headers: { 'Authorization': `Bearer ${_ghToken}` } });
-  const g = await r.json(); return JSON.parse(g.files[FILE].content || '{}');
+  if (!r.ok) { console.warn('Gist read failed', r.status); return {}; }
+  const g = await r.json();
+  if (!g.files || !g.files[FILE]) { console.warn('Gist missing file'); return {}; }
+  return JSON.parse(g.files[FILE].content || '{}');
 }
 
 async function writeDB(data) {
   const id = await gistId(); if (!id) return;
-  await fetch(`${GH_API}/${id}`, {
+  const r = await fetch(`${GH_API}/${id}`, {
     method: 'PATCH', headers: { 'Authorization': `Bearer ${_ghToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ files: { [FILE]: { content: JSON.stringify(data) } } })
   });
+  if (!r.ok) console.warn('Gist write failed', r.status);
 }
 
 function glc(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let d;do{d='';for(let i=0;i<5;i++)d+=c[~~(Math.random()*c.length)]}while(localStorage.getItem(`rm_${d}`));return d}
